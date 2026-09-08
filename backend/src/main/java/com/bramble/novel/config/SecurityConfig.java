@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -53,6 +54,20 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> {})
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint((request, response, exception) -> {
+                            org.slf4j.LoggerFactory.getLogger(SecurityConfig.class).warn(
+                                    "Authentication rejected: {} {} - {}",
+                                    request.getMethod(), request.getRequestURI(), exception.getMessage());
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication required");
+                        })
+                        .accessDeniedHandler((request, response, exception) -> {
+                            org.slf4j.LoggerFactory.getLogger(SecurityConfig.class).warn(
+                                    "Access denied: {} {} user={} - {}",
+                                    request.getMethod(), request.getRequestURI(),
+                                    request.getUserPrincipal(), exception.getMessage());
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+                        }))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth

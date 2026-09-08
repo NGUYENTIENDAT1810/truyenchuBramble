@@ -77,7 +77,8 @@ class HomeScreen extends ConsumerWidget {
                             onTap: () => context.go('/stats'),
                             child: Container(
                               height: 34,
-                              padding: const EdgeInsets.symmetric(horizontal: 13),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 13),
                               decoration: BoxDecoration(
                                 color: BrambleColors.lightSage,
                                 borderRadius: BorderRadius.circular(999),
@@ -161,27 +162,35 @@ class HomeScreen extends ConsumerWidget {
                                 const SizedBox(width: 15),
                                 Expanded(
                                   child: SizedBox(
-                                    height: 112,
+                                    height: 122,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               active['bookTitle'] ?? '',
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
-                                              style: BrambleTypography.displaySmall(
+                                              style: BrambleTypography
+                                                  .displaySmall(
                                                 color: BrambleColors.creamInk,
                                               ).copyWith(fontSize: 19),
                                             ),
-                                            const SizedBox(height: 2),
+                                            // const SizedBox(height: 2),
                                             Text(
                                               '${active['author'] ?? ''} · Chapter ${active['chapterNumber'] ?? 1}',
-                                              style: BrambleTypography.bodySmall(
-                                                color: BrambleColors.creamSubdued,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style:
+                                                  BrambleTypography.bodySmall(
+                                                color:
+                                                    BrambleColors.creamSubdued,
                                               ),
                                             ),
                                             const SizedBox(height: 6),
@@ -189,7 +198,8 @@ class HomeScreen extends ConsumerWidget {
                                               '“${active['chapterTitle'] ?? ''}”',
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
-                                              style: BrambleTypography.bodyMedium(
+                                              style:
+                                                  BrambleTypography.bodyMedium(
                                                 color: BrambleColors.creamInk,
                                                 fontWeight: FontWeight.w500,
                                               ),
@@ -197,45 +207,70 @@ class HomeScreen extends ConsumerWidget {
                                           ],
                                         ),
                                         Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             // Progress bar
                                             Container(
                                               height: 6,
                                               width: double.infinity,
                                               decoration: BoxDecoration(
-                                                color: BrambleColors.creamDivider,
-                                                borderRadius: BorderRadius.circular(999),
+                                                color:
+                                                    BrambleColors.creamDivider,
+                                                borderRadius:
+                                                    BorderRadius.circular(999),
                                               ),
                                               child: FractionallySizedBox(
                                                 alignment: Alignment.centerLeft,
-                                                widthFactor: ((active['percentage'] is num)
-                                                        ? (active['percentage'] as num).toDouble()
+                                                widthFactor: ((active[
+                                                                'percentage']
+                                                            is num)
+                                                        ? (active['percentage']
+                                                                as num)
+                                                            .toDouble()
                                                         : 0.0)
                                                     .clamp(0.05, 1.0),
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color: BrambleColors.primaryOrange,
-                                                    borderRadius: BorderRadius.circular(999),
+                                                    color: BrambleColors
+                                                        .primaryOrange,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            999),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(height: 6),
+                                            // const SizedBox(height: 6),
                                             Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                Text(
-                                                  active['pctText'] ?? '0% through',
-                                                  style: BrambleTypography.bodySmall(
-                                                    color: BrambleColors.creamMuted,
+                                                Expanded(
+                                                    child: Text(
+                                                  active['pctText'] ??
+                                                      '0% through',
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: BrambleTypography
+                                                      .bodySmall(
+                                                    color: BrambleColors
+                                                        .creamMuted,
                                                   ).copyWith(fontSize: 12),
-                                                ),
-                                                Text(
+                                                )),
+                                                const SizedBox(width: 8),
+                                                Flexible(
+                                                    child: Text(
                                                   active['timeLeft'] ?? '',
-                                                  style: BrambleTypography.bodySmall(
-                                                    color: BrambleColors.creamMuted,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.end,
+                                                  style: BrambleTypography
+                                                      .bodySmall(
+                                                    color: BrambleColors
+                                                        .creamMuted,
                                                   ).copyWith(fontSize: 12),
-                                                ),
+                                                )),
                                               ],
                                             ),
                                           ],
@@ -282,7 +317,7 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 12),
                     SizedBox(
-                      height: 215,
+                      height: 220,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.symmetric(horizontal: 22),
@@ -373,7 +408,8 @@ class HomeScreen extends ConsumerWidget {
                                     const SizedBox(width: 13),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             book.title,
@@ -392,39 +428,56 @@ class HomeScreen extends ConsumerWidget {
                                             ),
                                           ),
                                           const SizedBox(height: 7),
-                                          Row(
+                                          Wrap(
+                                            spacing: 6,
+                                            runSpacing: 4,
                                             children: [
                                               Container(
                                                 height: 21,
-                                                padding: const EdgeInsets.symmetric(horizontal: 9),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 9),
                                                 decoration: BoxDecoration(
-                                                  color: BrambleColors.lightSage,
-                                                  borderRadius: BorderRadius.circular(999),
+                                                  color:
+                                                      BrambleColors.lightSage,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          999),
                                                 ),
                                                 child: Center(
                                                   child: Text(
                                                     book.tag,
-                                                    style: BrambleTypography.bodySmall(
-                                                      color: BrambleColors.deepGreen,
-                                                      fontWeight: FontWeight.w700,
+                                                    style: BrambleTypography
+                                                        .bodySmall(
+                                                      color: BrambleColors
+                                                          .deepGreen,
+                                                      fontWeight:
+                                                          FontWeight.w700,
                                                     ).copyWith(fontSize: 11),
                                                   ),
                                                 ),
                                               ),
-                                              const SizedBox(width: 6),
                                               Container(
                                                 height: 21,
-                                                padding: const EdgeInsets.symmetric(horizontal: 9),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 9),
                                                 decoration: BoxDecoration(
-                                                  color: BrambleColors.peachSelection,
-                                                  borderRadius: BorderRadius.circular(999),
+                                                  color: BrambleColors
+                                                      .peachSelection,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          999),
                                                 ),
                                                 child: Center(
                                                   child: Text(
                                                     '${book.rating} ★',
-                                                    style: BrambleTypography.bodySmall(
-                                                      color: BrambleColors.peachDark,
-                                                      fontWeight: FontWeight.w700,
+                                                    style: BrambleTypography
+                                                        .bodySmall(
+                                                      color: BrambleColors
+                                                          .peachDark,
+                                                      fontWeight:
+                                                          FontWeight.w700,
                                                     ).copyWith(fontSize: 11),
                                                   ),
                                                 ),

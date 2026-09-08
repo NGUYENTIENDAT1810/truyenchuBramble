@@ -44,25 +44,35 @@ class BookModel {
   });
 
   factory BookModel.fromJson(Map<String, dynamic> json) {
+    final authorValue = json['author'];
+    final author = authorValue is Map<String, dynamic>
+        ? (authorValue['name'] ?? authorValue['displayName'] ?? '').toString()
+        : (authorValue ?? json['authorName'] ?? '').toString();
+    final authorMap = authorValue is Map<String, dynamic> ? authorValue : null;
+
     return BookModel(
-      id: json['id'] ?? '',
-      title: json['title'] ?? '',
-      author: json['author'] ?? (json['authorName'] ?? ''),
-      authorId: json['authorId'],
-      authorInitial: json['authorInitial'],
-      authorAvatarBg: json['authorAvatarBg'],
-      authorBio: json['authorBio'],
-      authorNote: json['authorNote'],
-      blurb: json['blurb'] ?? '',
-      coverColor: json['coverColor'] ?? '#56633f',
-      coverInkColor: json['coverInkColor'] ?? '#f0fae1',
-      coverImageUrl: json['coverImageUrl'],
-      tag: json['tag'] ?? (json['primaryTag'] ?? 'Slow fantasy'),
+      id: (json['id'] ?? '').toString(),
+      title: (json['title'] ?? '').toString(),
+      author: author,
+      authorId: (json['authorId'] ?? authorMap?['id'])?.toString(),
+      authorInitial: (json['authorInitial'] ?? authorMap?['initial'])?.toString(),
+      authorAvatarBg: (json['authorAvatarBg'] ?? authorMap?['avatarUrl'])?.toString(),
+      authorBio: (json['authorBio'] ?? authorMap?['bio'])?.toString(),
+      authorNote: (json['authorNote'] ?? authorMap?['note'])?.toString(),
+      blurb: (json['blurb'] ?? json['description'] ?? '').toString(),
+      coverColor: (json['coverColor'] ?? '#56633f').toString(),
+      coverInkColor: (json['coverInkColor'] ?? '#f0fae1').toString(),
+      coverImageUrl: (json['coverImageUrl'] ?? json['coverUrl'])?.toString(),
+      tag: (json['tag'] ?? json['primaryTag'] ?? 'Slow fantasy').toString(),
       rating: (json['rating'] is num) ? (json['rating'] as num).toDouble() : 4.7,
-      readersCount: json['readersCount'] ?? 14200,
-      totalChapters: json['totalChapters'] ?? (json['chapters'] ?? 0),
-      badge: json['badge'],
-      status: json['status'],
+      readersCount: (json['readersCount'] ?? json['viewsCount'] ?? 14200) is num
+          ? ((json['readersCount'] ?? json['viewsCount'] ?? 14200) as num).toInt()
+          : 14200,
+      totalChapters: (json['totalChapters'] ?? json['chapters'] ?? 0) is num
+          ? ((json['totalChapters'] ?? json['chapters'] ?? 0) as num).toInt()
+          : 0,
+      badge: json['badge']?.toString(),
+      status: json['status']?.toString(),
       isSaved: json['isSaved'] ?? false,
       readingProgress: json['readingProgress'] as Map<String, dynamic>?,
     );

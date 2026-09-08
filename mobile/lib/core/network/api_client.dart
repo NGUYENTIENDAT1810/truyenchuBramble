@@ -27,7 +27,9 @@ class ApiClient {
     if (kDebugMode) {
       _dio.interceptors.add(
         LogInterceptor(
+          requestHeader: true,
           requestBody: true,
+          responseHeader: false,
           responseBody: true,
           logPrint: (obj) => debugPrint('[DIO] $obj'),
         ),

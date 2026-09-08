@@ -44,12 +44,17 @@ class StatsScreen extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Your reading',
-                        style: BrambleTypography.displayLarge(
-                          color: BrambleColors.creamInk,
-                        ).copyWith(fontSize: 31),
+                      Expanded(
+                        child: Text(
+                          'Your reading',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: BrambleTypography.displayLarge(
+                            color: BrambleColors.creamInk,
+                          ).copyWith(fontSize: 31),
+                        ),
                       ),
+                      const SizedBox(width: 12),
                       Row(
                         children: [
                           GestureDetector(

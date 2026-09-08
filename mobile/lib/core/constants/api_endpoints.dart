@@ -1,6 +1,6 @@
 class ApiEndpoints {
   // Default to localhost:8080 (or 10.0.2.2 for Android emulator)
-  static String baseUrl = 'http://10.0.2.2:8080/api';
+  static String baseUrl = 'http://192.168.50.116:8080/api';
   static String webBaseUrl = 'http://localhost:8080/api';
 
   // Auth

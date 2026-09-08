@@ -38,12 +38,11 @@ class ReaderRepository {
     int deltaSeconds = 0,
   }) async {
     try {
-      await _client.post(ApiEndpoints.syncProgress, data: {
-        'bookId': bookId,
+      await _client.post('${ApiEndpoints.syncProgress}/$bookId', data: {
         'chapterId': chapterId,
-        'scrollOffset': scrollOffset,
-        'percentage': percentage,
-        'deltaSeconds': deltaSeconds,
+        'progressPercent': (percentage * 100).round(),
+        'scrollOffset': scrollOffset.toDouble(),
+        'readingTimeSeconds': deltaSeconds,
       });
     } catch (_) {}
   }

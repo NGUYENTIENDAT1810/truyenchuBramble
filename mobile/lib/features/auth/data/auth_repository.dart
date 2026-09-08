@@ -15,11 +15,7 @@ class AuthRepository {
       'name': name,
     });
 
-    final tokens = res['tokens'];
-    if (tokens != null) {
-      await LocalStorage.saveToken(tokens['accessToken']);
-      await LocalStorage.saveRefreshToken(tokens['refreshToken']);
-    }
+    await _storeAuthTokens(res);
 
     final user = UserModel.fromJson(res['user']);
     await LocalStorage.saveUser(user.toJson());
@@ -32,11 +28,7 @@ class AuthRepository {
       'password': password,
     });
 
-    final tokens = res['tokens'];
-    if (tokens != null) {
-      await LocalStorage.saveToken(tokens['accessToken']);
-      await LocalStorage.saveRefreshToken(tokens['refreshToken']);
-    }
+    await _storeAuthTokens(res);
 
     final user = UserModel.fromJson(res['user']);
     await LocalStorage.saveUser(user.toJson());
@@ -60,5 +52,22 @@ class AuthRepository {
       await _client.post(ApiEndpoints.logout, data: {'refreshToken': rt});
     } catch (_) {}
     await LocalStorage.clearAuth();
+  }
+
+  Future<void> _storeAuthTokens(Map<String, dynamic> response) async {
+    final tokens = response['tokens'] is Map<String, dynamic>
+        ? response['tokens'] as Map<String, dynamic>
+        : response;
+    final accessToken = tokens['accessToken'] as String?;
+    final refreshToken = tokens['refreshToken'] as String?;
+
+    if (accessToken == null || accessToken.isEmpty) {
+      throw StateError('Login response did not contain an access token');
+    }
+
+    await LocalStorage.saveToken(accessToken);
+    if (refreshToken != null && refreshToken.isNotEmpty) {
+      await LocalStorage.saveRefreshToken(refreshToken);
+    }
   }
 }

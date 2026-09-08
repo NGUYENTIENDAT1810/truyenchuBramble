@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../core/storage/local_storage.dart';
 import '../core/widgets/bramble_bottom_bar.dart';
 import '../features/auth/presentation/auth_controller.dart';
 import '../features/auth/presentation/login_screen.dart';
@@ -18,37 +17,50 @@ import '../features/reader/presentation/reader_screen.dart';
 import '../features/comments/presentation/comments_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../features/settings/presentation/appearance_screen.dart';
+import '../core/theme/bramble_colors.dart';
+import '../core/theme/bramble_typography.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authControllerProvider);
+  final authRefresh = _AuthRouterRefresh(ref);
+  ref.onDispose(authRefresh.dispose);
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/home',
+    initialLocation: '/splash',
+    refreshListenable: authRefresh,
     redirect: (context, state) {
+      final authState = ref.read(authControllerProvider);
       final isAuth = authState.status == AuthStatus.authenticated;
-      final isInitial = authState.status == AuthStatus.initial;
+      final isInitializing = authState.status == AuthStatus.initializing;
+      final location = state.matchedLocation;
       final isAuthRoute = state.matchedLocation == '/login' ||
           state.matchedLocation == '/signup' ||
           state.matchedLocation == '/onboarding';
 
-      if (isInitial) return null;
+      if (isInitializing) {
+        return location == '/splash' ? null : '/splash';
+      }
 
-      final token = LocalStorage.getToken();
-      if ((token == null || token.isEmpty) && !isAuthRoute) {
+      if (!isAuth && !isAuthRoute && location != '/splash') {
         return '/login';
       }
 
-      if (isAuth && isAuthRoute && state.matchedLocation != '/onboarding') {
+      if (isAuth && (location == '/login' || location == '/signup')) {
         return '/home';
       }
 
+      if (location == '/splash') return isAuth ? '/home' : '/login';
       return null;
     },
     routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const _SplashScreen(),
+      ),
+
       // Shell Route for 4 Bottom Bar Tabs
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
@@ -175,3 +187,35 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
+
+class _AuthRouterRefresh extends ChangeNotifier {
+  _AuthRouterRefresh(Ref ref) {
+    ref.listen<AuthState>(authControllerProvider, (previous, next) {
+      if (previous?.status != next.status) notifyListeners();
+    });
+  }
+}
+
+class _SplashScreen extends StatelessWidget {
+  const _SplashScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: BrambleColors.creamBg,
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(color: BrambleColors.primaryOrange),
+            const SizedBox(height: 16),
+            Text(
+              'Loading...',
+              style: BrambleTypography.bodyMedium(color: BrambleColors.creamSubdued),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

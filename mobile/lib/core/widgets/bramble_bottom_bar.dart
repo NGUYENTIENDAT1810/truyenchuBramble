@@ -22,7 +22,7 @@ class BrambleBottomBar extends StatelessWidget {
     ];
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 22),
+      padding: const EdgeInsets.fromLTRB(10, 8, 10, 18),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -36,7 +36,7 @@ class BrambleBottomBar extends StatelessWidget {
         ),
       ),
       child: Container(
-        height: 62,
+        height: 60,
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
           color: BrambleColors.creamSurface,
@@ -62,8 +62,8 @@ class BrambleBottomBar extends StatelessWidget {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 220),
                   curve: Curves.easeOutCubic,
-                  height: 50,
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
                     color: isActive ? BrambleColors.primaryOrange : Colors.transparent,
                     borderRadius: BorderRadius.circular(999),
@@ -82,11 +82,11 @@ class BrambleBottomBar extends StatelessWidget {
                     children: [
                       Icon(
                         item.icon,
-                        size: 21,
+                        size: 20,
                         color: isActive ? const Color(0xFFFFF2EB) : BrambleColors.creamSubdued,
                       ),
                       if (isActive) ...[
-                        const SizedBox(width: 7),
+                        const SizedBox(width: 5),
                         Flexible(
                           child: Text(
                             item.label,

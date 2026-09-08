@@ -12,7 +12,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 });
 
 enum AuthStatus {
-  initial,
+  initializing,
   authenticated,
   unauthenticated,
   loading,
@@ -24,7 +24,7 @@ class AuthState {
   final String? errorMessage;
 
   const AuthState({
-    this.status = AuthStatus.initial,
+    this.status = AuthStatus.initializing,
     this.user,
     this.errorMessage,
   });
@@ -50,10 +50,12 @@ class AuthController extends StateNotifier<AuthState> {
   }
 
   void checkInitialAuth() {
+    if (state.status != AuthStatus.initializing) return;
     final token = LocalStorage.getToken();
+    final refreshToken = LocalStorage.getRefreshToken();
     final savedUser = LocalStorage.getUser();
 
-    if (token != null && savedUser != null) {
+    if ((token != null || refreshToken != null) && savedUser != null) {
       state = state.copyWith(
         status: AuthStatus.authenticated,
         user: UserModel.fromJson(savedUser),

@@ -28,7 +28,9 @@ class LibraryScreen extends ConsumerWidget {
             children: [
               Text(
                 'Library',
-                style: BrambleTypography.displayLarge(color: BrambleColors.creamInk).copyWith(
+                style: BrambleTypography.displayLarge(
+                        color: BrambleColors.creamInk)
+                    .copyWith(
                   fontSize: 31,
                 ),
               ),
@@ -47,11 +49,15 @@ class LibraryScreen extends ConsumerWidget {
                     final isActive = currentTab == label;
                     return Expanded(
                       child: GestureDetector(
-                        onTap: () => ref.read(currentLibraryTabProvider.notifier).state = label,
+                        onTap: () => ref
+                            .read(currentLibraryTabProvider.notifier)
+                            .state = label,
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 150),
                           decoration: BoxDecoration(
-                            color: isActive ? BrambleColors.creamBg : Colors.transparent,
+                            color: isActive
+                                ? BrambleColors.creamBg
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(999),
                             boxShadow: isActive
                                 ? const [
@@ -67,7 +73,9 @@ class LibraryScreen extends ConsumerWidget {
                             child: Text(
                               label,
                               style: BrambleTypography.bodySmall(
-                                color: isActive ? BrambleColors.creamInk : BrambleColors.creamMuted,
+                                color: isActive
+                                    ? BrambleColors.creamInk
+                                    : BrambleColors.creamMuted,
                                 fontWeight: FontWeight.w700,
                               ).copyWith(fontSize: 13.5),
                             ),
@@ -83,7 +91,8 @@ class LibraryScreen extends ConsumerWidget {
               // List of books
               Expanded(
                 child: libraryAsync.when(
-                  loading: () => const BrambleLoading(message: 'Loading shelf...'),
+                  loading: () =>
+                      const BrambleLoading(message: 'Loading shelf...'),
                   error: (err, _) => BrambleErrorView(
                     message: err.toString(),
                     onRetry: () => ref.refresh(libraryListProvider),
@@ -110,7 +119,8 @@ class LibraryScreen extends ConsumerWidget {
                             const SizedBox(height: 14),
                             Text(
                               'No books in this tab yet',
-                              style: BrambleTypography.bodyMedium(color: BrambleColors.creamMuted),
+                              style: BrambleTypography.bodyMedium(
+                                  color: BrambleColors.creamMuted),
                             ),
                           ],
                         ),
@@ -131,7 +141,8 @@ class LibraryScreen extends ConsumerWidget {
 
                           return GestureDetector(
                             onTap: () {
-                              final lastCh = item['lastReadChapterId'] as String?;
+                              final lastCh =
+                                  item['lastReadChapterId'] as String?;
                               if (lastCh != null && lastCh.isNotEmpty) {
                                 context.push('/reader/$lastCh');
                               } else {
@@ -152,50 +163,63 @@ class LibraryScreen extends ConsumerWidget {
                                 const SizedBox(width: 14),
                                 Expanded(
                                   child: SizedBox(
-                                    height: 88,
+                                    height: 90,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               item['title'] ?? '',
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
-                                              style: BrambleTypography.bodyMedium(
+                                              style:
+                                                  BrambleTypography.bodyMedium(
                                                 color: BrambleColors.creamInk,
                                                 fontWeight: FontWeight.w700,
                                               ).copyWith(fontSize: 16),
                                             ),
-                                            const SizedBox(height: 3),
+                                            // const SizedBox(height: 3),
                                             Text(
                                               item['sub'] ?? '',
-                                              style: BrambleTypography.bodySmall(
+                                              maxLines: 1,
+                                              style:
+                                                  BrambleTypography.bodySmall(
                                                 color: BrambleColors.creamMuted,
                                               ),
                                             ),
                                           ],
                                         ),
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             // Progress bar
                                             Container(
                                               height: 5,
                                               width: double.infinity,
                                               decoration: BoxDecoration(
-                                                color: BrambleColors.creamDivider,
-                                                borderRadius: BorderRadius.circular(999),
+                                                color:
+                                                    BrambleColors.creamDivider,
+                                                borderRadius:
+                                                    BorderRadius.circular(999),
                                               ),
                                               child: FractionallySizedBox(
                                                 alignment: Alignment.centerLeft,
-                                                widthFactor: pct.clamp(0.0, 1.0),
+                                                widthFactor:
+                                                    pct.clamp(0.0, 1.0),
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color: BrambleColors.sageGreen,
-                                                    borderRadius: BorderRadius.circular(999),
+                                                    color:
+                                                        BrambleColors.sageGreen,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            999),
                                                   ),
                                                 ),
                                               ),
@@ -203,7 +227,8 @@ class LibraryScreen extends ConsumerWidget {
                                             const SizedBox(height: 5),
                                             Text(
                                               item['state'] ?? '',
-                                              style: BrambleTypography.bodySmall(
+                                              style:
+                                                  BrambleTypography.bodySmall(
                                                 color: BrambleColors.creamMuted,
                                               ).copyWith(fontSize: 11.5),
                                             ),

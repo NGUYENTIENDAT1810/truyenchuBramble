@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -67,7 +68,9 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
       ref.read(readerRepositoryProvider).syncProgress(
             bookId: ch['bookId'],
             chapterId: widget.chapterId,
-            scrollOffset: _scrollController.hasClients ? _scrollController.position.pixels : 0,
+            scrollOffset: _scrollController.hasClients
+                ? _scrollController.position.pixels
+                : 0,
             percentage: _readingProgress,
             deltaSeconds: elapsed,
           );
@@ -121,16 +124,24 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
           loading: () => const BrambleLoading(message: 'Opening chapter...'),
           error: (err, _) => BrambleErrorView(
             message: err.toString(),
-            onRetry: () => ref.invalidate(chapterContentProvider(widget.chapterId)),
+            onRetry: () =>
+                ref.invalidate(chapterContentProvider(widget.chapterId)),
           ),
           data: (chapter) {
             final isLocked = chapter['isLocked'] == true;
             final content = chapter['content'] as String? ?? '';
-            final paragraphs = content.split('\n\n').where((p) => p.trim().isNotEmpty).toList();
+            final paragraphs = content
+                .split('\n\n')
+                .where((p) => p.trim().isNotEmpty)
+                .toList();
 
             final pctInt = (_readingProgress * 100).toInt();
-            final wordCount = chapter['wordCount'] ?? 3400;
-            final estMinutes = Math.max(1, ((wordCount * (1.0 - _readingProgress)) / 250).round());
+            final wordCount =
+                (chapter['wordCount'] as num?)?.toDouble() ?? 3400.0;
+            final estMinutes = math.max(
+              1,
+              ((wordCount * (1.0 - _readingProgress)) / 250).round(),
+            );
 
             final nextCh = chapter['nextChapter'] as Map<String, dynamic>?;
 
@@ -195,7 +206,8 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                 ),
                                 const SizedBox(height: 18),
                                 BrambleButton(
-                                  text: 'Unlock for ${chapter['coinPrice'] ?? 30} coins',
+                                  text:
+                                      'Unlock for ${chapter['coinPrice'] ?? 30} coins',
                                   onPressed: () => _openPaywallSheet(chapter),
                                 ),
                               ],
@@ -244,12 +256,15 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                           },
                                           child: Container(
                                             height: 26,
-                                            padding: const EdgeInsets.symmetric(horizontal: 11),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 11),
                                             decoration: BoxDecoration(
                                               color: isLiked
                                                   ? BrambleColors.primaryOrange
-                                                  : themeConfig.ink.withOpacity(0.08),
-                                              borderRadius: BorderRadius.circular(999),
+                                                  : themeConfig.ink
+                                                      .withOpacity(0.08),
+                                              borderRadius:
+                                                  BorderRadius.circular(999),
                                             ),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.min,
@@ -264,10 +279,12 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                                 const SizedBox(width: 4),
                                                 Text(
                                                   isLiked ? 'Liked' : 'Like',
-                                                  style: BrambleTypography.bodySmall(
+                                                  style: BrambleTypography
+                                                      .bodySmall(
                                                     color: isLiked
-                                                      ? const Color(0xFFFFF2EB)
-                                                      : themeConfig.muted,
+                                                        ? const Color(
+                                                            0xFFFFF2EB)
+                                                        : themeConfig.muted,
                                                     fontWeight: FontWeight.w700,
                                                   ).copyWith(fontSize: 11.5),
                                                 ),
@@ -277,26 +294,32 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                         ),
                                         const SizedBox(width: 8),
                                         GestureDetector(
-                                          onTap: () => context.push('/comments/${widget.chapterId}'),
+                                          onTap: () => context.push(
+                                              '/comments/${widget.chapterId}'),
                                           child: Container(
                                             height: 26,
-                                            padding: const EdgeInsets.symmetric(horizontal: 11),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 11),
                                             decoration: BoxDecoration(
-                                              color: themeConfig.ink.withOpacity(0.08),
-                                              borderRadius: BorderRadius.circular(999),
+                                              color: themeConfig.ink
+                                                  .withOpacity(0.08),
+                                              borderRadius:
+                                                  BorderRadius.circular(999),
                                             ),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Icon(
-                                                  Icons.chat_bubble_outline_rounded,
+                                                  Icons
+                                                      .chat_bubble_outline_rounded,
                                                   size: 13,
                                                   color: themeConfig.muted,
                                                 ),
                                                 const SizedBox(width: 4),
                                                 Text(
                                                   'Note',
-                                                  style: BrambleTypography.bodySmall(
+                                                  style: BrambleTypography
+                                                      .bodySmall(
                                                     color: themeConfig.muted,
                                                     fontWeight: FontWeight.w700,
                                                   ).copyWith(fontSize: 11.5),
@@ -350,7 +373,8 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                       if (nextCh['isLocked'] == true) {
                                         _openPaywallSheet(nextCh);
                                       } else {
-                                        context.pushReplacement('/reader/${nextCh['id']}');
+                                        context.pushReplacement(
+                                            '/reader/${nextCh['id']}');
                                       }
                                     },
                                   ),
@@ -382,7 +406,8 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Comments',
@@ -403,10 +428,12 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
 
                                 // Comment input bar
                                 GestureDetector(
-                                  onTap: () => context.push('/comments/${widget.chapterId}'),
+                                  onTap: () => context
+                                      .push('/comments/${widget.chapterId}'),
                                   child: Container(
                                     height: 50,
-                                    padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
+                                    padding:
+                                        const EdgeInsets.fromLTRB(16, 0, 8, 0),
                                     decoration: BoxDecoration(
                                       color: themeConfig.surface,
                                       borderRadius: BorderRadius.circular(999),
@@ -452,22 +479,27 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                     return Column(
                                       children: top.map((c) {
                                         return Padding(
-                                          padding: const EdgeInsets.only(bottom: 16),
+                                          padding:
+                                              const EdgeInsets.only(bottom: 16),
                                           child: Row(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Container(
                                                 width: 38,
                                                 height: 38,
                                                 decoration: const BoxDecoration(
                                                   shape: BoxShape.circle,
-                                                  color: BrambleColors.primaryOrangeHover,
+                                                  color: BrambleColors
+                                                      .primaryOrangeHover,
                                                 ),
                                                 child: Center(
                                                   child: Text(
                                                     c.initial,
-                                                    style: BrambleTypography.displaySmall(
-                                                      color: const Color(0xFFFFF2EB),
+                                                    style: BrambleTypography
+                                                        .displaySmall(
+                                                      color: const Color(
+                                                          0xFFFFF2EB),
                                                     ).copyWith(fontSize: 16),
                                                   ),
                                                 ),
@@ -475,22 +507,31 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                               const SizedBox(width: 12),
                                               Expanded(
                                                 child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Row(
                                                       children: [
                                                         Text(
                                                           c.name,
-                                                          style: BrambleTypography.bodyMedium(
-                                                            color: themeConfig.ink,
-                                                            fontWeight: FontWeight.w700,
+                                                          style:
+                                                              BrambleTypography
+                                                                  .bodyMedium(
+                                                            color:
+                                                                themeConfig.ink,
+                                                            fontWeight:
+                                                                FontWeight.w700,
                                                           ),
                                                         ),
-                                                        const SizedBox(width: 8),
+                                                        const SizedBox(
+                                                            width: 8),
                                                         Text(
                                                           c.time,
-                                                          style: BrambleTypography.bodySmall(
-                                                            color: themeConfig.muted,
+                                                          style:
+                                                              BrambleTypography
+                                                                  .bodySmall(
+                                                            color: themeConfig
+                                                                .muted,
                                                           ),
                                                         ),
                                                       ],
@@ -498,7 +539,8 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                                     const SizedBox(height: 6),
                                                     Text(
                                                       c.text,
-                                                      style: BrambleTypography.bodyMedium(
+                                                      style: BrambleTypography
+                                                          .bodyMedium(
                                                         color: themeConfig.ink,
                                                       ),
                                                     ),
@@ -517,7 +559,8 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                 BrambleButton(
                                   text: 'See all comments',
                                   variant: BrambleButtonVariant.outline,
-                                  onPressed: () => context.push('/comments/${widget.chapterId}'),
+                                  onPressed: () => context
+                                      .push('/comments/${widget.chapterId}'),
                                 ),
                               ],
                             ),
@@ -535,7 +578,8 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                     left: 0,
                     right: 0,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
                         color: themeConfig.chrome,
                       ),
@@ -575,7 +619,8 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                           ),
                           const SizedBox(width: 10),
                           GestureDetector(
-                            onTap: () => context.push('/book/${chapter['bookId']}/toc'),
+                            onTap: () =>
+                                context.push('/book/${chapter['bookId']}/toc'),
                             child: Container(
                               width: 38,
                               height: 38,
@@ -678,8 +723,4 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
       ),
     );
   }
-}
-
-class Math {
-  static double max(double a, double b) => a > b ? a : b;
 }

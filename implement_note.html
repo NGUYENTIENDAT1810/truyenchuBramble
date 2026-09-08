@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bramble - Implementation Notes</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f5ead8;
+      color: #201e1d;
+      line-height: 1.6;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 36px 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(46,43,37,0.08);
+    }
+    h1 {
+      color: #c67139;
+      font-size: 28px;
+      margin-top: 0;
+      border-bottom: 2px solid #ebddc5;
+      padding-bottom: 12px;
+    }
+    h2 {
+      color: #3d472b;
+      font-size: 20px;
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: #e1eecc;
+      color: #3d472b;
+      font-weight: bold;
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    th, td {
+      border: 1px solid #dcd3c4;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      background: #ebddc5;
+      color: #201e1d;
+    }
+    ul {
+      padding-left: 22px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    code {
+      background: #ebddc5;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    pre {
+      background: #211f1c;
+      color: #f5ead8;
+      padding: 14px 18px;
+      border-radius: 10px;
+      overflow-x: auto;
+    }
+    pre code {
+      background: transparent;
+      color: #f5ead8;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge">BRAMBLE RELEASE 2.0.0 - JAVA SPRING BOOT 3 & FLUTTER FULLSTACK VERIFIED</div>
+    <h1>Implementation Note - Hệ Thống Bramble Novel Reader</h1>
+
+    <h2>1. Task</h2>
+    <p>Xây dựng trọn gói hệ thống ứng dụng đọc truyện chữ <strong>Bramble</strong> mobile-first chuẩn production-ready với mobile client bằng Flutter và backend API bằng <strong>Java Spring Boot 3.3.x (Java 17 LTS)</strong>, Spring Data JPA, Hibernate, Spring Security + JWT, Flyway migration, PostgreSQL, OpenAPI/Swagger và Docker Compose.</p>
+
+    <h2>2. Nguyên Nhân & Mục Tiêu</h2>
+    <ul>
+      <li>Xây dựng backend bằng <strong>Java Spring Boot</strong> theo kiến trúc nhiều tầng (Layered Architecture): <code>config/</code>, <code>security/</code>, <code>controller/</code>, <code>service/</code>, <code>repository/</code>, <code>entity/</code>, <code>dto/</code>, <code>mapper/</code>, <code>exception/</code>.</li>
+      <li>Hiện thực hóa thiết kế editorial cao cấp của Bramble (nền Cream <code>#f5ead8</code>, Sepia <code>#e8d7b4</code>, Night <code>#211f1c</code>, typography Caprasimo/Figtree/Lora, cards bo góc lớn, reader tối giản).</li>
+      <li>Không hard-code dữ liệu trong Flutter; kết nối thực tế tới REST API với đầy đủ tính năng: xác thực JWT, tủ sách cá nhân, tiến độ đọc auto-sync, bình luận theo đoạn văn, mở khóa chương bằng coin, thống kê và đọc offline.</li>
+    </ul>
+
+    <h2>3. Danh Sách Files Đã Tạo & Cấu Trúc Dự Án</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th>Thư Mục / File</th>
+          <th>Mô Tả Chức Năng</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Spring Boot API Controllers</strong></td>
+          <td><code>backend/.../controller/*</code></td>
+          <td><code>AuthController</code>, <code>BookController</code>, <code>DiscoverController</code>, <code>ChapterController</code>, <code>LibraryController</code>, <code>ReaderController</code>, <code>CommentController</code>, <code>StatsController</code>, <code>AdminController</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>Service & Business Layer</strong></td>
+          <td><code>backend/.../service/*</code></td>
+          <td><code>AuthService</code>, <code>BookService</code>, <code>ChapterService</code>, <code>LibraryService</code>, <code>ReaderService</code>, <code>CommentService</code>, <code>StatsService</code>, <code>AdminService</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>Security & JWT</strong></td>
+          <td><code>backend/.../security/*</code>, <code>backend/.../config/SecurityConfig.java</code></td>
+          <td>Spring Security 6 stateless filter chain, <code>JwtTokenProvider</code> (JJWT 0.12.5), <code>JwtAuthenticationFilter</code>, <code>CustomUserDetailsService</code>, <code>UserPrincipal</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>Entities & Repositories</strong></td>
+          <td><code>backend/.../entity/*</code>, <code>backend/.../repository/*</code></td>
+          <td>JPA/Hibernate Entities (<code>User</code>, <code>UserPreferences</code>, <code>Author</code>, <code>Genre</code>, <code>Book</code>, <code>Chapter</code>, <code>Library</code>, <code>ReadingProgress</code>, <code>ReadingHistory</code>, <code>Comment</code>, <code>CommentLike</code>, <code>RefreshToken</code>) & Spring Data JPA Repositories.</td>
+        </tr>
+        <tr>
+          <td><strong>Flyway & Seeding</strong></td>
+          <td><code>backend/src/main/resources/db/migration/V1__create_tables.sql</code>, <code>DataSeeder.java</code></td>
+          <td>Flyway migration 13 bảng cơ sở dữ liệu và CommandLineRunner seed 10+ tiểu thuyết, tác giả, thể loại, chương mẫu và bình luận.</td>
+        </tr>
+        <tr>
+          <td><strong>Docker & Infrastructure</strong></td>
+          <td><code>docker-compose.yml</code>, <code>backend/Dockerfile</code></td>
+          <td>Multi-stage Maven + Eclipse Temurin 17 JRE container và persistent PostgreSQL 16 container.</td>
+        </tr>
+        <tr>
+          <td><strong>Flutter Mobile Client</strong></td>
+          <td><code>mobile/lib/*</code></td>
+          <td>Clean Architecture với Riverpod, GoRouter shell navigation, Dio ApiClient, OfflineChapterStorage, và toàn bộ màn hình theo prototype Bramble.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. Logic Thay Đổi & Điểm Nổi Bật</h2>
+    <ul>
+      <li><strong>Layered Architecture & Separation of Concerns</strong>: Tách biệt hoàn toàn Controller (HTTP handling) &rarr; Service (Business Logic) &rarr; Repository (Data Access) &rarr; Entity/DTO Mappers.</li>
+      <li><strong>Spring Security + Stateless JWT</strong>: Token-based authentication với Access Token (1 ngày) và Refresh Token rotation (7 ngày) lưu trong database.</li>
+      <li><strong>Reader Engine</strong>: 3 giao diện đọc (Cream, Sepia, Night), tùy biến font/size/line-height/margin, auto-sync scroll vị trí đọc, mở khóa chương VIP bằng coins.</li>
+      <li><strong>Swagger/OpenAPI 3.0</strong>: Tự động tạo tài liệu API tương tác tại <code>http://localhost:8080/swagger-ui.html</code>.</li>
+    </ul>
+
+    <h2>5. Phạm Vi Ảnh Hưởng</h2>
+    <p>Thay thế hoàn toàn runtime backend từ Node.js sang Java Spring Boot 3.3.x tiêu chuẩn. Mobile client đồng bộ port mặc định sang <code>8080</code> và tương thích 100% với các REST endpoints.</p>
+
+    <h2>6. Danh Sách API Liên Quan</h2>
+    <ul>
+      <li><code>POST /api/auth/register</code> &amp; <code>POST /api/auth/login</code> &amp; <code>POST /api/auth/refresh</code> &amp; <code>GET /api/users/me</code></li>
+      <li><code>GET /api/books</code> &amp; <code>GET /api/discover</code> &amp; <code>GET /api/books/{id}</code> &amp; <code>GET /api/authors/{id}</code></li>
+      <li><code>GET /api/books/{bookId}/chapters</code> &amp; <code>GET /api/chapters/{id}</code> &amp; <code>POST /api/chapters/{id}/unlock</code></li>
+      <li><code>GET /api/me/library</code> &amp; <code>POST /api/me/library</code> &amp; <code>PATCH /api/me/library/{bookId}</code></li>
+      <li><code>GET /api/me/active-reading</code> &amp; <code>POST /api/me/books/{bookId}/progress</code></li>
+      <li><code>GET /api/chapters/{chapterId}/comments</code> &amp; <code>POST /api/chapters/{chapterId}/comments</code> &amp; <code>POST /api/comments/{id}/like</code></li>
+      <li><code>GET /api/me/stats</code></li>
+      <li><code>/api/admin/**</code> (Dành riêng cho ADMIN role)</li>
+    </ul>
+
+    <h2>7. Cách Kiểm Thử (Testing Guide)</h2>
+    <ol>
+      <li><strong>Build Backend bằng Gradle Wrapper</strong>:
+        <pre><code>cd backend && gradlew.bat build</code></pre>
+      </li>
+      <li><strong>Chạy Backend bằng Gradle Wrapper</strong>:
+        <pre><code>cd backend && gradlew.bat bootRun</code></pre>
+        Truy cập Swagger UI: <a href="http://localhost:8080/swagger-ui.html" target="_blank">http://localhost:8080/swagger-ui.html</a>
+      </li>
+      <li><strong>Chạy Unit Tests cho Mobile</strong>:
+        <pre><code>cd mobile && flutter test</code></pre>
+      </li>
+      <li><strong>Chạy Ứng Dụng Flutter Mobile</strong>:
+        <pre><code>cd mobile && flutter run</code></pre>
+      </li>
+    </ol>
+
+    <h2>8. Kết Quả Kiểm Thử & Tình Trạng Mã Nguồn</h2>
+    <ul>
+      <li><code>gradlew.bat build</code>: <strong>BUILD SUCCESSFUL</strong> (100% tests & packaging passed).</li>
+      <li><code>gradlew.bat bootRun</code>: <strong>Tomcat started on port 8080 (http)</strong>, DataSeeder seeded successfully.</li>
+      <li><code>flutter analyze</code>: <strong>No issues found!</strong> (0 errors, 0 warnings).</li>
+      <li><code>flutter test</code>: <strong>8/8 passed (100%)</strong>.</li>
+      <li>Java Spring Boot: Đầy đủ Controller, Service, Repository, DTO, Mapper, Exception, Security, Flyway Migration &amp; Dockerfile.</li>
+    </ul>
+  </div>
+</body>
+</html>

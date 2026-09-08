@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&display=swap"><style>
+body{margin:0;background:#f5ead8;font-family:"Figtree",system-ui,sans-serif;color:#201e1d;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#8c491a;text-decoration:none}a:hover{color:#b2622d}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid #c67139;outline-offset:2px}
+::selection{background:#ffe1d0}
+::-webkit-scrollbar{width:0;height:0}
+@keyframes bslide{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes bsheet{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes bfade{from{opacity:0}to{opacity:1}}
+</style></helmet>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ deviceDark }}" hint-size="402px,874px">
+
+      <div style="height:100%;position:relative;overflow:hidden;display:flex;flex-direction:column;background:{{ pageBg }};font-family:'Figtree',system-ui,sans-serif;color:{{ pageInk }}">
+        <div style="flex:1;min-height:0;overflow:auto;padding-top:62px;display:flex;flex-direction:column">
+
+        <!-- ONBOARDING -->
+        <sc-if value="{{ isOnboarding }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;display:flex;flex-direction:column;padding:28px 24px 30px;background:#f5ead8">
+            <div style="display:flex;gap:6px;margin-bottom:38px">
+              <sc-for list="{{ obDots }}" as="d" hint-placeholder-count="3">
+                <div style="{{ d.style }}"></div>
+              </sc-for>
+            </div>
+            <div style="width:132px;height:132px;border-radius:999px;background:#c67139;display:flex;align-items:center;justify-content:center;margin-bottom:32px;box-shadow:0 12px 32px rgba(46,43,37,.22)">
+              <span style="font-family:'Caprasimo',system-ui,sans-serif;font-size:64px;color:#fff2eb;line-height:1">B</span>
+            </div>
+            <h2 style="font-family:'Caprasimo',system-ui,sans-serif;font-weight:400;font-size:38px;line-height:1.08;margin:0 0 14px">{{ obTitle }}</h2>
+            <p style="margin:0 0 26px;font-size:16px;line-height:1.6;color:#645c50;max-width:30ch">{{ obBody }}</p>
+
+            <sc-if value="{{ obPickGenres }}">
+              <div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:8px">
+                <sc-for list="{{ genreChips }}" as="g" hint-placeholder-count="9">
+                  <button onClick="{{ g.toggle }}" style="{{ g.style }}">{{ g.name }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ obShowPace }}">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ paceOptions }}" as="p" hint-placeholder-count="3">
+                  <button onClick="{{ p.pick }}" style="{{ p.style }}">
+                    <span style="font-family:'Caprasimo',system-ui,sans-serif;font-size:19px">{{ p.title }}</span>
+                    <span style="font-size:13.5px;color:#645c50;line-height:1.4">{{ p.note }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <div style="flex:1"></div>
+            <button onClick="{{ obNext }}" style="width:100%;height:56px;border-radius:999px;background:#c67139;color:#fff2eb;font-size:17px;font-weight:700;box-shadow:0 3px 10px rgba(46,43,37,.16)" style-hover="background:#b2622d">{{ obCta }}</button>
+            <button onClick="{{ obSkip }}" style="width:100%;height:44px;margin-top:6px;border-radius:999px;font-size:15px;font-weight:600;color:#82796a" style-hover="background:rgba(32,30,29,.05)">Skip for now</button>
+          </div>
+        </sc-if>
+
+        <!-- HOME -->
+        <sc-if value="{{ isHome }}">
+          <div style="flex:1;padding:14px 0 0">
+            <div style="padding:0 22px 4px;display:flex;align-items:flex-end;justify-content:space-between">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#82796a;letter-spacing:.02em">Wednesday evening</div>
+                <h2 style="font-family:'Caprasimo',system-ui,sans-serif;font-weight:400;font-size:31px;margin:2px 0 0;line-height:1.1">Welcome back, Noor</h2>
+              </div>
+              <button onClick="{{ goStats }}" style="display:flex;align-items:center;gap:6px;height:34px;padding:0 13px;border-radius:999px;background:#e1eecc;color:#3d472b;font-size:13.5px;font-weight:700" style-hover="background:#ccdbb2">
+                <span style="width:8px;height:8px;border-radius:999px;background:#728157;display:block"></span>12
+              </button>
+            </div>
+
+            <div style="padding:18px 22px 0">
+              <div style="font:700 11px/1 'Figtree',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#82796a;margin-bottom:11px">Continue reading</div>
+              <button onClick="{{ openReader }}" style="width:100%;text-align:left;display:flex;gap:15px;padding:15px;border-radius:28px;background:#ebddc5;box-shadow:0 3px 10px rgba(46,43,37,.16)" style-hover="background:#e4d3b6">
+                <div style="width:78px;height:112px;border-radius:16px;background:#56633f;flex:none;display:flex;align-items:flex-end;padding:10px;overflow:hidden;position:relative">
+                  <div style="position:absolute;top:-16px;right:-16px;width:56px;height:56px;border-radius:999px;background:rgba(240,250,225,.22)"></div>
+                  <span style="font-family:'Caprasimo',system-ui,sans-serif;font-size:15px;line-height:1.05;color:#f0fae1;position:relative">The Salt Almanac</span>
+                </div>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;padding:3px 0">
+                  <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:20px;line-height:1.15">The Salt Almanac</div>
+                  <div style="font-size:13.5px;color:#645c50;margin-top:3px">Wen Ito · Chapter 47</div>
+                  <div style="font-size:14px;color:#201e1d;margin-top:9px;line-height:1.4;font-weight:500">“The Ledger of Tides”</div>
+                  <div style="flex:1"></div>
+                  <div style="height:6px;border-radius:999px;background:#dcd3c4;overflow:hidden"><div style="width:62%;height:100%;background:#c67139;border-radius:999px"></div></div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;color:#82796a;margin-top:6px"><span>62% through</span><span>9 min left</span></div>
+                </div>
+              </button>
+            </div>
+
+            <div style="padding:26px 0 0">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;padding:0 22px 11px">
+                <div style="font:700 11px/1 'Figtree',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#82796a">New chapters today</div>
+                <button onClick="{{ goLibrary }}" style="font-size:13px;font-weight:700;color:#8c491a">Library</button>
+              </div>
+              <div style="display:flex;gap:14px;overflow-x:auto;padding:0 22px 4px">
+                <sc-for list="{{ updates }}" as="b" hint-placeholder-count="4">
+                  <button onClick="{{ b.open }}" style="flex:none;width:112px;text-align:left" style-hover="opacity:.88">
+                    <div style="width:112px;height:158px;border-radius:16px;background:{{ b.cover }};display:flex;align-items:flex-end;padding:12px;position:relative;overflow:hidden;box-shadow:0 3px 10px rgba(46,43,37,.16)">
+                      <div style="position:absolute;top:-20px;right:-20px;width:66px;height:66px;border-radius:999px;background:rgba(255,255,255,.18)"></div>
+                      <span style="font-family:'Caprasimo',system-ui,sans-serif;font-size:16px;line-height:1.05;color:{{ b.coverInk }};position:relative">{{ b.title }}</span>
+                      <div style="position:absolute;top:9px;left:9px;height:20px;padding:0 8px;border-radius:999px;background:#c67139;color:#fff2eb;font-size:10.5px;font-weight:800;display:flex;align-items:center;letter-spacing:.04em">{{ b.badge }}</div>
+                    </div>
+                    <div style="font-size:13.5px;font-weight:600;margin-top:8px;line-height:1.25">{{ b.title }}</div>
+                    <div style="font-size:12px;color:#82796a;margin-top:2px">{{ b.author }}</div>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="padding:26px 22px 0">
+              <div style="font:700 11px/1 'Figtree',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#82796a;margin-bottom:11px">Because you read slow fantasy</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ recs }}" as="r" hint-placeholder-count="3">
+                  <button onClick="{{ r.open }}" style="display:flex;gap:13px;align-items:center;padding:11px;border-radius:20px;background:#ebddc5;text-align:left" style-hover="background:#e4d3b6">
+                    <div style="width:46px;height:64px;border-radius:12px;background:{{ r.cover }};flex:none"></div>
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:15px;font-weight:700;line-height:1.2">{{ r.title }}</div>
+                      <div style="font-size:12.5px;color:#645c50;margin-top:3px">{{ r.author }} · {{ r.chapters }} chapters</div>
+                      <div style="display:flex;gap:6px;margin-top:7px">
+                        <span style="height:21px;padding:0 9px;border-radius:999px;background:#e1eecc;color:#3d472b;font-size:11px;font-weight:700;display:flex;align-items:center">{{ r.tag }}</span>
+                        <span style="height:21px;padding:0 9px;border-radius:999px;background:#ffe1d0;color:#643312;font-size:11px;font-weight:700;display:flex;align-items:center">{{ r.rating }}</span>
+                      </div>
+                    </div>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="height:26px"></div>
+          </div>
+        </sc-if>
+
+        <!-- LIBRARY -->
+        <sc-if value="{{ isLibrary }}">
+          <div style="flex:1;padding:16px 22px 26px">
+            <h2 style="font-family:'Caprasimo',system-ui,sans-serif;font-weight:400;font-size:31px;margin:0 0 16px">Library</h2>
+            <div style="display:flex;padding:4px;border-radius:999px;background:#ebddc5;margin-bottom:18px">
+              <sc-for list="{{ libTabs }}" as="t" hint-placeholder-count="3">
+                <button onClick="{{ t.pick }}" style="{{ t.style }}">{{ t.label }}</button>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <sc-for list="{{ libRows }}" as="b" hint-placeholder-count="4">
+                <button onClick="{{ b.open }}" style="display:flex;gap:14px;text-align:left;align-items:stretch" style-hover="opacity:.88">
+                  <div style="width:62px;height:88px;border-radius:14px;background:{{ b.cover }};flex:none;box-shadow:0 1px 2px rgba(46,43,37,.14)"></div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;padding:2px 0">
+                    <div style="font-size:16px;font-weight:700;line-height:1.2">{{ b.title }}</div>
+                    <div style="font-size:12.5px;color:#82796a;margin-top:3px">{{ b.sub }}</div>
+                    <div style="flex:1"></div>
+                    <div style="height:5px;border-radius:999px;background:#dcd3c4;overflow:hidden"><div style="width:{{ b.pct }};height:100%;background:#8fa073;border-radius:999px"></div></div>
+                    <div style="font-size:11.5px;color:#82796a;margin-top:5px">{{ b.state }}</div>
+                  </div>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- DISCOVER -->
+        <sc-if value="{{ isDiscover }}">
+          <div style="flex:1;padding:16px 22px 26px">
+            <h2 style="font-family:'Caprasimo',system-ui,sans-serif;font-weight:400;font-size:31px;margin:0 0 14px">Discover</h2>
+            <div style="display:flex;align-items:center;gap:10px;height:50px;padding:0 16px;border-radius:999px;background:#ebddc5;margin-bottom:18px">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#82796a" stroke-width="2.75" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input class="b-input" placeholder="Titles, authors, tags" value="{{ query }}" onChange="{{ onQuery }}" style="flex:1;border:none;background:none;outline:none;font-size:15.5px;font-family:'Figtree',sans-serif;color:#201e1d">
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px">
+              <sc-for list="{{ tagChips }}" as="t" hint-placeholder-count="7">
+                <button onClick="{{ t.pick }}" style="{{ t.style }}">{{ t.name }}</button>
+              </sc-for>
+            </div>
+            <div style="font:700 11px/1 'Figtree',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#82796a;margin-bottom:12px">{{ rankHeading }}</div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <sc-for list="{{ ranked }}" as="b" hint-placeholder-count="5">
+                <button onClick="{{ b.open }}" style="display:flex;gap:13px;text-align:left;align-items:center" style-hover="opacity:.88">
+                  <span style="font-family:'Caprasimo',system-ui,sans-serif;font-size:24px;color:#c0b6a5;width:26px;flex:none">{{ b.rank }}</span>
+                  <div style="width:52px;height:74px;border-radius:13px;background:{{ b.cover }};flex:none"></div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:15.5px;font-weight:700;line-height:1.2">{{ b.title }}</div>
+                    <div style="font-size:12.5px;color:#645c50;margin-top:3px">{{ b.author }}</div>
+                    <div style="font-size:12px;color:#82796a;margin-top:5px">{{ b.meta }}</div>
+                  </div>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- NOVEL DETAIL -->
+        <sc-if value="{{ isDetail }}">
+          <div style="flex:1">
+            <div style="padding:10px 18px 0"><button onClick="{{ back }}" style="width:40px;height:40px;border-radius:999px;background:rgba(32,30,29,.06);display:flex;align-items:center;justify-content:center" style-hover="background:rgba(32,30,29,.12)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#201e1d" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button></div>
+            <div style="padding:12px 22px 0;display:flex;gap:18px">
+              <div style="width:122px;height:174px;border-radius:22px;background:{{ book.cover }};flex:none;display:flex;align-items:flex-end;padding:14px;position:relative;overflow:hidden;box-shadow:0 12px 32px rgba(46,43,37,.22)">
+                <div style="position:absolute;top:-24px;right:-24px;width:84px;height:84px;border-radius:999px;background:rgba(255,255,255,.18)"></div>
+                <span style="font-family:'Caprasimo',system-ui,sans-serif;font-size:19px;line-height:1.05;color:{{ book.coverInk }};position:relative">{{ book.title }}</span>
+              </div>
+              <div style="flex:1;min-width:0;padding-top:4px">
+                <h2 style="font-family:'Caprasimo',system-ui,sans-serif;font-weight:400;font-size:26px;line-height:1.1;margin:0">{{ book.title }}</h2>
+                <button onClick="{{ goAuthor }}" style="font-size:14px;font-weight:700;color:#8c491a;margin-top:7px;display:block" style-hover="color:#b2622d">{{ book.author }}</button>
+                <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px">
+                  <span style="height:24px;padding:0 10px;border-radius:999px;background:#ffe1d0;color:#643312;font-size:11.5px;font-weight:700;display:flex;align-items:center">{{ book.tag }}</span>
+                  <span style="height:24px;padding:0 10px;border-radius:999px;background:#e1eecc;color:#3d472b;font-size:11.5px;font-weight:700;display:flex;align-items:center">Ongoing</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;margin:22px 22px 0;padding:14px 0;border-radius:22px;background:#ebddc5">
+              <sc-for list="{{ bookStats }}" as="s" hint-placeholder-count="3">
+                <div style="flex:1;text-align:center;padding:0 6px">
+                  <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:21px;line-height:1.1">{{ s.value }}</div>
+                  <div style="font-size:11px;color:#82796a;margin-top:4px;letter-spacing:.05em;text-transform:uppercase;font-weight:700">{{ s.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="padding:20px 22px 0">
+              <p style="margin:0;font-size:15px;line-height:1.65;color:#474238;text-wrap:pretty">{{ book.blurb }}</p>
+            </div>
+
+            <div style="padding:22px 22px 0;display:flex;gap:10px">
+              <button onClick="{{ openReader }}" style="flex:1;height:54px;border-radius:999px;background:#c67139;color:#fff2eb;font-size:16.5px;font-weight:700;box-shadow:0 3px 10px rgba(46,43,37,.16)" style-hover="background:#b2622d">Continue ch. 47</button>
+              <button onClick="{{ toggleSave }}" style="{{ saveBtnStyle }}">{{ saveLabel }}</button>
+            </div>
+
+            <div style="padding:26px 22px 0">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px">
+                <div style="font:700 11px/1 'Figtree',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#82796a">Latest chapters</div>
+                <button onClick="{{ goToc }}" style="font-size:13px;font-weight:700;color:#8c491a">All 132</button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <sc-for list="{{ latestChapters }}" as="c" hint-placeholder-count="3">
+                  <button onClick="{{ c.open }}" style="display:flex;align-items:center;gap:12px;padding:12px 4px;text-align:left;border-bottom:1px solid rgba(32,30,29,.1)" style-hover="background:rgba(32,30,29,.04)">
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:14.5px;font-weight:600">{{ c.title }}</div>
+                      <div style="font-size:12px;color:#82796a;margin-top:3px">{{ c.meta }}</div>
+                    </div>
+                    <span style="{{ c.pill }}">{{ c.pillLabel }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="height:26px"></div>
+          </div>
+        </sc-if>
+
+        <!-- TOC -->
+        <sc-if value="{{ isToc }}">
+          <div style="flex:1">
+            <div style="position:sticky;top:0;z-index:5;background:#f5ead8;padding:10px 18px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(32,30,29,.1)">
+              <button onClick="{{ back }}" style="width:40px;height:40px;border-radius:999px;background:rgba(32,30,29,.06);display:flex;align-items:center;justify-content:center" style-hover="background:rgba(32,30,29,.12)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#201e1d" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+              <div style="flex:1;min-width:0">
+                <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:19px;line-height:1.15">Chapters</div>
+                <div style="font-size:12px;color:#82796a;margin-top:2px">132 · 41 downloaded</div>
+              </div>
+              <button onClick="{{ toggleTocOrder }}" style="height:34px;padding:0 13px;border-radius:999px;background:#ebddc5;font-size:12.5px;font-weight:700" style-hover="background:#dcd3c4">{{ tocOrderLabel }}</button>
+            </div>
+            <div style="padding:6px 22px 26px">
+              <sc-for list="{{ chapters }}" as="c" hint-placeholder-count="10">
+                <button onClick="{{ c.open }}" style="width:100%;display:flex;align-items:center;gap:13px;padding:14px 2px;text-align:left;border-bottom:1px solid rgba(32,30,29,.08)" style-hover="background:rgba(32,30,29,.04)">
+                  <span style="font-family:'Caprasimo',system-ui,sans-serif;font-size:16px;color:#c0b6a5;width:30px;flex:none">{{ c.n }}</span>
+                  <div style="flex:1;min-width:0">
+                    <div style="{{ c.titleStyle }}">{{ c.title }}</div>
+                    <div style="font-size:11.5px;color:#82796a;margin-top:3px">{{ c.meta }}</div>
+                  </div>
+                  <span style="{{ c.pill }}">{{ c.pillLabel }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- READER -->
+        <sc-if value="{{ isReader }}">
+          <div style="flex:1;display:flex;flex-direction:column;background:{{ readerBg }};color:{{ readerInk }}">
+            <sc-if value="{{ chrome }}">
+              <div style="position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:10px;padding:10px 16px;background:{{ chromeBg }};backdrop-filter:blur(14px)">
+                <button onClick="{{ back }}" style="width:38px;height:38px;border-radius:999px;display:flex;align-items:center;justify-content:center" style-hover="background:rgba(128,128,128,.15)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+                <div style="flex:1;min-width:0;text-align:center;font-size:13px;font-weight:600;opacity:.75">Ch. 47 · The Ledger of Tides</div>
+                <button onClick="{{ goToc }}" style="width:38px;height:38px;border-radius:999px;display:flex;align-items:center;justify-content:center" style-hover="background:rgba(128,128,128,.15)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="14" y2="17"></line></svg></button>
+                <button onClick="{{ openSettings }}" style="width:38px;height:38px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-family:'Caprasimo',system-ui,sans-serif;font-size:16px" style-hover="background:rgba(128,128,128,.15)">Aa</button>
+              </div>
+            </sc-if>
+
+            <div onClick="{{ toggleChrome }}" style="flex:1;padding:{{ readerPad }}">
+              <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;opacity:.5;margin-bottom:8px">Chapter forty-seven</div>
+              <h2 style="font-family:'Caprasimo',system-ui,sans-serif;font-weight:400;font-size:30px;line-height:1.12;margin:0 0 22px">The Ledger of Tides</h2>
+              <sc-for list="{{ paragraphs }}" as="p" hint-placeholder-count="6">
+                <p style="{{ p.style }}">{{ p.text }}</p>
+              </sc-for>
+              <div style="height:20px"></div>
+              <div style="padding:20px;border-radius:28px;background:rgba(128,128,128,.1);display:flex;flex-direction:column;gap:12px">
+                <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:20px">End of chapter 47</div>
+                <div style="font-size:14px;opacity:.7;line-height:1.5">Chapter 48 unlocks in 6 hours, or open it now with coins.</div>
+                <button onClick="{{ goPaywall }}" style="height:48px;border-radius:999px;background:#c67139;color:#fff2eb;font-size:15px;font-weight:700" style-hover="background:#b2622d">Unlock ch. 48</button>
+              </div>
+
+              <div style="margin-top:30px;padding-top:24px;border-top:1px solid rgba(128,128,128,.25)">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+                  <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:21px">Comments</div>
+                  <span style="font-size:13px;font-weight:700;opacity:.55">218 on this chapter</span>
+                </div>
+                <button onClick="{{ goComments }}" style="width:100%;display:flex;align-items:center;gap:11px;height:50px;padding:0 8px 0 16px;border-radius:999px;background:rgba(128,128,128,.14);text-align:left" style-hover="background:rgba(128,128,128,.22)">
+                  <span style="flex:1;font-size:14.5px;opacity:.6">Say something about chapter 47…</span>
+                  <span style="width:38px;height:38px;border-radius:999px;background:#c67139;color:#fff2eb;font-size:17px;display:flex;align-items:center;justify-content:center;flex:none">↑</span>
+                </button>
+                <div style="display:flex;flex-direction:column;gap:18px;margin-top:20px">
+                  <sc-for list="{{ topComments }}" as="c" hint-placeholder-count="2">
+                    <div style="display:flex;gap:12px">
+                      <span style="width:38px;height:38px;border-radius:999px;background:{{ c.color }};flex:none;display:flex;align-items:center;justify-content:center;font-family:'Caprasimo',system-ui,sans-serif;font-size:16px;color:#fff2eb">{{ c.initial }}</span>
+                      <div style="flex:1;min-width:0">
+                        <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:700">{{ c.name }}</span><span style="font-size:11.5px;opacity:.55">{{ c.time }}</span></div>
+                        <p style="margin:6px 0 0;font-size:14.5px;line-height:1.5">{{ c.text }}</p>
+                        <div style="display:flex;gap:8px;margin-top:9px">
+                          <button onClick="{{ c.like }}" style="{{ c.likeStyle }}">♥ {{ c.likes }}</button>
+                          <button onClick="{{ goComments }}" style="height:28px;padding:0 12px;border-radius:999px;background:rgba(128,128,128,.14);font-size:12px;font-weight:700;opacity:.75" style-hover="background:rgba(128,128,128,.24)">Reply</button>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+                <button onClick="{{ goComments }}" style="width:100%;height:48px;margin-top:20px;border-radius:999px;border:1.5px solid currentColor;font-size:15px;font-weight:700;opacity:.8" style-hover="background:rgba(128,128,128,.12)">See all 218 comments</button>
+              </div>
+            </div>
+
+            <sc-if value="{{ chrome }}">
+              <div style="position:sticky;bottom:0;z-index:6;padding:12px 18px 30px;background:{{ chromeBg }};backdrop-filter:blur(14px)">
+                <div style="height:5px;border-radius:999px;background:rgba(128,128,128,.28);overflow:hidden"><div style="width:62%;height:100%;background:#c67139;border-radius:999px"></div></div>
+                <div style="display:flex;justify-content:space-between;font-size:11.5px;opacity:.65;margin-top:7px;font-weight:600"><span>62% · 9 min left in chapter</span><span>Downloaded</span></div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- COMMENTS -->
+        <sc-if value="{{ isComments }}">
+          <div style="flex:1;display:flex;flex-direction:column">
+            <div style="position:sticky;top:0;z-index:5;background:#f5ead8;padding:10px 18px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(32,30,29,.1)">
+              <button onClick="{{ back }}" style="width:40px;height:40px;border-radius:999px;background:rgba(32,30,29,.06);display:flex;align-items:center;justify-content:center" style-hover="background:rgba(32,30,29,.12)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#201e1d" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+              <div style="flex:1;min-width:0">
+                <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:19px;line-height:1.15">218 notes</div>
+                <div style="font-size:12px;color:#82796a;margin-top:2px">Chapter 47 · spoilers hidden</div>
+              </div>
+            </div>
+            <div style="padding:16px 22px 20px;display:flex;flex-direction:column;gap:16px">
+              <div style="padding:14px 16px;border-radius:22px;background:#e1eecc;color:#3d472b;font-size:13.5px;line-height:1.5;font-weight:500">Notes on paragraph 3 are the busiest. Tap a paragraph in the reader to jump straight to its thread.</div>
+              <sc-for list="{{ comments }}" as="c" hint-placeholder-count="4">
+                <div style="display:flex;gap:12px">
+                  <div style="width:40px;height:40px;border-radius:999px;background:{{ c.color }};flex:none;display:flex;align-items:center;justify-content:center;font-family:'Caprasimo',system-ui,sans-serif;font-size:17px;color:#fff2eb">{{ c.initial }}</div>
+                  <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:700">{{ c.name }}</span><span style="font-size:11.5px;color:#82796a">{{ c.time }}</span></div>
+                    <sc-if value="{{ c.quote }}">
+                      <div style="margin-top:7px;padding:8px 12px;border-radius:14px;background:#ebddc5;font-size:12.5px;line-height:1.45;color:#645c50;font-style:italic">{{ c.quote }}</div>
+                    </sc-if>
+                    <p style="margin:7px 0 0;font-size:14.5px;line-height:1.55;color:#201e1d">{{ c.text }}</p>
+                    <div style="display:flex;gap:8px;margin-top:9px">
+                      <button onClick="{{ c.like }}" style="{{ c.likeStyle }}">♥ {{ c.likes }}</button>
+                      <button style="height:28px;padding:0 12px;border-radius:999px;background:rgba(32,30,29,.06);font-size:12px;font-weight:700;color:#645c50" style-hover="background:rgba(32,30,29,.12)">Reply</button>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="position:sticky;bottom:0;padding:12px 18px 30px;background:#f5ead8;border-top:1px solid rgba(32,30,29,.1);display:flex;gap:10px;align-items:center">
+              <div style="flex:1;height:46px;border-radius:999px;background:#ebddc5;display:flex;align-items:center;padding:0 18px;font-size:14.5px;color:#82796a">Add a note…</div>
+              <button style="width:46px;height:46px;border-radius:999px;background:#c67139;color:#fff2eb;font-size:18px;display:flex;align-items:center;justify-content:center" style-hover="background:#b2622d">↑</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- STATS -->
+        <sc-if value="{{ isStats }}">
+          <div style="flex:1;padding:16px 22px 26px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+              <h2 style="font-family:'Caprasimo',system-ui,sans-serif;font-weight:400;font-size:31px;margin:0">Your reading</h2>
+              <div style="display:flex;align-items:center;gap:9px">
+                <button onClick="{{ goSettings }}" style="height:44px;padding:0 16px;border-radius:999px;background:#ebddc5;font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:7px" style-hover="background:#dcd3c4">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#645c50" stroke-width="2.75" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 3.2v2.4M12 18.4v2.4M20.8 12h-2.4M5.6 12H3.2M18.2 5.8l-1.7 1.7M7.5 16.5l-1.7 1.7M18.2 18.2l-1.7-1.7M7.5 7.5 5.8 5.8"></path></svg>
+                  Settings
+                </button>
+                <button onClick="{{ goAuthor }}" style="width:44px;height:44px;border-radius:999px;background:#8fa073;color:#f0fae1;font-family:'Caprasimo',system-ui,sans-serif;font-size:18px;display:flex;align-items:center;justify-content:center">N</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:18px;align-items:center;padding:20px;border-radius:28px;background:#ebddc5;margin-bottom:14px">
+              <svg width="92" height="92" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#dcd3c4" stroke-width="12"></circle>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#c67139" stroke-width="12" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="72" transform="rotate(-90 50 50)"></circle>
+              </svg>
+              <div>
+                <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:28px;line-height:1.1">27 of 40 min</div>
+                <div style="font-size:13.5px;color:#645c50;margin-top:5px;line-height:1.45">Today's goal. One more chapter does it.</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:11px;margin-bottom:14px">
+              <sc-for list="{{ statCards }}" as="s" hint-placeholder-count="3">
+                <div style="flex:1;padding:16px 14px;border-radius:22px;background:{{ s.bg }};color:{{ s.ink }}">
+                  <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:25px;line-height:1.1">{{ s.value }}</div>
+                  <div style="font-size:11.5px;margin-top:6px;font-weight:700;letter-spacing:.04em;line-height:1.3">{{ s.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="padding:20px;border-radius:28px;background:#ebddc5">
+              <div style="font:700 11px/1 'Figtree',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#82796a;margin-bottom:16px">Last 7 days</div>
+              <div style="display:flex;align-items:flex-end;gap:10px;height:104px">
+                <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end">
+                    <div style="width:100%;height:{{ d.h }};border-radius:999px;background:{{ d.color }}"></div>
+                    <span style="font-size:11px;font-weight:700;color:#82796a">{{ d.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="margin-top:14px;padding:18px 20px;border-radius:28px;background:#e1eecc;color:#3d472b;font-size:14px;line-height:1.55">You read most between 21:00 and 23:00. Bramble now holds new chapters until then.</div>
+          </div>
+        </sc-if>
+
+        <!-- AUTHOR -->
+        <sc-if value="{{ isAuthor }}">
+          <div style="flex:1">
+            <div style="padding:10px 18px 0"><button onClick="{{ back }}" style="width:40px;height:40px;border-radius:999px;background:rgba(32,30,29,.06);display:flex;align-items:center;justify-content:center" style-hover="background:rgba(32,30,29,.12)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#201e1d" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button></div>
+            <div style="padding:14px 22px 0;display:flex;flex-direction:column;align-items:flex-start;gap:14px">
+              <div style="width:92px;height:92px;border-radius:999px;background:#56633f;display:flex;align-items:center;justify-content:center;font-family:'Caprasimo',system-ui,sans-serif;font-size:38px;color:#f0fae1">W</div>
+              <div>
+                <h2 style="font-family:'Caprasimo',system-ui,sans-serif;font-weight:400;font-size:30px;margin:0;line-height:1.1">Wen Ito</h2>
+                <div style="font-size:13.5px;color:#82796a;margin-top:6px">14.2k readers · 3 novels · joined 2021</div>
+              </div>
+              <p style="margin:0;font-size:15px;line-height:1.65;color:#474238;text-wrap:pretty">Writes slow fantasy about coastlines, debt and inherited work. Posts a chapter every Wednesday and answers notes on Sundays.</p>
+              <div style="display:flex;gap:10px;width:100%">
+                <button onClick="{{ toggleFollow }}" style="{{ followStyle }}">{{ followLabel }}</button>
+                <button style="flex:none;height:50px;padding:0 22px;border-radius:999px;background:#ebddc5;font-size:15px;font-weight:700" style-hover="background:#dcd3c4">Support</button>
+              </div>
+            </div>
+            <div style="padding:26px 22px 0">
+              <div style="font:700 11px/1 'Figtree',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#82796a;margin-bottom:12px">Novels</div>
+              <div style="display:flex;gap:14px;overflow-x:auto;padding-bottom:4px">
+                <sc-for list="{{ authorWorks }}" as="b" hint-placeholder-count="3">
+                  <button onClick="{{ b.open }}" style="flex:none;width:104px;text-align:left" style-hover="opacity:.88">
+                    <div style="width:104px;height:148px;border-radius:16px;background:{{ b.cover }};box-shadow:0 3px 10px rgba(46,43,37,.16)"></div>
+                    <div style="font-size:13px;font-weight:700;margin-top:8px;line-height:1.25">{{ b.title }}</div>
+                    <div style="font-size:11.5px;color:#82796a;margin-top:2px">{{ b.meta }}</div>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="padding:24px 22px 30px">
+              <div style="padding:18px 20px;border-radius:28px;background:#ffe1d0;color:#643312">
+                <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:19px">Note from Wen</div>
+                <p style="margin:8px 0 0;font-size:14px;line-height:1.55">Chapter 48 runs long, so it lands Thursday instead. Thank you for the patience — the harbour scene needed it.</p>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- LOGIN -->
+        <sc-if value="{{ isLogin }}">
+          <div style="flex:1;display:flex;flex-direction:column;padding:34px 26px 30px">
+            <div style="width:76px;height:76px;border-radius:999px;background:#c67139;display:flex;align-items:center;justify-content:center;margin-bottom:26px">
+              <span style="font-family:'Caprasimo',system-ui,sans-serif;font-size:38px;color:#fff2eb;line-height:1">B</span>
+            </div>
+            <h2 style="font-family:'Caprasimo',system-ui,sans-serif;font-weight:400;font-size:34px;line-height:1.08;margin:0 0 8px">Welcome back</h2>
+            <p style="margin:0 0 26px;font-size:15px;line-height:1.6;color:#645c50">Your shelf, notes and streak are waiting where you left them.</p>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <label style="display:block">
+                <span style="display:block;font-size:12.5px;font-weight:700;color:#82796a;margin-bottom:7px;letter-spacing:.04em">EMAIL</span>
+                <input value="{{ email }}" onChange="{{ onEmail }}" placeholder="noor@example.com" style="width:100%;height:54px;border-radius:999px;border:none;background:#ebddc5;padding:0 20px;font-size:15.5px;font-family:'Figtree',sans-serif;color:#201e1d;outline:none">
+              </label>
+              <label style="display:block">
+                <span style="display:block;font-size:12.5px;font-weight:700;color:#82796a;margin-bottom:7px;letter-spacing:.04em">PASSWORD</span>
+                <input type="password" value="{{ pw }}" onChange="{{ onPw }}" placeholder="••••••••" style="width:100%;height:54px;border-radius:999px;border:none;background:#ebddc5;padding:0 20px;font-size:15.5px;font-family:'Figtree',sans-serif;color:#201e1d;outline:none">
+              </label>
+            </div>
+            <button style="align-self:flex-start;margin-top:12px;font-size:13.5px;font-weight:700;color:#8c491a" style-hover="color:#b2622d">Forgot password</button>
+            <button onClick="{{ goHome }}" style="{{ loginBtnStyle }}">Log in</button>
+            <sc-if value="{{ loginHint }}">
+              <div style="margin-top:10px;font-size:12.5px;color:#82796a;text-align:center">Fill both fields to continue</div>
+            </sc-if>
+            <div style="display:flex;align-items:center;gap:12px;margin:24px 0 18px">
+              <span style="flex:1;height:1px;background:rgba(32,30,29,.14);display:block"></span>
+              <span style="font-size:12px;font-weight:700;color:#82796a">OR</span>
+              <span style="flex:1;height:1px;background:rgba(32,30,29,.14);display:block"></span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <button onClick="{{ goHome }}" style="height:52px;border-radius:999px;background:#201e1d;color:#f5ead8;font-size:15px;font-weight:700" style-hover="background:#2e2b25">Continue with Apple</button>
+              <button onClick="{{ goHome }}" style="height:52px;border-radius:999px;background:#ebddc5;color:#201e1d;font-size:15px;font-weight:700" style-hover="background:#dcd3c4">Continue with Google</button>
+            </div>
+            <div style="flex:1;min-height:22px"></div>
+            <div style="text-align:center;font-size:14px;color:#645c50">New here? <button onClick="{{ goSignup }}" style="font-size:14px;font-weight:700;color:#8c491a">Create an account</button></div>
+          </div>
+        </sc-if>
+
+        <!-- SIGN UP -->
+        <sc-if value="{{ isSignup }}">
+          <div style="flex:1;display:flex;flex-direction:column;padding:16px 26px 30px">
+            <button onClick="{{ goLogin }}" style="width:40px;height:40px;border-radius:999px;background:rgba(32,30,29,.06);display:flex;align-items:center;justify-content:center;margin-bottom:20px" style-hover="background:rgba(32,30,29,.12)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#201e1d" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+            <h2 style="font-family:'Caprasimo',system-ui,sans-serif;font-weight:400;font-size:34px;line-height:1.08;margin:0 0 8px">Start your shelf</h2>
+            <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#645c50">Free. Three chapters a day, notes, and offline reading on one device.</p>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <label style="display:block">
+                <span style="display:block;font-size:12.5px;font-weight:700;color:#82796a;margin-bottom:7px;letter-spacing:.04em">READING NAME</span>
+                <input value="{{ name }}" onChange="{{ onName }}" placeholder="How notes will sign you" style="width:100%;height:54px;border-radius:999px;border:none;background:#ebddc5;padding:0 20px;font-size:15.5px;font-family:'Figtree',sans-serif;color:#201e1d;outline:none">
+              </label>
+              <label style="display:block">
+                <span style="display:block;font-size:12.5px;font-weight:700;color:#82796a;margin-bottom:7px;letter-spacing:.04em">EMAIL</span>
+                <input value="{{ email }}" onChange="{{ onEmail }}" placeholder="noor@example.com" style="width:100%;height:54px;border-radius:999px;border:none;background:#ebddc5;padding:0 20px;font-size:15.5px;font-family:'Figtree',sans-serif;color:#201e1d;outline:none">
+              </label>
+              <label style="display:block">
+                <span style="display:block;font-size:12.5px;font-weight:700;color:#82796a;margin-bottom:7px;letter-spacing:.04em">PASSWORD</span>
+                <input type="password" value="{{ pw }}" onChange="{{ onPw }}" placeholder="8 characters or more" style="width:100%;height:54px;border-radius:999px;border:none;background:#ebddc5;padding:0 20px;font-size:15.5px;font-family:'Figtree',sans-serif;color:#201e1d;outline:none">
+              </label>
+            </div>
+            <button onClick="{{ toggleAgree }}" style="display:flex;align-items:flex-start;gap:12px;text-align:left;margin-top:20px">
+              <span style="{{ agreeBox }}">✓</span>
+              <span style="flex:1;font-size:13.5px;line-height:1.5;color:#645c50">I'm happy with the reading terms and the note guidelines.</span>
+            </button>
+            <div style="flex:1;min-height:20px"></div>
+            <button onClick="{{ goOnboarding }}" style="{{ signupBtnStyle }}">Create account</button>
+            <div style="text-align:center;font-size:14px;color:#645c50;margin-top:14px">Already reading with us? <button onClick="{{ goLogin }}" style="font-size:14px;font-weight:700;color:#8c491a">Log in</button></div>
+          </div>
+        </sc-if>
+
+        <!-- SETTINGS -->
+        <sc-if value="{{ isSettings }}">
+          <div style="flex:1;padding:16px 22px 26px">
+            <h2 style="font-family:'Caprasimo',system-ui,sans-serif;font-weight:400;font-size:31px;margin:0 0 18px">Settings</h2>
+            <button onClick="{{ goAccount }}" style="width:100%;display:flex;align-items:center;gap:14px;padding:14px;border-radius:28px;background:#ebddc5;text-align:left;margin-bottom:22px" style-hover="background:#e4d3b6">
+              <span style="width:52px;height:52px;border-radius:999px;background:#8fa073;color:#f0fae1;font-family:'Caprasimo',system-ui,sans-serif;font-size:22px;display:flex;align-items:center;justify-content:center;flex:none">N</span>
+              <span style="flex:1;min-width:0">
+                <span style="display:block;font-size:16px;font-weight:700">Noor Rahim</span>
+                <span style="display:block;font-size:12.5px;color:#82796a;margin-top:3px">noor@example.com</span>
+              </span>
+              <span style="height:24px;padding:0 10px;border-radius:999px;background:#3d472b;color:#f0fae1;font-size:11px;font-weight:800;display:flex;align-items:center;flex:none">TRIAL</span>
+            </button>
+
+            <sc-for list="{{ settingGroups }}" as="g" hint-placeholder-count="3">
+              <div style="margin-bottom:24px">
+                <div style="font:700 11px/1 'Figtree',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#82796a;margin-bottom:6px">{{ g.title }}</div>
+                <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 2px;border-bottom:1px solid rgba(32,30,29,.08)">
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:15px;font-weight:600">{{ r.label }}</div>
+                      <sc-if value="{{ r.note }}">
+                        <div style="font-size:12.5px;color:#82796a;margin-top:3px;line-height:1.4">{{ r.note }}</div>
+                      </sc-if>
+                    </div>
+                    <sc-if value="{{ r.isToggle }}">
+                      <button onClick="{{ r.toggle }}" style="{{ r.track }}"><span style="{{ r.knob }}"></span></button>
+                    </sc-if>
+                    <sc-if value="{{ r.isLink }}">
+                      <button onClick="{{ r.open }}" style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:#8c491a" style-hover="color:#b2622d">{{ r.value }}
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+                      </button>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+
+            <button onClick="{{ goLogin }}" style="width:100%;height:52px;border-radius:999px;background:#ffe1d0;color:#8c491a;font-size:15px;font-weight:700" style-hover="background:#ffc6a5">Log out</button>
+            <div style="text-align:center;font-size:12px;color:#a19786;margin-top:14px">Bramble 3.4.1</div>
+          </div>
+        </sc-if>
+
+        <!-- APPEARANCE -->
+        <sc-if value="{{ isAppearance }}">
+          <div style="flex:1;padding:0 0 26px">
+            <div style="position:sticky;top:0;z-index:5;background:#f5ead8;padding:10px 18px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(32,30,29,.1)">
+              <button onClick="{{ back }}" style="width:40px;height:40px;border-radius:999px;background:rgba(32,30,29,.06);display:flex;align-items:center;justify-content:center" style-hover="background:rgba(32,30,29,.12)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#201e1d" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+              <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:19px">Font &amp; theme</div>
+            </div>
+
+            <div style="padding:18px 22px 0">
+              <div style="border-radius:28px;padding:20px;background:{{ readerBg }};color:{{ readerInk }};box-shadow:0 1px 2px rgba(46,43,37,.14)">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.5;margin-bottom:8px">Preview</div>
+                <p style="{{ previewStyle }}">She read the entry twice. A brig called the Orrery, three tons of unspecified cargo, and in the correction column a single word that was not a number at all.</p>
+              </div>
+            </div>
+
+            <div style="padding:24px 22px 0">
+              <div style="font:700 11px/1 'Figtree',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#82796a;margin-bottom:11px">Theme</div>
+              <div style="display:flex;gap:10px">
+                <sc-for list="{{ themeOptions }}" as="t" hint-placeholder-count="3">
+                  <button onClick="{{ t.pick }}" style="{{ t.style }}">
+                    <span style="font-family:'Caprasimo',system-ui,sans-serif;font-size:22px">Aa</span>
+                    <span style="font-size:12px;font-weight:700">{{ t.label }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="padding:24px 22px 0">
+              <div style="font:700 11px/1 'Figtree',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#82796a;margin-bottom:11px">Typeface</div>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ faceCards }}" as="f" hint-placeholder-count="2">
+                  <button onClick="{{ f.pick }}" style="{{ f.style }}">
+                    <span style="{{ f.sampleStyle }}">{{ f.sample }}</span>
+                    <span style="display:block;font-size:12px;color:#82796a;margin-top:5px;font-family:'Figtree',sans-serif">{{ f.note }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="padding:24px 22px 0">
+              <div style="font:700 11px/1 'Figtree',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#82796a;margin-bottom:11px">Size &amp; rhythm</div>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <sc-for list="{{ steppers }}" as="s" hint-placeholder-count="2">
+                  <div style="display:flex;align-items:center;gap:14px">
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:15px;font-weight:700">{{ s.label }}</div>
+                      <div style="font-size:12.5px;color:#82796a;margin-top:2px">{{ s.value }}</div>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                      <button onClick="{{ s.dec }}" style="width:44px;height:44px;border-radius:999px;background:#ebddc5;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center" style-hover="background:#dcd3c4">−</button>
+                      <button onClick="{{ s.inc }}" style="width:44px;height:44px;border-radius:999px;background:#ebddc5;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center" style-hover="background:#dcd3c4">+</button>
+                    </div>
+                  </div>
+                </sc-for>
+                <div>
+                  <div style="font-size:15px;font-weight:700;margin-bottom:9px">Margins</div>
+                  <div style="display:flex;padding:4px;border-radius:999px;background:#ebddc5">
+                    <sc-for list="{{ marginOptions }}" as="m" hint-placeholder-count="3">
+                      <button onClick="{{ m.pick }}" style="{{ m.style }}">{{ m.label }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="padding:24px 22px 0">
+              <sc-for list="{{ appearanceToggles }}" as="t" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:14px;padding:15px 2px;border-bottom:1px solid rgba(32,30,29,.08)">
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:15px;font-weight:600">{{ t.label }}</div>
+                    <div style="font-size:12.5px;color:#82796a;margin-top:3px;line-height:1.4">{{ t.note }}</div>
+                  </div>
+                  <button onClick="{{ t.toggle }}" style="{{ t.track }}"><span style="{{ t.knob }}"></span></button>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- TAB BAR -->
+        <sc-if value="{{ showTabs }}">
+          <div style="position:sticky;bottom:0;z-index:8;padding:14px 16px 22px;background:linear-gradient(to top,#f5ead8 62%,rgba(245,234,216,0))">
+            <div style="display:flex;gap:5px;padding:6px;border-radius:999px;background:#ebddc5;box-shadow:0 12px 32px rgba(46,43,37,.22)">
+              <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+                <button onClick="{{ t.pick }}" style="{{ t.style }}" style-hover="filter:brightness(.97)">
+                  <sc-if value="{{ t.isHome }}" hint-placeholder-val="{{ true }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5V20a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 20z"></path></svg></sc-if>
+                  <sc-if value="{{ t.isLibrary }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v18H6.5A1.5 1.5 0 0 1 5 19.5z"></path><line x1="9.2" y1="3" x2="9.2" y2="21"></line></svg></sc-if>
+                  <sc-if value="{{ t.isDiscover }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7.4"></circle><line x1="21" y1="21" x2="16.6" y2="16.6"></line></svg></sc-if>
+                  <sc-if value="{{ t.isYou }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"></circle><path d="M4.8 20a7.2 7.2 0 0 1 14.4 0"></path></svg></sc-if>
+                  <sc-if value="{{ t.active }}">
+                    <span style="font-size:13.5px;font-weight:800;letter-spacing:.01em;white-space:nowrap">{{ t.label }}</span>
+                  </sc-if>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        </div>
+
+        <!-- READER SETTINGS SHEET -->
+        <sc-if value="{{ isSettings }}">
+          <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:20;background:rgba(32,30,29,.42)"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;z-index:21;background:#f5ead8;border-radius:28px 28px 0 0;padding:20px 22px 40px;box-shadow:0 12px 32px rgba(46,43,37,.22)">
+            <div style="width:44px;height:5px;border-radius:999px;background:#dcd3c4;margin:0 auto 18px"></div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px">
+              <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:23px">Reading</div>
+              <button onClick="{{ closeSheet }}" style="font-size:14px;font-weight:700;color:#8c491a">Done</button>
+            </div>
+
+            <div style="font:700 11px/1 'Figtree',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#82796a;margin-bottom:10px">Theme</div>
+            <div style="display:flex;gap:10px;margin-bottom:22px">
+              <sc-for list="{{ themeOptions }}" as="t" hint-placeholder-count="3">
+                <button onClick="{{ t.pick }}" style="{{ t.style }}">
+                  <span style="font-family:'Caprasimo',system-ui,sans-serif;font-size:22px">Aa</span>
+                  <span style="font-size:12px;font-weight:700">{{ t.label }}</span>
+                </button>
+              </sc-for>
+            </div>
+
+            <div style="font:700 11px/1 'Figtree',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#82796a;margin-bottom:10px">Typeface</div>
+            <div style="display:flex;padding:4px;border-radius:999px;background:#ebddc5;margin-bottom:22px">
+              <sc-for list="{{ faceOptions }}" as="f" hint-placeholder-count="2">
+                <button onClick="{{ f.pick }}" style="{{ f.style }}">{{ f.label }}</button>
+              </sc-for>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <sc-for list="{{ steppers }}" as="s" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:14px">
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:15px;font-weight:700">{{ s.label }}</div>
+                    <div style="font-size:12.5px;color:#82796a;margin-top:2px">{{ s.value }}</div>
+                  </div>
+                  <div style="display:flex;gap:8px">
+                    <button onClick="{{ s.dec }}" style="width:44px;height:44px;border-radius:999px;background:#ebddc5;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center" style-hover="background:#dcd3c4">−</button>
+                    <button onClick="{{ s.inc }}" style="width:44px;height:44px;border-radius:999px;background:#ebddc5;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center" style-hover="background:#dcd3c4">+</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- PAYWALL SHEET -->
+        <sc-if value="{{ isPaywall }}">
+          <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:20;background:rgba(32,30,29,.42)"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;z-index:21;background:#f5ead8;border-radius:28px 28px 0 0;padding:20px 22px 38px;box-shadow:0 12px 32px rgba(46,43,37,.22)">
+            <div style="width:44px;height:5px;border-radius:999px;background:#dcd3c4;margin:0 auto 18px"></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:25px">Chapter 48</div>
+              <div style="display:flex;align-items:center;gap:7px;height:32px;padding:0 13px;border-radius:999px;background:#ffe1d0;color:#643312;font-size:13px;font-weight:800"><span style="width:9px;height:9px;border-radius:999px;background:#c67139;display:block"></span>{{ coins }}</div>
+            </div>
+            <p style="margin:0 0 18px;font-size:14.5px;line-height:1.55;color:#645c50">“The Harbour Ledger” · 4,100 words. Free for everyone in 6 hours.</p>
+            <button onClick="{{ unlock }}" style="{{ unlockStyle }}">{{ unlockLabel }}</button>
+            <div style="height:12px"></div>
+            <div style="padding:18px 20px;border-radius:28px;background:#3d472b;color:#f0fae1">
+              <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:21px">Bramble+</div>
+              <p style="margin:7px 0 14px;font-size:13.5px;line-height:1.55;opacity:.85">Every chapter the moment it posts, offline downloads, no ads. 40% goes to the authors you read.</p>
+              <button style="width:100%;height:48px;border-radius:999px;background:#f0fae1;color:#272e1b;font-size:15px;font-weight:800" style-hover="background:#e1eecc">Try 7 days free</button>
+            </div>
+            <div style="display:flex;gap:9px;margin-top:14px">
+              <sc-for list="{{ coinPacks }}" as="p" hint-placeholder-count="3">
+                <button onClick="{{ p.buy }}" style="flex:1;padding:13px 8px;border-radius:20px;background:#ebddc5;text-align:center" style-hover="background:#dcd3c4">
+                  <div style="font-family:'Caprasimo',system-ui,sans-serif;font-size:19px">{{ p.coins }}</div>
+                  <div style="font-size:12px;color:#645c50;margin-top:4px;font-weight:600">{{ p.price }}</div>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:402,&quot;height&quot;:874},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;onboarding&quot;,&quot;home&quot;,&quot;library&quot;,&quot;discover&quot;,&quot;detail&quot;,&quot;toc&quot;,&quot;reader&quot;,&quot;comments&quot;,&quot;stats&quot;,&quot;author&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;sheet&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;&quot;,&quot;settings&quot;,&quot;paywall&quot;],&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;cream&quot;,&quot;sepia&quot;,&quot;night&quot;],&quot;default&quot;:&quot;cream&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;fontSize&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:15,&quot;max&quot;:26,&quot;default&quot;:19,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;},&quot;lineHeight&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;min&quot;:1.3,&quot;max&quot;:2.4,&quot;step&quot;:0.05,&quot;default&quot;:1.75,&quot;tsType&quot;:&quot;number&quot;},&quot;face&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;serif&quot;,&quot;sans&quot;],&quot;default&quot;:&quot;serif&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const COVERS = {
+  salt: ['#56633f', '#f0fae1'],
+  lantern: ['#b2622d', '#fff2eb'],
+  house: ['#ccdbb2', '#272e1b'],
+  copper: ['#ffc6a5', '#402310'],
+  machinist: ['#474238', '#f9f4ed'],
+  tide: ['#8fa073', '#f0fae1'],
+};
+
+const BOOKS = [
+  { id: 'salt', title: 'The Salt Almanac', author: 'Wen Ito', chapters: 132, tag: 'Slow fantasy', rating: '4.7 ★', badge: 'CH 48', meta: '132 ch · updated today',
+    blurb: 'A harbour clerk inherits her mother’s tide ledger and finds every entry after 1911 written in a hand that is not her mother’s. Twelve years of debt, weather and quiet correction, kept in a book that refuses to end.' },
+  { id: 'lantern', title: 'Nine Lanterns', author: 'R. Okonkwo', chapters: 88, tag: 'Court intrigue', rating: '4.5 ★', badge: 'CH 89', meta: '88 ch · updated 2h ago',
+    blurb: 'Nine lanterns are lit each winter. This year one goes out early, and the household must decide what it saw.' },
+  { id: 'house', title: 'A House of Small Weather', author: 'Mira Halden', chapters: 61, tag: 'Literary', rating: '4.8 ★', badge: 'NEW', meta: '61 ch · complete',
+    blurb: 'Four siblings, one coastal house, and a barometer that has been wrong for thirty years.' },
+  { id: 'copper', title: 'Copper Season', author: 'Jun Park', chapters: 204, tag: 'Progression', rating: '4.4 ★', badge: 'CH 205', meta: '204 ch · updated daily',
+    blurb: 'The mines reopen, and with them an older contract nobody meant to honour.' },
+  { id: 'machinist', title: 'The Quiet Machinist', author: 'Elsa Vondel', chapters: 47, tag: 'Slipstream', rating: '4.6 ★', badge: 'CH 48', meta: '47 ch · hiatus',
+    blurb: 'She repairs the machines that measure grief, and refuses to explain how she calibrates them.' },
+  { id: 'tide', title: 'Letters to the Tide', author: 'Ana Ferreira', chapters: 39, tag: 'Epistolary', rating: '4.3 ★', badge: 'CH 40', meta: '39 ch · weekly',
+    blurb: 'Two lighthouse keepers, forty years of letters, one delivery that never arrived.' },
+];
+
+const PARAS = [
+  { t: 'The ledger came down from the shelf the way a tide comes in: slowly, and then all at once across her lap. Ito had not opened it since the funeral, and the salt had done its work on the binding.', likes: 41, note: 0 },
+  { t: 'Every page carried the same four columns — date, vessel, weight, correction — and her mother’s hand held steady through eleven years of them. Then, in the spring of 1911, the letters changed shape.', likes: 128, note: 63 },
+  { t: 'She read the entry twice. A brig called the Orrery, three tons of unspecified cargo, and in the correction column a single word that was not a number at all.', likes: 96, note: 0 },
+  { t: '“You are reading it wrong,” said the harbourmaster from the doorway, though he had not seen the page and did not intend to.', likes: 212, note: 41 },
+  { t: 'Ito closed the book on her thumb. Outside, the water was doing what it always did, which was arrive, and leave, and keep no record of either.', likes: 74, note: 0 },
+];
+
+const CHAPTER_TITLES = ['The Orrery', 'Salt and Correction', 'What the Harbourmaster Knew', 'A Debt in Three Columns', 'Low Water', 'The Second Hand', 'Nine Tons Unspecified', 'The Ledger of Tides', 'The Harbour Ledger', 'Spring, 1911'];
+
+const COMMENTS = [
+  { name: 'oleander', initial: 'O', color: '#b2622d', time: '2h', quote: 'the letters changed shape', text: 'Third reread and I only just noticed she never says whose hand it is. Wen is not going to tell us until ch. 60, is he.', likes: 84 },
+  { name: 'harbourlight', initial: 'H', color: '#728157', time: '4h', quote: '', text: 'The harbourmaster speaking without looking at the page is the whole book in one line.', likes: 51 },
+  { name: 'm_reads', initial: 'M', color: '#645c50', time: '6h', quote: '', text: 'Slower chapter but the last paragraph earns it. Water keeping no record — after 47 chapters of ledgers.', likes: 33 },
+  { name: 'tidepool', initial: 'T', color: '#8c491a', time: '9h', quote: 'three tons of unspecified cargo', text: 'Called it in ch. 12. The Orrery is not a ship.', likes: 190 },
+];
+
+class Component extends DCLogic {
+  state = {
+    screen: null, tab: 'home', sheet: undefined, obStep: 0,
+    chrome: true, theme: null, fs: null, ls: null, face: null,
+    bookId: 'salt', saved: false, followed: false, coins: 120, unlocked: false,
+    genres: { 'Slow fantasy': true, 'Progression': false, 'Literary': true, 'Romance': false, 'Court intrigue': false, 'Horror': false, 'Slipstream': false, 'Epistolary': false, 'Cultivation': false },
+    pace: 'daily', libTab: 'Reading', tag: 'All', tocDesc: true, query: '',
+    paraLikes: {}, commentLikes: {}, history: [],
+    email: '', pw: '', name: '', agree: true, margins: 'Regular',
+    flags: { wifi: true, keepScreen: false, newChapter: true, authorPosts: true, digest: false, autoNight: true, spoilers: true },
+  };
+
+  sw(on) {
+    return {
+      track: 'width:52px;height:31px;border-radius:999px;padding:3px;display:flex;flex:none;transition:background .18s;'
+        + (on ? 'background:#c67139;justify-content:flex-end;' : 'background:#dcd3c4;justify-content:flex-start;'),
+      knob: 'width:25px;height:25px;border-radius:999px;background:#f9f4ed;display:block;box-shadow:0 1px 2px rgba(46,43,37,.14)',
+    };
+  }
+
+  go = (dest) => this.setState(s => ({ screen: dest, sheet: null, history: [...s.history, s.screen || this.props.screen || 'home'] }));
+  back = () => this.setState(s => {
+    const h = [...s.history];
+    const prev = h.pop() || this.props.screen || 'home';
+    return { screen: prev, history: h, sheet: null };
+  });
+
+  chip(label, active, extra) {
+    return 'height:32px;padding:0 14px;border-radius:999px;font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:6px;transition:background .15s;'
+      + (active ? 'background:#c67139;color:#fff2eb;' : 'background:#ebddc5;color:#474238;') + (extra || '');
+  }
+
+  renderVals() {
+    const s = this.state;
+    const p = this.props;
+    const screen = s.screen == null ? (p.screen || 'home') : s.screen;
+    const sheet = s.sheet === undefined ? (p.sheet || null) : s.sheet;
+    const theme = s.theme || p.theme || 'cream';
+    const fs = s.fs || p.fontSize || 19;
+    const ls = s.ls || p.lineHeight || 1.75;
+    const face = s.face || p.face || 'serif';
+    const book = BOOKS.find(b => b.id === s.bookId) || BOOKS[0];
+    const themeMap = {
+      cream: { bg: '#f5ead8', ink: '#201e1d', chrome: 'rgba(245,234,216,.86)' },
+      sepia: { bg: '#e8d7b4', ink: '#3a2c17', chrome: 'rgba(232,215,180,.86)' },
+      night: { bg: '#211f1c', ink: '#e7dfd1', chrome: 'rgba(33,31,28,.86)' },
+    };
+    const th = themeMap[theme];
+    const isReader = screen === 'reader';
+    const openBook = (id) => () => this.setState(st => ({ bookId: id, screen: 'detail', history: [...st.history, screen] }));
+
+    const obCopy = [
+      { title: 'Read the long way round', body: 'Serials, classics and light novels in one shelf. Chapters arrive when you have time for them, not when a feed decides.', cta: 'Pick what you like' },
+      { title: 'What pulls you in?', body: 'Choose a few. Discovery leans on these, and you can change them any time.', cta: 'Continue' },
+      { title: 'How fast do you read?', body: 'Bramble holds new chapters and paces your goal around your answer.', cta: 'Start reading' },
+    ][s.obStep];
+
+    const tabDefs = [['Home', 'home'], ['Library', 'library'], ['Discover', 'discover'], ['You', 'stats']];
+    const bookCard = (b) => ({
+      title: b.title, author: b.author, chapters: b.chapters, tag: b.tag, rating: b.rating, badge: b.badge, meta: b.meta,
+      cover: COVERS[b.id][0], coverInk: COVERS[b.id][1], open: openBook(b.id),
+    });
+
+    const filtered = BOOKS.filter(b => {
+      const q = s.query.trim().toLowerCase();
+      const okQ = !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q);
+      return okQ && (s.tag === 'All' || b.tag === s.tag);
+    });
+
+    const chapterList = CHAPTER_TITLES.map((t, i) => {
+      const n = 48 - i;
+      const locked = n >= 48 && !s.unlocked;
+      return {
+        n: String(n), title: t, meta: (locked ? 'Posts in 6h · ' : 'Read ') + (3400 + i * 130) + ' words',
+        titleStyle: 'font-size:14.5px;font-weight:600;line-height:1.25;' + (locked ? 'color:#82796a;' : 'color:#201e1d;'),
+        pill: locked
+          ? 'height:24px;padding:0 10px;border-radius:999px;background:#ffe1d0;color:#643312;font-size:11px;font-weight:800;display:flex;align-items:center;flex:none'
+          : 'height:24px;padding:0 10px;border-radius:999px;background:#e1eecc;color:#3d472b;font-size:11px;font-weight:800;display:flex;align-items:center;flex:none',
+        pillLabel: locked ? '30 coins' : (i < 4 ? 'Saved' : 'Read'),
+        open: () => (locked ? this.setState({ screen: 'reader', sheet: 'paywall' }) : this.go('reader')),
+      };
+    });
+    if (!s.tocDesc) chapterList.reverse();
+
+    return {
+      book: bookCard(book), coins: s.coins, query: s.query,
+      deviceDark: isReader && theme === 'night',
+      pageBg: isReader ? th.bg : '#f5ead8', pageInk: isReader ? th.ink : '#201e1d',
+      readerBg: th.bg, readerInk: th.ink, chromeBg: th.chrome,
+      readerPad: s.chrome ? '18px 24px 24px' : '34px 24px 40px',
+      chrome: s.chrome,
+
+      isOnboarding: screen === 'onboarding', isHome: screen === 'home', isLibrary: screen === 'library',
+      isDiscover: screen === 'discover', isDetail: screen === 'detail', isToc: screen === 'toc',
+      isReader, isComments: screen === 'comments', isStats: screen === 'stats', isAuthor: screen === 'author',
+      isSettings: sheet === 'settings', isPaywall: sheet === 'paywall',
+      showTabs: ['home', 'library', 'discover', 'stats'].includes(screen),
+
+      back: this.back,
+      goStats: () => this.go('stats'), goSettings: () => this.go('settings'), goLibrary: () => this.go('library'), goToc: () => this.go('toc'),
+      goComments: () => this.go('comments'), goAuthor: () => this.go('author'),
+      openReader: () => this.setState(st => ({ screen: 'reader', chrome: true, sheet: null, history: [...st.history, screen] })),
+      openSettings: () => this.setState({ sheet: 'settings' }),
+      goPaywall: () => this.setState({ sheet: 'paywall' }),
+      closeSheet: () => this.setState({ sheet: null }),
+      toggleChrome: () => this.setState(st => ({ chrome: !st.chrome })),
+      onQuery: (e) => this.setState({ query: e.target.value }),
+
+      obTitle: obCopy.title, obBody: obCopy.body, obCta: obCopy.cta,
+      obPickGenres: s.obStep === 1, obShowPace: s.obStep === 2,
+      obNext: () => (s.obStep < 2 ? this.setState({ obStep: s.obStep + 1 }) : this.setState({ screen: 'home', history: [] })),
+      obSkip: () => this.setState({ screen: 'home', history: [] }),
+      obDots: [0, 1, 2].map(i => ({ style: 'height:5px;border-radius:999px;transition:width .25s,background .25s;' + (i === s.obStep ? 'width:30px;background:#c67139;' : 'width:12px;background:#dcd3c4;') })),
+      genreChips: Object.keys(s.genres).map(name => ({
+        name, style: this.chip(name, s.genres[name]),
+        toggle: () => this.setState(st => ({ genres: { ...st.genres, [name]: !st.genres[name] } })),
+      })),
+      paceOptions: [
+        { id: 'daily', title: 'A chapter a day', note: 'About 15 minutes each evening' },
+        { id: 'binge', title: 'Weekend binges', note: 'Hold updates and stack them up' },
+        { id: 'slow', title: 'Whenever it happens', note: 'No goals, no streaks, no nudges' },
+      ].map(p => ({
+        title: p.title, note: p.note, pick: () => this.setState({ pace: p.id }),
+        style: 'display:flex;flex-direction:column;gap:3px;align-items:flex-start;text-align:left;padding:14px 18px;border-radius:22px;transition:background .15s;'
+          + (s.pace === p.id ? 'background:#ffe1d0;box-shadow:inset 0 0 0 2px #c67139;' : 'background:#ebddc5;'),
+      })),
+
+      updates: BOOKS.slice(1, 5).map(bookCard),
+      recs: [BOOKS[2], BOOKS[4], BOOKS[5]].map(bookCard),
+      libRows: BOOKS.slice(0, 4).map((b, i) => ({
+        ...bookCard(b), sub: b.author + ' · ' + b.chapters + ' chapters',
+        pct: [62, 18, 100, 7][i] + '%',
+        state: ['Chapter 47 of 132', 'Chapter 16 of 88', 'Finished in March', 'Just started'][i],
+      })),
+      libTabs: ['Reading', 'Saved', 'Downloaded'].map(label => ({
+        label, pick: () => this.setState({ libTab: label }),
+        style: 'flex:1;height:38px;border-radius:999px;font-size:13.5px;font-weight:700;transition:background .15s;'
+          + (s.libTab === label ? 'background:#f5ead8;color:#201e1d;box-shadow:0 1px 2px rgba(46,43,37,.14);' : 'color:#82796a;'),
+      })),
+      tagChips: ['All', 'Slow fantasy', 'Progression', 'Literary', 'Court intrigue', 'Epistolary', 'Slipstream'].map(name => ({
+        name, style: this.chip(name, s.tag === name), pick: () => this.setState({ tag: name }),
+      })),
+      rankHeading: s.query || s.tag !== 'All' ? filtered.length + ' results' : 'Rising this week',
+      ranked: filtered.map((b, i) => ({ ...bookCard(b), rank: String(i + 1) })),
+
+      bookStats: [{ value: '4.7 ★', label: 'Rating' }, { value: '132', label: 'Chapters' }, { value: '14.2k', label: 'Readers' }],
+      saveLabel: s.saved ? 'Saved' : 'Save',
+      saveBtnStyle: 'flex:none;height:54px;padding:0 24px;border-radius:999px;font-size:16px;font-weight:700;transition:background .15s;'
+        + (s.saved ? 'background:#3d472b;color:#f0fae1;' : 'background:#ebddc5;color:#474238;'),
+      toggleSave: () => this.setState(st => ({ saved: !st.saved })),
+      latestChapters: chapterList.slice(0, 3),
+      chapters: chapterList,
+      tocOrderLabel: s.tocDesc ? 'Newest' : 'Oldest',
+      toggleTocOrder: () => this.setState(st => ({ tocDesc: !st.tocDesc })),
+
+      paragraphs: PARAS.map((p, i) => {
+        const liked = !!s.paraLikes[i];
+        return {
+          text: p.t, likes: p.likes + (liked ? 1 : 0), hasNote: p.note > 0, noteLabel: p.note + ' notes',
+          style: 'margin:0 0 19px;font-size:' + fs + 'px;line-height:' + ls + ';font-family:'
+            + (face === 'serif' ? '"Lora",Georgia,serif' : '"Figtree",system-ui,sans-serif') + ';text-wrap:pretty;',
+          likeStyle: 'height:26px;padding:0 11px;border-radius:999px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:5px;transition:background .15s;'
+            + (liked ? 'background:#c67139;color:#fff2eb;' : 'background:rgba(128,128,128,.14);color:inherit;opacity:.75;'),
+          like: () => this.setState(st => ({ paraLikes: { ...st.paraLikes, [i]: !st.paraLikes[i] } })),
+        };
+      }),
+
+      comments: COMMENTS.map((c, i) => {
+        const liked = !!s.commentLikes[i];
+        return {
+          ...c, likes: c.likes + (liked ? 1 : 0),
+          likeStyle: 'height:28px;padding:0 12px;border-radius:999px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;'
+            + (liked ? 'background:#c67139;color:#fff2eb;' : 'background:rgba(32,30,29,.06);color:#645c50;'),
+          like: () => this.setState(st => ({ commentLikes: { ...st.commentLikes, [i]: !st.commentLikes[i] } })),
+        };
+      }),
+
+      topComments: COMMENTS.slice(0, 2).map((c, i) => ({
+        name: c.name, initial: c.initial, color: c.color, time: c.time, text: c.text,
+        likes: c.likes + (s.commentLikes[i] ? 1 : 0),
+        likeStyle: 'height:28px;padding:0 12px;border-radius:999px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;'
+          + (s.commentLikes[i] ? 'background:#c67139;color:#fff2eb;' : 'background:rgba(128,128,128,.14);opacity:.75;'),
+        like: () => this.setState(st => ({ commentLikes: { ...st.commentLikes, [i]: !st.commentLikes[i] } })),
+      })),
+
+      statCards: [
+        { value: '12', label: 'Day streak', bg: '#ffe1d0', ink: '#643312' },
+        { value: '38', label: 'Chapters this month', bg: '#e1eecc', ink: '#3d472b' },
+        { value: '9h', label: 'Read in August', bg: '#ebddc5', ink: '#474238' },
+      ],
+      week: [['M', 46], ['T', 72], ['W', 30], ['T', 88], ['F', 55], ['S', 100], ['S', 62]].map(([label, h], i) => ({
+        label, h: h + '%', color: i === 6 ? '#c67139' : '#aebf92',
+      })),
+
+      authorWorks: [BOOKS[0], BOOKS[4], BOOKS[5]].map(b => ({ ...bookCard(b), meta: b.chapters + ' chapters' })),
+      followLabel: s.followed ? 'Following' : 'Follow Wen',
+      followStyle: 'flex:1;height:50px;border-radius:999px;font-size:15px;font-weight:700;transition:background .15s;'
+        + (s.followed ? 'background:#3d472b;color:#f0fae1;' : 'background:#c67139;color:#fff2eb;'),
+      toggleFollow: () => this.setState(st => ({ followed: !st.followed })),
+
+      isLogin: screen === 'login', isSignup: screen === 'signup',
+      isSettings: screen === 'settings', isAppearance: screen === 'appearance',
+      goHome: () => this.setState({ screen: 'home', history: [] }),
+      goLogin: () => this.setState({ screen: 'login', history: [] }),
+      goSignup: () => this.setState({ screen: 'signup', history: [] }),
+      goOnboarding: () => this.setState({ screen: 'onboarding', obStep: 0, history: [] }),
+      goAccount: () => this.go('author'),
+      email: s.email, pw: s.pw, name: s.name,
+      onEmail: (e) => this.setState({ email: e.target.value }),
+      onPw: (e) => this.setState({ pw: e.target.value }),
+      onName: (e) => this.setState({ name: e.target.value }),
+      loginHint: !(s.email && s.pw),
+      loginBtnStyle: 'width:100%;height:56px;margin-top:18px;border-radius:999px;font-size:16.5px;font-weight:700;transition:background .15s;'
+        + (s.email && s.pw ? 'background:#c67139;color:#fff2eb;box-shadow:0 3px 10px rgba(46,43,37,.16);' : 'background:#dcd3c4;color:#82796a;'),
+      signupBtnStyle: 'width:100%;height:56px;border-radius:999px;font-size:16.5px;font-weight:700;transition:background .15s;'
+        + (s.agree ? 'background:#c67139;color:#fff2eb;box-shadow:0 3px 10px rgba(46,43,37,.16);' : 'background:#dcd3c4;color:#82796a;'),
+      toggleAgree: () => this.setState(st => ({ agree: !st.agree })),
+      agreeBox: 'width:26px;height:26px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;transition:background .15s;'
+        + (s.agree ? 'background:#c67139;color:#fff2eb;' : 'background:#ebddc5;color:transparent;'),
+
+      settingGroups: [
+        { title: 'Reading', rows: [
+          { label: 'Font & theme', note: theme[0].toUpperCase() + theme.slice(1) + ' · ' + (face === 'serif' ? 'Lora' : 'Figtree') + ' · ' + fs + 'px', isLink: true, value: 'Open', open: () => this.go('appearance') },
+          { label: 'Download over Wi-Fi only', note: 'Chapters queue until you are on Wi-Fi', isToggle: true, key: 'wifi' },
+          { label: 'Keep screen on while reading', note: '', isToggle: true, key: 'keepScreen' },
+          { label: 'Hide spoiler notes', note: 'Blur notes from chapters past yours', isToggle: true, key: 'spoilers' },
+        ] },
+        { title: 'Notifications', rows: [
+          { label: 'New chapter', note: 'From novels in your library', isToggle: true, key: 'newChapter' },
+          { label: 'Author posts', note: '', isToggle: true, key: 'authorPosts' },
+          { label: 'Weekly digest', note: 'Sunday, what you read and missed', isToggle: true, key: 'digest' },
+        ] },
+        { title: 'Account', rows: [
+          { label: 'Coins & Bramble+', note: s.coins + ' coins · trial ends in 4 days', isLink: true, value: 'Manage', open: () => this.setState({ screen: 'reader', sheet: 'paywall' }) },
+          { label: 'Language', note: '', isLink: true, value: 'English', open: () => {} },
+          { label: 'Reading data', note: 'Export or delete your history', isLink: true, value: 'Open', open: () => this.go('stats') },
+        ] },
+      ].map(g => ({ title: g.title, rows: g.rows.map(r => {
+        if (!r.isToggle) return { ...r, isToggle: false, isLink: true };
+        const on = s.flags[r.key];
+        return { ...r, isLink: false, ...this.sw(on), toggle: () => this.setState(st => ({ flags: { ...st.flags, [r.key]: !st.flags[r.key] } })) };
+      }) })),
+
+      previewStyle: 'margin:0;font-family:' + (face === 'serif' ? '"Lora",Georgia,serif' : '"Figtree",system-ui,sans-serif')
+        + ';font-size:' + fs + 'px;line-height:' + ls + ';padding:0 ' + ({ Narrow: 0, Regular: 10, Wide: 22 }[s.margins]) + 'px',
+      faceCards: [
+        { id: 'serif', sample: 'The Ledger of Tides', note: 'Lora · a warm book serif', font: '"Lora",Georgia,serif' },
+        { id: 'sans', sample: 'The Ledger of Tides', note: 'Figtree · the interface face', font: '"Figtree",system-ui,sans-serif' },
+      ].map(f => ({
+        sample: f.sample, note: f.note, pick: () => this.setState({ face: f.id }),
+        sampleStyle: 'display:block;font-family:' + f.font + ';font-size:19px;line-height:1.3',
+        style: 'text-align:left;padding:15px 18px;border-radius:22px;transition:background .15s;'
+          + (face === f.id ? 'background:#ffe1d0;box-shadow:inset 0 0 0 2px #c67139;' : 'background:#ebddc5;'),
+      })),
+      marginOptions: ['Narrow', 'Regular', 'Wide'].map(label => ({
+        label, pick: () => this.setState({ margins: label }),
+        style: 'flex:1;height:38px;border-radius:999px;font-size:13.5px;font-weight:700;transition:background .15s;'
+          + (s.margins === label ? 'background:#f5ead8;color:#201e1d;box-shadow:0 1px 2px rgba(46,43,37,.14);' : 'color:#82796a;'),
+      })),
+      appearanceToggles: [
+        { label: 'Match system dark mode', note: 'Switch to Night when the phone does', key: 'autoNight' },
+        { label: 'Keep screen on', note: 'While a chapter is open', key: 'keepScreen' },
+      ].map(t => ({
+        label: t.label, note: t.note, ...this.sw(s.flags[t.key]),
+        toggle: () => this.setState(st => ({ flags: { ...st.flags, [t.key]: !st.flags[t.key] } })),
+      })),
+
+      tabs: tabDefs.map(([label, id]) => {
+        const active = screen === id;
+        return {
+          label, pick: () => this.setState(st => ({ tab: id, screen: id, sheet: null, history: [...st.history, screen] })),
+          active,
+          isHome: id === 'home', isLibrary: id === 'library', isDiscover: id === 'discover', isYou: id === 'stats',
+          style: 'height:50px;display:flex;align-items:center;justify-content:center;gap:9px;border-radius:999px;transition:flex .22s cubic-bezier(.22,1,.36,1),background .18s,color .18s;'
+            + (active ? 'flex:1 1 auto;padding:0 18px;background:#c67139;color:#fff2eb;box-shadow:0 3px 10px rgba(46,43,37,.16);' : 'flex:0 0 50px;color:#645c50;'),
+        };
+      }),
+
+      themeOptions: [['cream', 'Cream', '#f5ead8', '#201e1d'], ['sepia', 'Sepia', '#e8d7b4', '#3a2c17'], ['night', 'Night', '#211f1c', '#e7dfd1']].map(([id, label, bg, ink]) => ({
+        label, pick: () => this.setState({ theme: id }),
+        style: 'flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;height:76px;border-radius:22px;background:' + bg + ';color:' + ink + ';'
+          + (theme === id ? 'box-shadow:inset 0 0 0 2.5px #c67139;' : 'box-shadow:inset 0 0 0 1px rgba(32,30,29,.14);'),
+      })),
+      faceOptions: [['serif', 'Lora'], ['sans', 'Figtree']].map(([id, label]) => ({
+        label, pick: () => this.setState({ face: id }),
+        style: 'flex:1;height:40px;border-radius:999px;font-size:14px;font-weight:700;font-family:' + (id === 'serif' ? '"Lora",serif;' : '"Figtree",sans-serif;')
+          + (face === id ? 'background:#f5ead8;color:#201e1d;box-shadow:0 1px 2px rgba(46,43,37,.14);' : 'color:#82796a;'),
+      })),
+      steppers: [
+        { label: 'Text size', value: fs + 'px', dec: () => this.setState({ fs: Math.max(15, fs - 1) }), inc: () => this.setState({ fs: Math.min(26, fs + 1) }) },
+        { label: 'Line spacing', value: ls.toFixed(2), dec: () => this.setState({ ls: Math.max(1.3, +(ls - 0.15).toFixed(2)) }), inc: () => this.setState({ ls: Math.min(2.4, +(ls + 0.15).toFixed(2)) }) },
+      ],
+
+      unlockLabel: s.unlocked ? 'Unlocked — read now' : 'Unlock for 30 coins',
+      unlockStyle: 'width:100%;height:54px;border-radius:999px;font-size:16px;font-weight:700;'
+        + (s.unlocked ? 'background:#3d472b;color:#f0fae1;' : 'background:#c67139;color:#fff2eb;'),
+      unlock: () => this.setState(st => (st.unlocked
+        ? { sheet: null, screen: 'reader' }
+        : { unlocked: true, coins: Math.max(0, st.coins - 30) })),
+      coinPacks: [{ coins: '100', price: '$1.99' }, { coins: '550', price: '$8.99' }, { coins: '1200', price: '$17.99' }].map(p => ({
+        ...p, buy: () => this.setState(st => ({ coins: st.coins + parseInt(p.coins, 10) })),
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>

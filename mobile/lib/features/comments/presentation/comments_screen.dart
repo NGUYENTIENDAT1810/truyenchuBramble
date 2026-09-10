@@ -164,19 +164,25 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                width: 40,
-                                height: 40,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: BrambleColors.primaryOrangeHover,
+                              GestureDetector(
+                                onTap: () => context.push(
+                                  '/profile/${c.userId}',
+                                  extra: {'name': c.name, 'initial': c.initial, 'color': c.color},
                                 ),
-                                child: Center(
-                                  child: Text(
-                                    c.initial,
-                                    style: BrambleTypography.displaySmall(
-                                      color: const Color(0xFFFFF2EB),
-                                    ).copyWith(fontSize: 17),
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: BrambleColors.primaryOrangeHover,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      c.initial,
+                                      style: BrambleTypography.displaySmall(
+                                        color: const Color(0xFFFFF2EB),
+                                      ).copyWith(fontSize: 17),
+                                    ),
                                   ),
                                 ),
                               ),

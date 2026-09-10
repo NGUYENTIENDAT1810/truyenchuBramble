@@ -33,6 +33,8 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
   void setLineHeight(double lh) => updateSettings(state.copyWith(lineHeight: lh.clamp(1.2, 2.6)));
   void setFontFamily(String family) => updateSettings(state.copyWith(fontFamily: family));
   void setMargins(String margins) => updateSettings(state.copyWith(margins: margins));
+  void setKeepScreenOn(bool value) => updateSettings(state.copyWith(keepScreenOn: value));
+  void setHideSpoilers(bool value) => updateSettings(state.copyWith(hideSpoilers: value));
 }
 
 final readerSettingsProvider =

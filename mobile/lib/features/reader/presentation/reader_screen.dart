@@ -485,22 +485,32 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Container(
-                                                width: 38,
-                                                height: 38,
-                                                decoration: const BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: BrambleColors
-                                                      .primaryOrangeHover,
+                                              GestureDetector(
+                                                onTap: () => context.push(
+                                                  '/profile/${c.userId}',
+                                                  extra: {
+                                                    'name': c.name,
+                                                    'initial': c.initial,
+                                                    'color': c.color,
+                                                  },
                                                 ),
-                                                child: Center(
-                                                  child: Text(
-                                                    c.initial,
-                                                    style: BrambleTypography
-                                                        .displaySmall(
-                                                      color: const Color(
-                                                          0xFFFFF2EB),
-                                                    ).copyWith(fontSize: 16),
+                                                child: Container(
+                                                  width: 38,
+                                                  height: 38,
+                                                  decoration: const BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: BrambleColors
+                                                        .primaryOrangeHover,
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      c.initial,
+                                                      style: BrambleTypography
+                                                          .displaySmall(
+                                                        color: const Color(
+                                                            0xFFFFF2EB),
+                                                      ).copyWith(fontSize: 16),
+                                                    ),
                                                   ),
                                                 ),
                                               ),

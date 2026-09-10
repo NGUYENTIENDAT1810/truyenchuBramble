@@ -31,4 +31,17 @@ class BookRepository {
     final res = await _client.post(ApiEndpoints.toggleSave, data: {'bookId': bookId});
     return res['isSaved'] ?? false;
   }
+
+  Future<BookModel> createBook({
+    required String title,
+    String? description,
+    String status = 'ONGOING',
+  }) async {
+    final res = await _client.post(ApiEndpoints.adminBooks, data: {
+      'title': title,
+      'description': description,
+      'status': status,
+    });
+    return BookModel.fromJson(res);
+  }
 }

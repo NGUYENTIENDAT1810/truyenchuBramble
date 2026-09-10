@@ -113,6 +113,22 @@ class AuthController extends StateNotifier<AuthState> {
     } catch (_) {}
   }
 
+  Future<void> addCoins(int amount) async {
+    final current = state.user;
+    if (current == null) return;
+    final updated = current.copyWith(coins: current.coins + amount);
+    state = state.copyWith(user: updated);
+    await LocalStorage.saveUser(updated.toJson());
+  }
+
+  Future<void> updateLocalProfile({String? name, String? bio}) async {
+    final current = state.user;
+    if (current == null) return;
+    final updated = current.copyWith(name: name, bio: bio);
+    state = state.copyWith(user: updated);
+    await LocalStorage.saveUser(updated.toJson());
+  }
+
   Future<void> logout() async {
     await _repo.logout();
     state = const AuthState(status: AuthStatus.unauthenticated);

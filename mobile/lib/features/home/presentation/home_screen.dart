@@ -5,8 +5,10 @@ import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/book_cover_view.dart';
 import '../../../core/widgets/loading_indicator.dart';
+import '../../../core/widgets/skeleton_loading.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../books/domain/book_detail_model.dart';
+import '../../notifications/presentation/notifications_controller.dart';
 import 'home_controller.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -23,7 +25,7 @@ class HomeScreen extends ConsumerWidget {
       body: SafeArea(
         bottom: false,
         child: homeAsync.when(
-          loading: () => const BrambleLoading(message: 'Loading your shelf...'),
+          loading: () => const HomeSkeletonView(),
           error: (err, _) => BrambleErrorView(
             message: err.toString(),
             onRetry: () => ref.refresh(homeDataProvider),
@@ -72,39 +74,88 @@ class HomeScreen extends ConsumerWidget {
                               ],
                             ),
                           ),
-                          // Streak badge
-                          GestureDetector(
-                            onTap: () => context.go('/stats'),
-                            child: Container(
-                              height: 34,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 13),
-                              decoration: BoxDecoration(
-                                color: BrambleColors.lightSage,
-                                borderRadius: BorderRadius.circular(999),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: BrambleColors.mutedGreen,
+                          Row(
+                            children: [
+                              // Notification bell
+                              Consumer(
+                                builder: (context, ref, _) {
+                                  final hasUnread = ref.watch(notificationsUnreadProvider);
+                                  return GestureDetector(
+                                    onTap: () => context.push('/notifications'),
+                                    child: Container(
+                                      width: 34,
+                                      height: 34,
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: BrambleColors.creamSurface,
+                                      ),
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.notifications_none_rounded,
+                                            size: 19,
+                                            color: Color(0xFF474238),
+                                          ),
+                                          if (hasUnread)
+                                            Positioned(
+                                              top: 6,
+                                              right: 7,
+                                              child: Container(
+                                                width: 8,
+                                                height: 8,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: BrambleColors.primaryOrange,
+                                                  border: Border.all(
+                                                    color: BrambleColors.creamBg,
+                                                    width: 2,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    '$streak',
-                                    style: BrambleTypography.bodySmall(
-                                      color: BrambleColors.deepGreen,
-                                      fontWeight: FontWeight.w700,
-                                    ).copyWith(fontSize: 13.5),
-                                  ),
-                                ],
+                                  );
+                                },
                               ),
-                            ),
+                              const SizedBox(width: 9),
+                              // Streak badge
+                              GestureDetector(
+                                onTap: () => context.go('/stats'),
+                                child: Container(
+                                  height: 34,
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 13),
+                                  decoration: BoxDecoration(
+                                    color: BrambleColors.lightSage,
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 8,
+                                        height: 8,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: BrambleColors.mutedGreen,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        '$streak',
+                                        style: BrambleTypography.bodySmall(
+                                          color: BrambleColors.deepGreen,
+                                          fontWeight: FontWeight.w700,
+                                        ).copyWith(fontSize: 13.5),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

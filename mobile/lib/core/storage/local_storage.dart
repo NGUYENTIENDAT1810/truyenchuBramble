@@ -53,6 +53,20 @@ class LocalStorage {
     }
   }
 
+  static Future<void> saveSettingsPreferences(Map<String, dynamic> prefs) async {
+    await _prefs?.setString(AppConstants.settingsPreferencesKey, jsonEncode(prefs));
+  }
+
+  static Map<String, dynamic>? getSettingsPreferences() {
+    final str = _prefs?.getString(AppConstants.settingsPreferencesKey);
+    if (str == null) return null;
+    try {
+      return jsonDecode(str) as Map<String, dynamic>;
+    } catch (_) {
+      return null;
+    }
+  }
+
   static Future<void> setOnboardingCompleted(bool val) async {
     await _prefs?.setBool(AppConstants.onboardingCompletedKey, val);
   }

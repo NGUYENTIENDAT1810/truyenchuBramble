@@ -18,14 +18,23 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _phoneController = TextEditingController();
   bool _agreed = true;
+  bool _isPhoneMode = false;
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _phoneController.dispose();
     super.dispose();
+  }
+
+  void _sendCode() {
+    final phone = _phoneController.text.trim();
+    if (phone.isEmpty) return;
+    context.push('/verify', extra: phone);
   }
 
   void _handleSignup() async {
@@ -105,61 +114,89 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 controller: _nameController,
               ),
               const SizedBox(height: 14),
-              BrambleTextField(
-                label: 'EMAIL',
-                placeholder: 'noor@example.com',
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 14),
-              BrambleTextField(
-                label: 'PASSWORD',
-                placeholder: '8 characters or more',
-                controller: _passwordController,
-                obscureText: true,
-              ),
-              const SizedBox(height: 20),
-              // Checkbox row
-              GestureDetector(
-                onTap: () => setState(() => _agreed = !_agreed),
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: BrambleColors.creamSurface,
+                  borderRadius: BorderRadius.circular(999),
+                ),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 26,
-                      height: 26,
-                      decoration: BoxDecoration(
-                        color: _agreed ? BrambleColors.primaryOrange : BrambleColors.creamSurface,
-                        borderRadius: BorderRadius.circular(9),
-                      ),
-                      child: _agreed
-                          ? const Center(
-                              child: Icon(
-                                Icons.check_rounded,
-                                size: 18,
-                                color: Color(0xFFFFF2EB),
-                              ),
-                            )
-                          : null,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        "I'm happy with the reading terms and the note guidelines.",
-                        style: BrambleTypography.bodySmall(
-                          color: BrambleColors.creamSubdued,
-                        ),
-                      ),
-                    ),
+                    Expanded(child: _authModeTab('Email', !_isPhoneMode, () => setState(() => _isPhoneMode = false))),
+                    Expanded(child: _authModeTab('Phone', _isPhoneMode, () => setState(() => _isPhoneMode = true))),
                   ],
                 ),
               ),
-              const SizedBox(height: 28),
-              BrambleButton(
-                text: 'Create account',
-                isLoading: isLoading,
-                onPressed: _handleSignup,
-              ),
+              const SizedBox(height: 14),
+              if (!_isPhoneMode) ...[
+                BrambleTextField(
+                  label: 'EMAIL',
+                  placeholder: 'noor@example.com',
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 14),
+                BrambleTextField(
+                  label: 'PASSWORD',
+                  placeholder: '8 characters or more',
+                  controller: _passwordController,
+                  obscureText: true,
+                ),
+                const SizedBox(height: 20),
+                // Checkbox row
+                GestureDetector(
+                  onTap: () => setState(() => _agreed = !_agreed),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          color: _agreed ? BrambleColors.primaryOrange : BrambleColors.creamSurface,
+                          borderRadius: BorderRadius.circular(9),
+                        ),
+                        child: _agreed
+                            ? const Center(
+                                child: Icon(
+                                  Icons.check_rounded,
+                                  size: 18,
+                                  color: Color(0xFFFFF2EB),
+                                ),
+                              )
+                            : null,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          "I'm happy with the reading terms and the note guidelines.",
+                          style: BrambleTypography.bodySmall(
+                            color: BrambleColors.creamSubdued,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 28),
+                BrambleButton(
+                  text: 'Create account',
+                  isLoading: isLoading,
+                  onPressed: _handleSignup,
+                ),
+              ] else ...[
+                BrambleTextField(
+                  label: 'PHONE NUMBER',
+                  placeholder: '+84 90 123 4567',
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 28),
+                BrambleButton(
+                  text: 'Send code',
+                  onPressed: _sendCode,
+                ),
+              ],
               const SizedBox(height: 20),
               Center(
                 child: GestureDetector(
@@ -183,6 +220,32 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               ),
               const SizedBox(height: 16),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _authModeTab(String label, bool isActive, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        height: 38,
+        decoration: BoxDecoration(
+          color: isActive ? BrambleColors.creamBg : Colors.transparent,
+          borderRadius: BorderRadius.circular(999),
+          boxShadow: isActive
+              ? const [BoxShadow(color: Color(0x1F2E2B25), blurRadius: 2, offset: Offset(0, 1))]
+              : null,
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: BrambleTypography.bodySmall(
+              color: isActive ? BrambleColors.creamInk : BrambleColors.creamMuted,
+              fontWeight: FontWeight.w700,
+            ).copyWith(fontSize: 13.5),
           ),
         ),
       ),

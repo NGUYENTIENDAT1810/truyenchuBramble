@@ -1,7 +1,7 @@
 class ApiEndpoints {
   // Default to localhost:8080 (or 10.0.2.2 for Android emulator)
-  static String baseUrl = 'http://192.168.50.116:8080/api';
-  static String webBaseUrl = 'http://localhost:8080/api';
+  static String baseUrl = 'http://192.168.50.112:8080/api';
+  static String webBaseUrl = 'http://192.168.50.112:8080/api';
 
   // Auth
   static const String register = '/auth/register';
@@ -37,4 +37,7 @@ class ApiEndpoints {
 
   // Stats
   static const String stats = '/stats/me';
+
+  // Admin
+  static const String adminBooks = '/admin/books';
 }

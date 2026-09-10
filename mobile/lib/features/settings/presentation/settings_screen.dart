@@ -7,6 +7,7 @@ import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../reader/presentation/reader_controller.dart';
+import 'settings_preferences_controller.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -16,12 +17,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  bool _wifi = true;
-  bool _keepScreen = false;
-  bool _hideSpoilers = true;
-  bool _newChapter = true;
-  bool _authorPosts = true;
-  bool _digest = false;
+  bool _confirmDelete = false;
 
   void _handleLogout() async {
     await ref.read(authControllerProvider.notifier).logout();
@@ -32,6 +28,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     final user = ref.watch(authControllerProvider).user;
     final readerSettings = ref.watch(readerSettingsProvider);
+    final readerNotifier = ref.read(readerSettingsProvider.notifier);
+    final prefs = ref.watch(settingsPreferencesProvider);
+    final prefsNotifier = ref.read(settingsPreferencesProvider.notifier);
 
     final themeName = readerSettings.themeMode.name;
     final faceName = readerSettings.fontFamily == 'serif' ? 'Lora' : 'Figtree';
@@ -76,7 +75,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: 18),
 
               // User Account Card
-              Container(
+              GestureDetector(
+                onTap: () => context.push('/profile/edit'),
+                child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   color: BrambleColors.creamSurface,
@@ -131,7 +132,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          'TRIAL',
+                          user?.isPremium == true ? 'PREMIUM' : 'TRIAL',
                           style: BrambleTypography.bodySmall(
                             color: const Color(0xFFF0FAE1),
                             fontWeight: FontWeight.w800,
@@ -140,6 +141,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                     ),
                   ],
+                ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -157,21 +159,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 label: 'Download over Wi-Fi only',
                 note: 'Chapters queue until you are on Wi-Fi',
                 isToggle: true,
-                toggleValue: _wifi,
-                onToggle: (v) => setState(() => _wifi = v),
+                toggleValue: prefs.downloadOverWifiOnly,
+                onToggle: prefsNotifier.setDownloadOverWifiOnly,
               ),
               _buildSettingRow(
                 label: 'Keep screen on while reading',
                 isToggle: true,
-                toggleValue: _keepScreen,
-                onToggle: (v) => setState(() => _keepScreen = v),
+                toggleValue: readerSettings.keepScreenOn,
+                onToggle: readerNotifier.setKeepScreenOn,
               ),
               _buildSettingRow(
                 label: 'Hide spoiler notes',
                 note: 'Blur notes from chapters past yours',
                 isToggle: true,
-                toggleValue: _hideSpoilers,
-                onToggle: (v) => setState(() => _hideSpoilers = v),
+                toggleValue: readerSettings.hideSpoilers,
+                onToggle: readerNotifier.setHideSpoilers,
               ),
               const SizedBox(height: 24),
 
@@ -181,21 +183,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 label: 'New chapter',
                 note: 'From novels in your library',
                 isToggle: true,
-                toggleValue: _newChapter,
-                onToggle: (v) => setState(() => _newChapter = v),
+                toggleValue: prefs.newChapterNotif,
+                onToggle: prefsNotifier.setNewChapterNotif,
               ),
               _buildSettingRow(
                 label: 'Author posts',
                 isToggle: true,
-                toggleValue: _authorPosts,
-                onToggle: (v) => setState(() => _authorPosts = v),
+                toggleValue: prefs.authorPostsNotif,
+                onToggle: prefsNotifier.setAuthorPostsNotif,
               ),
               _buildSettingRow(
                 label: 'Weekly digest',
                 note: 'Sunday, what you read and missed',
                 isToggle: true,
-                toggleValue: _digest,
-                onToggle: (v) => setState(() => _digest = v),
+                toggleValue: prefs.weeklyDigest,
+                onToggle: prefsNotifier.setWeeklyDigest,
               ),
               const SizedBox(height: 24),
 
@@ -213,10 +215,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 },
               ),
               _buildSettingRow(
+                label: 'Payment methods',
+                note: 'Bank, MoMo, ZaloPay, card',
+                isLink: true,
+                linkValue: 'Open',
+                onTap: () => context.push('/payment'),
+              ),
+              _buildSettingRow(
                 label: 'Language',
                 isLink: true,
                 linkValue: 'English',
                 onTap: () {},
+              ),
+              _buildSettingRow(
+                label: 'Component library',
+                note: 'Buttons, tags, toggles, chips',
+                isLink: true,
+                linkValue: 'Open',
+                onTap: () => context.push('/components'),
               ),
               _buildSettingRow(
                 label: 'Reading data',
@@ -225,13 +241,110 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 linkValue: 'Open',
                 onTap: () => context.go('/stats'),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 24),
+
+              // Section: LEGAL
+              _buildSectionHeader('LEGAL'),
+              _buildSettingRow(
+                label: 'Terms of service',
+                isLink: true,
+                linkValue: 'Open',
+                onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Terms of service')),
+                ),
+              ),
+              _buildSettingRow(
+                label: 'Privacy policy',
+                isLink: true,
+                linkValue: 'Open',
+                onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Privacy policy')),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              if (user?.role == 'ADMIN') ...[
+                _buildSectionHeader('ADMIN'),
+                _buildSettingRow(
+                  label: 'Add a novel',
+                  note: 'Publish a new title to the catalogue',
+                  isLink: true,
+                  linkValue: 'Open',
+                  onTap: () => context.push('/admin/add-novel'),
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              if (_confirmDelete) ...[
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.only(bottom: 14),
+                  decoration: BoxDecoration(
+                    color: BrambleColors.peachSelection,
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Delete your account?',
+                        style: BrambleTypography.bodyMedium(
+                          color: BrambleColors.peachDark,
+                          fontWeight: FontWeight.w700,
+                        ).copyWith(fontSize: 14),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        "This removes your shelf, notes and coins permanently. This can't be undone.",
+                        style: BrambleTypography.bodySmall(
+                          color: BrambleColors.primaryOrangeDark,
+                        ).copyWith(fontSize: 13),
+                      ),
+                      const SizedBox(height: 14),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: BrambleButton(
+                              text: 'Cancel',
+                              variant: BrambleButtonVariant.secondary,
+                              height: 42,
+                              onPressed: () => setState(() => _confirmDelete = false),
+                            ),
+                          ),
+                          const SizedBox(width: 9),
+                          Expanded(
+                            child: BrambleButton(
+                              text: 'Delete',
+                              variant: BrambleButtonVariant.dark,
+                              height: 42,
+                              onPressed: _handleLogout,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
 
               // Logout Button
               BrambleButton(
                 text: 'Log out',
                 variant: BrambleButtonVariant.peach,
                 onPressed: _handleLogout,
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: GestureDetector(
+                  onTap: () => setState(() => _confirmDelete = !_confirmDelete),
+                  child: Text(
+                    'Delete account',
+                    style: BrambleTypography.bodySmall(
+                      color: const Color(0xFFA19786),
+                      fontWeight: FontWeight.w700,
+                    ).copyWith(fontSize: 13.5),
+                  ),
+                ),
               ),
               const SizedBox(height: 14),
               Center(

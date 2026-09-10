@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
@@ -213,9 +214,8 @@ class _PaywallSheetState extends ConsumerState<PaywallSheet> {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Purchased $coins coins pack')),
-          );
+          Navigator.pop(context);
+          context.push('/payment', extra: {'coins': coins, 'price': price});
         },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 13),

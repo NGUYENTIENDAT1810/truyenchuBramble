@@ -17,12 +17,21 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController(text: 'noor@example.com');
   final _passwordController = TextEditingController(text: 'password123');
+  final _phoneController = TextEditingController();
+  bool _isPhoneMode = false;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _phoneController.dispose();
     super.dispose();
+  }
+
+  void _sendCode() {
+    final phone = _phoneController.text.trim();
+    if (phone.isEmpty) return;
+    context.push('/verify', extra: phone);
   }
 
   void _handleLogin() async {
@@ -94,40 +103,68 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 style: BrambleTypography.bodyMedium(color: BrambleColors.creamSubdued),
               ),
               const SizedBox(height: 28),
-              BrambleTextField(
-                label: 'EMAIL',
-                placeholder: 'noor@example.com',
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 14),
-              BrambleTextField(
-                label: 'PASSWORD',
-                placeholder: '••••••••',
-                controller: _passwordController,
-                obscureText: true,
-              ),
-              const SizedBox(height: 12),
-              GestureDetector(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Demo account: noor@example.com / password123')),
-                  );
-                },
-                child: Text(
-                  'Forgot password',
-                  style: BrambleTypography.bodySmall(
-                    color: BrambleColors.primaryOrangeDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: BrambleColors.creamSurface,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(child: _authModeTab('Email', !_isPhoneMode, () => setState(() => _isPhoneMode = false))),
+                    Expanded(child: _authModeTab('Phone', _isPhoneMode, () => setState(() => _isPhoneMode = true))),
+                  ],
                 ),
               ),
-              const SizedBox(height: 22),
-              BrambleButton(
-                text: 'Log in',
-                isLoading: isLoading,
-                onPressed: _handleLogin,
-              ),
+              const SizedBox(height: 18),
+              if (!_isPhoneMode) ...[
+                BrambleTextField(
+                  label: 'EMAIL',
+                  placeholder: 'noor@example.com',
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 14),
+                BrambleTextField(
+                  label: 'PASSWORD',
+                  placeholder: '••••••••',
+                  controller: _passwordController,
+                  obscureText: true,
+                ),
+                const SizedBox(height: 12),
+                GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Demo account: noor@example.com / password123')),
+                    );
+                  },
+                  child: Text(
+                    'Forgot password',
+                    style: BrambleTypography.bodySmall(
+                      color: BrambleColors.primaryOrangeDark,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 22),
+                BrambleButton(
+                  text: 'Log in',
+                  isLoading: isLoading,
+                  onPressed: _handleLogin,
+                ),
+              ] else ...[
+                BrambleTextField(
+                  label: 'PHONE NUMBER',
+                  placeholder: '+84 90 123 4567',
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 22),
+                BrambleButton(
+                  text: 'Send code',
+                  onPressed: _sendCode,
+                ),
+              ],
               const SizedBox(height: 24),
               Row(
                 children: [
@@ -187,6 +224,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               const SizedBox(height: 16),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _authModeTab(String label, bool isActive, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        height: 38,
+        decoration: BoxDecoration(
+          color: isActive ? BrambleColors.creamBg : Colors.transparent,
+          borderRadius: BorderRadius.circular(999),
+          boxShadow: isActive
+              ? const [BoxShadow(color: Color(0x1F2E2B25), blurRadius: 2, offset: Offset(0, 1))]
+              : null,
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: BrambleTypography.bodySmall(
+              color: isActive ? BrambleColors.creamInk : BrambleColors.creamMuted,
+              fontWeight: FontWeight.w700,
+            ).copyWith(fontSize: 13.5),
           ),
         ),
       ),

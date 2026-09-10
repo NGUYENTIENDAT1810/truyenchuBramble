@@ -5,6 +5,7 @@ import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_theme.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../reader/presentation/reader_controller.dart';
+import 'settings_preferences_controller.dart';
 
 class AppearanceScreen extends ConsumerStatefulWidget {
   const AppearanceScreen({super.key});
@@ -14,13 +15,12 @@ class AppearanceScreen extends ConsumerStatefulWidget {
 }
 
 class _AppearanceScreenState extends ConsumerState<AppearanceScreen> {
-  bool _matchSystem = true;
-  bool _keepScreen = false;
-
   @override
   Widget build(BuildContext context) {
     final settings = ref.watch(readerSettingsProvider);
     final notifier = ref.read(readerSettingsProvider.notifier);
+    final prefs = ref.watch(settingsPreferencesProvider);
+    final prefsNotifier = ref.read(settingsPreferencesProvider.notifier);
     final themeConfig = ReaderThemeConfig.fromMode(settings.themeMode);
 
     final marginOptions = ['Narrow', 'Regular', 'Wide'];
@@ -283,14 +283,14 @@ class _AppearanceScreenState extends ConsumerState<AppearanceScreen> {
                     _buildToggleRow(
                       label: 'Match system dark mode',
                       note: 'Switch to Night when the phone does',
-                      value: _matchSystem,
-                      onChanged: (v) => setState(() => _matchSystem = v),
+                      value: prefs.matchSystemDarkMode,
+                      onChanged: prefsNotifier.setMatchSystemDarkMode,
                     ),
                     _buildToggleRow(
                       label: 'Keep screen on',
                       note: 'While a chapter is open',
-                      value: _keepScreen,
-                      onChanged: (v) => setState(() => _keepScreen = v),
+                      value: settings.keepScreenOn,
+                      onChanged: notifier.setKeepScreenOn,
                     ),
                   ],
                 ),

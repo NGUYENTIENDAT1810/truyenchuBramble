@@ -5,6 +5,7 @@ class UserModel {
   final String role;
   final int coins;
   final bool isPremium;
+  final String? bio;
   final Map<String, dynamic>? preferences;
 
   UserModel({
@@ -14,6 +15,7 @@ class UserModel {
     required this.role,
     this.coins = 120,
     this.isPremium = false,
+    this.bio,
     this.preferences,
   });
 
@@ -25,6 +27,7 @@ class UserModel {
       role: json['role'] ?? 'USER',
       coins: json['coins'] ?? 120,
       isPremium: json['isPremium'] ?? false,
+      bio: json['bio']?.toString(),
       preferences: json['preferences'] as Map<String, dynamic>?,
     );
   }
@@ -37,6 +40,7 @@ class UserModel {
       'role': role,
       'coins': coins,
       'isPremium': isPremium,
+      'bio': bio,
       'preferences': preferences,
     };
   }
@@ -48,6 +52,7 @@ class UserModel {
     String? role,
     int? coins,
     bool? isPremium,
+    String? bio,
     Map<String, dynamic>? preferences,
   }) {
     return UserModel(
@@ -57,6 +62,7 @@ class UserModel {
       role: role ?? this.role,
       coins: coins ?? this.coins,
       isPremium: isPremium ?? this.isPremium,
+      bio: bio ?? this.bio,
       preferences: preferences ?? this.preferences,
     );
   }

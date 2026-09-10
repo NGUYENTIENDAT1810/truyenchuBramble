@@ -6,6 +6,7 @@ import '../features/auth/presentation/auth_controller.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/signup_screen.dart';
 import '../features/auth/presentation/onboarding_screen.dart';
+import '../features/auth/presentation/verify_screen.dart';
 import '../features/home/presentation/home_screen.dart';
 import '../features/library/presentation/library_screen.dart';
 import '../features/discover/presentation/discover_screen.dart';
@@ -17,6 +18,12 @@ import '../features/reader/presentation/reader_screen.dart';
 import '../features/comments/presentation/comments_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../features/settings/presentation/appearance_screen.dart';
+import '../features/settings/presentation/component_library_screen.dart';
+import '../features/payment/presentation/payment_screen.dart';
+import '../features/profile/presentation/profile_screen.dart';
+import '../features/profile/presentation/edit_profile_screen.dart';
+import '../features/notifications/presentation/notifications_screen.dart';
+import '../features/admin/presentation/admin_add_novel_screen.dart';
 import '../core/theme/bramble_colors.dart';
 import '../core/theme/bramble_typography.dart';
 
@@ -38,7 +45,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final location = state.matchedLocation;
       final isAuthRoute = state.matchedLocation == '/login' ||
           state.matchedLocation == '/signup' ||
-          state.matchedLocation == '/onboarding';
+          state.matchedLocation == '/onboarding' ||
+          state.matchedLocation == '/verify';
 
       if (isInitializing) {
         return location == '/splash' ? null : '/splash';
@@ -144,6 +152,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),
       ),
+      GoRoute(
+        path: '/verify',
+        builder: (context, state) => VerifyScreen(
+          phone: (state.extra as String?) ?? '',
+        ),
+      ),
 
       // Detail & Reader routes
       GoRoute(
@@ -183,6 +197,40 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/appearance',
         builder: (context, state) => const AppearanceScreen(),
+      ),
+      GoRoute(
+        path: '/components',
+        builder: (context, state) => const ComponentLibraryScreen(),
+      ),
+      GoRoute(
+        path: '/notifications',
+        builder: (context, state) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/payment',
+        builder: (context, state) => PaymentScreen(
+          pendingPack: state.extra as Map<String, dynamic>?,
+        ),
+      ),
+      GoRoute(
+        path: '/profile/edit',
+        builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/profile/:id',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return ProfileScreen(
+            userId: state.pathParameters['id']!,
+            name: extra?['name'] ?? 'Reader',
+            initial: extra?['initial'] ?? 'R',
+            colorHex: extra?['color'] ?? '#b2622d',
+          );
+        },
+      ),
+      GoRoute(
+        path: '/admin/add-novel',
+        builder: (context, state) => const AdminAddNovelScreen(),
       ),
     ],
   );

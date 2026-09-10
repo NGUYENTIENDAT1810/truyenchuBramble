@@ -24,17 +24,16 @@ class BrambleChip extends StatelessWidget {
         duration: const Duration(milliseconds: 150),
         height: height,
         padding: const EdgeInsets.symmetric(horizontal: 14),
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: isSelected ? BrambleColors.primaryOrange : BrambleColors.creamSurface,
           borderRadius: BorderRadius.circular(999),
         ),
-        child: Center(
-          child: Text(
-            label,
-            style: BrambleTypography.bodySmall(
-              color: isSelected ? const Color(0xFFFFF2EB) : const Color(0xFF474238),
-              fontWeight: FontWeight.w700,
-            ),
+        child: Text(
+          label,
+          style: BrambleTypography.bodySmall(
+            color: isSelected ? const Color(0xFFFFF2EB) : const Color(0xFF474238),
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),

@@ -29,13 +29,17 @@ public class BookController {
     @Operation(summary = "Get list of books with search, filter, and pagination")
     public ResponseEntity<ApiResponse<PageResponse<BookResponse>>> getAllBooks(
             @RequestParam(required = false) String search,
+            @RequestParam(required = false) String query,
             @RequestParam(required = false) String genre,
+            @RequestParam(required = false) String tag,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String sortBy,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int limit
     ) {
-        PageResponse<BookResponse> data = bookService.getAllBooks(search, genre, status, sortBy, page, limit);
+        String effectiveSearch = (search != null && !search.isEmpty()) ? search : query;
+        String effectiveGenre = (genre != null && !genre.isEmpty() && !genre.equalsIgnoreCase("All")) ? genre : ((tag != null && !tag.equalsIgnoreCase("All")) ? tag : null);
+        PageResponse<BookResponse> data = bookService.getAllBooks(effectiveSearch, effectiveGenre, status, sortBy, page, limit);
         return ResponseEntity.ok(ApiResponse.success(data));
     }
 

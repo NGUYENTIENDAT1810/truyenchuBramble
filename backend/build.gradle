@@ -37,6 +37,9 @@ dependencies {
     // Bean Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // MySQL Driver for MySQL Workbench / MySQL Server
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
     // PostgreSQL Driver
     runtimeOnly 'org.postgresql:postgresql'
 
@@ -46,6 +49,7 @@ dependencies {
     // Flyway Migration
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-database-postgresql'
+    implementation 'org.flywaydb:flyway-mysql'
 
     // JWT (JJWT)
     implementation 'io.jsonwebtoken:jjwt-api:0.12.5'

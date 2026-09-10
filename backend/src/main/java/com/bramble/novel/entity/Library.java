@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(
-    name = "library",
+    name = "user_libraries",
     uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "book_id"})
 )
 @Getter

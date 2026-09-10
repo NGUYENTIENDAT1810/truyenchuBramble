@@ -75,19 +75,19 @@ class HomeSkeletonView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   BrambleSkeletonBox(width: 120, height: 12),
                   SizedBox(height: 8),
                   BrambleSkeletonBox(width: 190, height: 24),
                 ],
               ),
-              const BrambleSkeletonBox(width: 74, height: 34, borderRadius: 999),
+              BrambleSkeletonBox(width: 74, height: 34, borderRadius: 999),
             ],
           ),
           const SizedBox(height: 22),

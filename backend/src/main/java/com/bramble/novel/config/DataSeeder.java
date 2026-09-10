@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.*;
 
 @Slf4j
@@ -32,12 +31,12 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        if (userRepository.count() > 0) {
+        if (bookRepository.count() > 0) {
             log.info("Database already contains data. Skipping DataSeeder.");
             return;
         }
 
-        log.info("Seeding initial Bramble platform data...");
+        log.info("Seeding authentic Bramble platform data from design prototype...");
 
         // 1. Users
         User admin = User.builder()
@@ -66,10 +65,10 @@ public class DataSeeder implements CommandLineRunner {
         User demoUser = User.builder()
                 .email("noor@example.com")
                 .passwordHash(passwordEncoder.encode("password123"))
-                .displayName("Noor Al-Mansoor")
+                .displayName("Noor Rahim")
                 .avatarUrl("https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150")
                 .role(Role.USER)
-                .coins(350)
+                .coins(120)
                 .isVip(false)
                 .build();
         demoUser = userRepository.save(demoUser);
@@ -77,266 +76,379 @@ public class DataSeeder implements CommandLineRunner {
         UserPreferences userPrefs = UserPreferences.builder()
                 .user(demoUser)
                 .theme("CREAM")
-                .fontSize(18)
+                .fontSize(19)
                 .fontFamily("Serif")
-                .lineHeight(1.6)
+                .lineHeight(1.75)
                 .marginHorizontal(24.0)
                 .autoUnlock(false)
                 .soundEffects(true)
                 .build();
         preferencesRepository.save(userPrefs);
 
+        User userOleander = userRepository.save(User.builder()
+                .email("oleander@bramble.com")
+                .passwordHash(passwordEncoder.encode("password123"))
+                .displayName("oleander")
+                .role(Role.USER)
+                .coins(50)
+                .build());
+
+        User userHarbourlight = userRepository.save(User.builder()
+                .email("harbourlight@bramble.com")
+                .passwordHash(passwordEncoder.encode("password123"))
+                .displayName("harbourlight")
+                .role(Role.USER)
+                .coins(200)
+                .build());
+
+        User userMreads = userRepository.save(User.builder()
+                .email("m_reads@bramble.com")
+                .passwordHash(passwordEncoder.encode("password123"))
+                .displayName("m_reads")
+                .role(Role.USER)
+                .coins(80)
+                .build());
+
+        User userTidepool = userRepository.save(User.builder()
+                .email("tidepool@bramble.com")
+                .passwordHash(passwordEncoder.encode("password123"))
+                .displayName("tidepool")
+                .role(Role.USER)
+                .coins(300)
+                .build());
+
         // 2. Authors
-        Author author1 = Author.builder()
-                .name("Clara Oswald")
-                .bio("Best-selling dark fantasy and high intrigue novelist. Winner of the Astral Literary Ribbon 2024.")
+        Author wenIto = authorRepository.save(Author.builder()
+                .name("Wen Ito")
+                .bio("Writes slow fantasy about coastlines, debt and inherited work. Posts a chapter every Wednesday and answers notes on Sundays.")
                 .avatarUrl("https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150")
                 .followersCount(14200L)
-                .build();
-        author1 = authorRepository.save(author1);
+                .build());
 
-        Author author2 = Author.builder()
-                .name("Arthur Pendelton")
-                .bio("Sci-Fi architect exploring cybernetic revolutions, temporal rifts, and existential cosmos.")
+        Author okonkwo = authorRepository.save(Author.builder()
+                .name("R. Okonkwo")
+                .bio("Court intrigue novelist with too many locked doors. Publishes on Fridays.")
                 .avatarUrl("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150")
                 .followersCount(9800L)
-                .build();
-        author2 = authorRepository.save(author2);
+                .build());
 
-        Author author3 = Author.builder()
-                .name("Evelyn Vance")
-                .bio("Poetic romanticist crafting emotional journeys across timeless historical eras and pastoral lands.")
+        Author miraHalden = authorRepository.save(Author.builder()
+                .name("Mira Halden")
+                .bio("Literary fiction author focusing on quiet coastal homes, families, and long-standing mysteries.")
                 .avatarUrl("https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150")
-                .followersCount(21500L)
-                .build();
-        author3 = authorRepository.save(author3);
+                .followersCount(11500L)
+                .build());
 
-        Author author4 = Author.builder()
-                .name("M. K. Sterling")
-                .bio("Mystery thriller master of locked-room enigmas and atmospheric noir investigations.")
+        Author junPark = authorRepository.save(Author.builder()
+                .name("Jun Park")
+                .bio("Progression fantasy worldbuilder exploring contracts, subterranean mines, and ancient covenants.")
                 .avatarUrl("https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150")
-                .followersCount(8300L)
-                .build();
-        author4 = authorRepository.save(author4);
+                .followersCount(16300L)
+                .build());
 
-        Author author5 = Author.builder()
-                .name("Silvia Thorne")
-                .bio("Cultivation fantasy enthusiast blending eastern mythos with western character dynamics.")
+        Author elsaVondel = authorRepository.save(Author.builder()
+                .name("Elsa Vondel")
+                .bio("Repairs the machines that measure grief, and refuses to explain how she calibrates them.")
                 .avatarUrl("https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150")
-                .followersCount(17600L)
-                .build();
-        author5 = authorRepository.save(author5);
+                .followersCount(8700L)
+                .build());
+
+        Author anaFerreira = authorRepository.save(Author.builder()
+                .name("Ana Ferreira")
+                .bio("Epistolary fiction about lighthouses, coastlines, and forty years of letters.")
+                .avatarUrl("https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150")
+                .followersCount(12400L)
+                .build());
 
         // 3. Genres
-        Genre fantasy = Genre.builder().name("Fantasy").slug("fantasy").description("Epic magic, mystical realms and legendary heroes").iconName("auto_awesome").build();
-        Genre scifi = Genre.builder().name("Sci-Fi").slug("sci-fi").description("Future technology, artificial intelligence and space odyssey").iconName("rocket_launch").build();
-        Genre romance = Genre.builder().name("Romance").slug("romance").description("Heartwarming connections, drama, and timeless devotion").iconName("favorite").build();
-        Genre mystery = Genre.builder().name("Mystery").slug("mystery").description("Suspenseful twists, detectives, and covert secrets").iconName("visibility").build();
-        Genre xianxia = Genre.builder().name("Cultivation").slug("cultivation").description("Daoist arts, heavenly tribulations, and martial ascendance").iconName("sports_martial_arts").build();
-        Genre adventure = Genre.builder().name("Adventure").slug("adventure").description("Expeditions across uncharted lands and perilous ruins").iconName("explore").build();
+        Genre slowFantasy = genreRepository.save(Genre.builder().name("Slow fantasy").slug("slow-fantasy").description("Atmospheric worldbuilding and quiet reflection").iconName("auto_awesome").build());
+        Genre courtIntrigue = genreRepository.save(Genre.builder().name("Court intrigue").slug("court-intrigue").description("Political schemes, hidden motives and secrets").iconName("visibility").build());
+        Genre literary = genreRepository.save(Genre.builder().name("Literary").slug("literary").description("Character-driven, profound prose and thematic depth").iconName("menu_book").build());
+        Genre progression = genreRepository.save(Genre.builder().name("Progression").slug("progression").description("Growth, magic contracts, and power development").iconName("trending_up").build());
+        Genre slipstream = genreRepository.save(Genre.builder().name("Slipstream").slug("slipstream").description("Surreal, speculative fiction blending reality").iconName("grain").build());
+        Genre epistolary = genreRepository.save(Genre.builder().name("Epistolary").slug("epistolary").description("Stories told through letters, journals and records").iconName("mail").build());
 
-        fantasy = genreRepository.save(fantasy);
-        scifi = genreRepository.save(scifi);
-        romance = genreRepository.save(romance);
-        mystery = genreRepository.save(mystery);
-        xianxia = genreRepository.save(xianxia);
-        adventure = genreRepository.save(adventure);
-
-        // 4. Books
-        Book book1 = Book.builder()
-                .title("The Starlit Citadel")
-                .slug("the-starlit-citadel")
-                .author(author1)
+        // 4. Books (The 6 authentic Bramble prototype novels)
+        Book saltAlmanac = bookRepository.save(Book.builder()
+                .title("The Salt Almanac")
+                .slug("the-salt-almanac")
+                .author(wenIto)
                 .coverUrl("https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500")
-                .description("In a city suspended between colliding galaxies, an exiled scholar discovers a forgotten stargate that holds the key to preventing the celestial collapse.")
-                .status(BookStatus.ONGOING)
-                .rating(4.9)
-                .ratingsCount(1240L)
-                .viewsCount(58200L)
-                .totalChapters(6L)
-                .isFeatured(true)
-                .isTrending(true)
-                .isNewRelease(false)
-                .genres(Set.of(fantasy, adventure))
-                .build();
-        book1 = bookRepository.save(book1);
-
-        Book book2 = Book.builder()
-                .title("Whispers of the Jade Empire")
-                .slug("whispers-of-the-jade-empire")
-                .author(author5)
-                .coverUrl("https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500")
-                .description("An orphaned herbalist inadvertently uncovers an ancient Dragon core, setting off an imperial war across the Nine Heavens.")
-                .status(BookStatus.ONGOING)
-                .rating(4.8)
-                .ratingsCount(980L)
-                .viewsCount(44100L)
-                .totalChapters(5L)
-                .isFeatured(true)
-                .isTrending(true)
-                .isNewRelease(false)
-                .genres(Set.of(xianxia, fantasy))
-                .build();
-        book2 = bookRepository.save(book2);
-
-        Book book3 = Book.builder()
-                .title("The Silent Chrono")
-                .slug("the-silent-chrono")
-                .author(author2)
-                .coverUrl("https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500")
-                .description("When time suddenly fractures into non-linear loops, chronomancer Liam must locate the Prime Anchor before reality dissolves.")
+                .description("A harbour clerk inherits her mother’s tide ledger and finds every entry after 1911 written in a hand that is not her mother’s. Twelve years of debt, weather and quiet correction, kept in a book that refuses to end.")
                 .status(BookStatus.ONGOING)
                 .rating(4.7)
-                .ratingsCount(730L)
-                .viewsCount(32000L)
-                .totalChapters(4L)
-                .isFeatured(false)
+                .ratingsCount(14200L)
+                .viewsCount(84200L)
+                .totalChapters(132L)
+                .isFeatured(true)
                 .isTrending(true)
-                .isNewRelease(true)
-                .genres(Set.of(scifi, mystery))
-                .build();
-        book3 = bookRepository.save(book3);
+                .isNewRelease(false)
+                .genres(Set.of(slowFantasy))
+                .build());
 
-        Book book4 = Book.builder()
-                .title("Song of the Silver Meadow")
-                .slug("song-of-the-silver-meadow")
-                .author(author3)
-                .coverUrl("https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=500")
-                .description("A poetic romance about second chances in an emerald valley shrouded in morning mist and forgotten promises.")
-                .status(BookStatus.COMPLETED)
-                .rating(4.9)
-                .ratingsCount(1650L)
-                .viewsCount(67800L)
-                .totalChapters(5L)
+        Book nineLanterns = bookRepository.save(Book.builder()
+                .title("Nine Lanterns")
+                .slug("nine-lanterns")
+                .author(okonkwo)
+                .coverUrl("https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500")
+                .description("Nine lanterns are lit each winter. This year one goes out early, and the household must decide what it saw.")
+                .status(BookStatus.ONGOING)
+                .rating(4.5)
+                .ratingsCount(9800L)
+                .viewsCount(52100L)
+                .totalChapters(88L)
                 .isFeatured(true)
                 .isTrending(false)
                 .isNewRelease(false)
-                .genres(Set.of(romance))
-                .build();
-        book4 = bookRepository.save(book4);
+                .genres(Set.of(courtIntrigue))
+                .build());
 
-        Book book5 = Book.builder()
-                .title("The Midnight Archive")
-                .slug("the-midnight-archive")
-                .author(author4)
-                .coverUrl("https://images.unsplash.com/photo-1507842229452-7729221237e1?w=500")
-                .description("Inside London's underground labyrinth of forbidden grimoires, a rogue detective investigates murders committed by living ink.")
+        Book houseSmallWeather = bookRepository.save(Book.builder()
+                .title("A House of Small Weather")
+                .slug("a-house-of-small-weather")
+                .author(miraHalden)
+                .coverUrl("https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500")
+                .description("Four siblings, one coastal house, and a barometer that has been wrong for thirty years.")
+                .status(BookStatus.COMPLETED)
+                .rating(4.8)
+                .ratingsCount(11500L)
+                .viewsCount(67800L)
+                .totalChapters(61L)
+                .isFeatured(false)
+                .isTrending(false)
+                .isNewRelease(true)
+                .genres(Set.of(literary))
+                .build());
+
+        Book copperSeason = bookRepository.save(Book.builder()
+                .title("Copper Season")
+                .slug("copper-season")
+                .author(junPark)
+                .coverUrl("https://images.unsplash.com/photo-1519681393784-d120267933ba?w=500")
+                .description("The mines reopen, and with them an older contract nobody meant to honour.")
+                .status(BookStatus.ONGOING)
+                .rating(4.4)
+                .ratingsCount(16300L)
+                .viewsCount(91400L)
+                .totalChapters(204L)
+                .isFeatured(false)
+                .isTrending(true)
+                .isNewRelease(false)
+                .genres(Set.of(progression))
+                .build());
+
+        Book quietMachinist = bookRepository.save(Book.builder()
+                .title("The Quiet Machinist")
+                .slug("the-quiet-machinist")
+                .author(elsaVondel)
+                .coverUrl("https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500")
+                .description("She repairs the machines that measure grief, and refuses to explain how she calibrates them.")
                 .status(BookStatus.ONGOING)
                 .rating(4.6)
-                .ratingsCount(512L)
-                .viewsCount(21900L)
-                .totalChapters(4L)
+                .ratingsCount(8700L)
+                .viewsCount(43200L)
+                .totalChapters(47L)
                 .isFeatured(false)
                 .isTrending(false)
-                .isNewRelease(true)
-                .genres(Set.of(mystery, fantasy))
-                .build();
-        book5 = bookRepository.save(book5);
+                .isNewRelease(false)
+                .genres(Set.of(slipstream))
+                .build());
 
-        Book book6 = Book.builder()
-                .title("The Clockwork Alchemist")
-                .slug("the-clockwork-alchemist")
-                .author(author2)
-                .coverUrl("https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500")
-                .description("In a Victorian metropolis powered by steam and aether, a brilliant outcast discovers how to transmute mechanical souls.")
+        Book lettersToTide = bookRepository.save(Book.builder()
+                .title("Letters to the Tide")
+                .slug("letters-to-the-tide")
+                .author(anaFerreira)
+                .coverUrl("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500")
+                .description("Two lighthouse keepers, forty years of letters, one delivery that never arrived.")
                 .status(BookStatus.ONGOING)
-                .rating(4.7)
-                .ratingsCount(430L)
-                .viewsCount(18500L)
-                .totalChapters(3L)
+                .rating(4.3)
+                .ratingsCount(12400L)
+                .viewsCount(38900L)
+                .totalChapters(39L)
                 .isFeatured(false)
-                .isTrending(true)
-                .isNewRelease(true)
-                .genres(Set.of(scifi, adventure))
-                .build();
-        book6 = bookRepository.save(book6);
+                .isTrending(false)
+                .isNewRelease(false)
+                .genres(Set.of(epistolary))
+                .build());
 
-        // 5. Chapters for Book 1 (The Starlit Citadel)
-        String ch1Content =
-                "The towers of the Citadel did not rise from the soil; they hung like crystalline stalactites from the roof of the celestial dome.\n\n" +
-                "Kaelen adjusted the brass strap of his eyepiece, letting the amber glyphs pulse against his retina. Below him, eighty thousand leagues of astral fog churned in violet whorls.\n\n" +
-                "\"You shouldn't be up here, Master Kaelen,\" whispered a voice behind him. It was Lyra, her cloak shimmering with silver dust from the upper archives.\n\n" +
-                "\"The council declared the outer bridge forbidden after the tremor at twilight.\"\n\n" +
-                "\"The council fears what they cannot measure with their sun dials,\" Kaelen answered without turning. \"Look at the resonance lines along the seventh arch. That is not seismic settling. That is an echo.\"\n\n" +
-                "Lyra stepped carefully over the obsidian flagstones. When she placed her fingertips against the stone, a gentle chime reverberated deep in her bones.\n\n" +
-                "\"The gate is waking,\" she murmured, her amber eyes widening in disbelief. \"After seven centuries... the Old Way is opening.\"";
+        // 5. Authentic Chapters for The Salt Almanac
+        Chapter ch1 = chapterRepository.save(Chapter.builder()
+                .book(saltAlmanac)
+                .chapterNumber(1)
+                .title("The Orrery")
+                .content("The ledger came down from the shelf the way a tide comes in: slowly, and then all at once across her lap. Ito had not opened it since the funeral, and the salt had done its work on the binding.\n\nEvery page carried the same four columns — date, vessel, weight, correction — and her mother’s hand held steady through eleven years of them.\n\nThen, in the spring of 1911, the letters changed shape.")
+                .wordCount(3400)
+                .isFree(true)
+                .coinCost(0)
+                .commentsCount(12L)
+                .build());
 
-        String ch2Content =
-                "The grand library of the Citadel spanned seven subterranean rings, lit only by bottled starfire suspended from arched vaulting.\n\n" +
-                "Kaelen unrolled the cartography parchment. The paper crackled with ancient static, illuminating coordinate runes that hadn't been charted since the Great Migration.\n\n" +
-                "\"If we align the lunar focal lenses,\" Kaelen explained, tracing the spiral vector with his stylus, \"we bypass the Imperial wards entirely.\"\n\n" +
-                "Lyra shook her head solemnly. \"And if the Inquisitors catch us? Treason against the Luminari isn't punished by exile. They cleanse the soul.\"\n\n" +
-                "\"Then we make sure they never catch us.\"";
+        Chapter ch46 = chapterRepository.save(Chapter.builder()
+                .book(saltAlmanac)
+                .chapterNumber(46)
+                .title("The Second Hand")
+                .content("The harbour was quiet when the courier docked. In the second drawer under the chart table, the wax seal remained unbroken. Ito held the letter against the lantern light, tracing the thin watermark of an anchor that had never belonged to the fleet.")
+                .wordCount(3900)
+                .isFree(true)
+                .coinCost(0)
+                .commentsCount(45L)
+                .build());
 
-        String ch3Content =
-                "Midnight arrived without the chime of bells. The Citadel was silent except for the hum of the core dynamo.\n\n" +
-                "Kaelen slipped through the labyrinthine maintenance tunnels beneath Sector 4. The air here was dense with ozone and the scent of cold metal.\n\n" +
-                "Ahead, the archway glowed with an eerie cerulean luminescence. He could feel the gravity shifting beneath his boots—each step felt as light as falling snow.\n\n" +
-                "He took out the crystalline key given to him by the elder before her passing. As the key slotted into the aperture, the void spoke back.";
+        String authenticCh47Content = "The ledger came down from the shelf the way a tide comes in: slowly, and then all at once across her lap. Ito had not opened it since the funeral, and the salt had done its work on the binding.\n\n"
+                + "Every page carried the same four columns — date, vessel, weight, correction — and her mother’s hand held steady through eleven years of them. Then, in the spring of 1911, the letters changed shape.\n\n"
+                + "She read the entry twice. A brig called the Orrery, three tons of unspecified cargo, and in the correction column a single word that was not a number at all.\n\n"
+                + "“You are reading it wrong,” said the harbourmaster from the doorway, though he had not seen the page and did not intend to.\n\n"
+                + "Ito closed the book on her thumb. Outside, the water was doing what it always did, which was arrive, and leave, and keep no record of either.";
 
-        Chapter c1 = Chapter.builder().book(book1).chapterNumber(1).title("Chapter 1: The Hanging spires").content(ch1Content).wordCount(180).isFree(true).coinCost(0).status(ChapterStatus.PUBLISHED).commentsCount(3L).build();
-        Chapter c2 = Chapter.builder().book(book1).chapterNumber(2).title("Chapter 2: The Starfire Cartography").content(ch2Content).wordCount(140).isFree(true).coinCost(0).status(ChapterStatus.PUBLISHED).commentsCount(1L).build();
-        Chapter c3 = Chapter.builder().book(book1).chapterNumber(3).title("Chapter 3: The Cerulean Portal").content(ch3Content).wordCount(150).isFree(false).coinCost(15).status(ChapterStatus.PUBLISHED).commentsCount(0L).build();
-        c1 = chapterRepository.save(c1);
-        c2 = chapterRepository.save(c2);
-        c3 = chapterRepository.save(c3);
+        Chapter ch47 = chapterRepository.save(Chapter.builder()
+                .book(saltAlmanac)
+                .chapterNumber(47)
+                .title("The Ledger of Tides")
+                .content(authenticCh47Content)
+                .wordCount(4200)
+                .isFree(true)
+                .coinCost(0)
+                .commentsCount(218L)
+                .build());
 
-        // 6. Comments on Chapter 1
-        Comment comm1 = Comment.builder()
-                .chapter(c1)
-                .user(admin)
-                .content("The world building in the first paragraph is breathtaking! Loving the crystalline stalactite imagery.")
-                .paragraphIndex(0)
-                .likesCount(12L)
-                .build();
-        commentRepository.save(comm1);
+        Chapter ch48 = chapterRepository.save(Chapter.builder()
+                .book(saltAlmanac)
+                .chapterNumber(48)
+                .title("The Harbour Ledger")
+                .content("Dawn broke over the breakwater in pale bands of grey and amber. The Orrery was already casting off when Ito reached the lower quay, its black hull low in the water under the weight of whatever had been hauled aboard before first light.")
+                .wordCount(4100)
+                .isFree(false)
+                .coinCost(30)
+                .commentsCount(0L)
+                .build());
 
-        Comment comm2 = Comment.builder()
-                .chapter(c1)
-                .user(demoUser)
-                .content("Lyra's cloak shimmering with silver dust is such a neat detail. Can't wait to see where the stargate leads!")
+        // Chapters for other books
+        Chapter nineLanternsCh1 = chapterRepository.save(Chapter.builder()
+                .book(nineLanterns)
+                .chapterNumber(1)
+                .title("The First Light")
+                .content("Nine lanterns are lit each winter along the imperial gallery. The ninth flickered and died before the snow began.")
+                .wordCount(3500)
+                .isFree(true)
+                .coinCost(0)
+                .build());
+
+        Chapter houseCh1 = chapterRepository.save(Chapter.builder()
+                .book(houseSmallWeather)
+                .chapterNumber(1)
+                .title("The Barometer")
+                .content("The barometer on the parlour wall had read storm through four weddings and two funerals, none of which had seen a drop of rain.")
+                .wordCount(3200)
+                .isFree(true)
+                .coinCost(0)
+                .build());
+
+        Chapter copperCh1 = chapterRepository.save(Chapter.builder()
+                .book(copperSeason)
+                .chapterNumber(1)
+                .title("The Sealed Shaft")
+                .content("When the deep bell rang from the three-hundred-fathom level, nobody working the upper seams moved towards the cages.")
+                .wordCount(3800)
+                .isFree(true)
+                .coinCost(0)
+                .build());
+
+        // 6. Comments for Chapter 47 (The Salt Almanac)
+        commentRepository.save(Comment.builder()
+                .chapter(ch47)
+                .user(userOleander)
+                .paragraphIndex(1)
+                .content("Third reread and I only just noticed she never says whose hand it is. Wen is not going to tell us until ch. 60, is he.")
+                .likesCount(84L)
+                .build());
+
+        commentRepository.save(Comment.builder()
+                .chapter(ch47)
+                .user(userHarbourlight)
+                .paragraphIndex(3)
+                .content("The harbourmaster speaking without looking at the page is the whole book in one line.")
+                .likesCount(51L)
+                .build());
+
+        commentRepository.save(Comment.builder()
+                .chapter(ch47)
+                .user(userMreads)
+                .paragraphIndex(4)
+                .content("Slower chapter but the last paragraph earns it. Water keeping no record — after 47 chapters of ledgers.")
+                .likesCount(33L)
+                .build());
+
+        commentRepository.save(Comment.builder()
+                .chapter(ch47)
+                .user(userTidepool)
                 .paragraphIndex(2)
-                .likesCount(5L)
-                .build();
-        commentRepository.save(comm2);
+                .content("Called it in ch. 12. The Orrery is not a ship.")
+                .likesCount(190L)
+                .build());
 
-        // 7. Library & Reading Progress for Demo User
-        Library lib1 = Library.builder()
+        // 7. Library & Active Reading for Noor
+        libraryRepository.save(Library.builder()
                 .user(demoUser)
-                .book(book1)
+                .book(saltAlmanac)
                 .status(LibraryStatus.CURRENT)
-                .lastReadAt(Instant.now().minusSeconds(1800))
-                .build();
-        libraryRepository.save(lib1);
+                .build());
 
-        Library lib2 = Library.builder()
+        libraryRepository.save(Library.builder()
                 .user(demoUser)
-                .book(book4)
+                .book(nineLanterns)
+                .status(LibraryStatus.CURRENT)
+                .build());
+
+        libraryRepository.save(Library.builder()
+                .user(demoUser)
+                .book(houseSmallWeather)
                 .status(LibraryStatus.SAVED)
-                .build();
-        libraryRepository.save(lib2);
+                .build());
 
-        ReadingProgress prog1 = ReadingProgress.builder()
+        libraryRepository.save(Library.builder()
                 .user(demoUser)
-                .book(book1)
-                .chapter(c1)
-                .progressPercent(42)
-                .scrollOffset(320.0)
-                .readingTimeSeconds(1850)
-                .lastReadAt(Instant.now().minusSeconds(1800))
-                .build();
-        progressRepository.save(prog1);
+                .book(copperSeason)
+                .status(LibraryStatus.CURRENT)
+                .build());
 
-        ReadingHistory hist1 = ReadingHistory.builder()
+        libraryRepository.save(Library.builder()
                 .user(demoUser)
-                .book(book1)
-                .chapter(c1)
-                .progressPercent(42)
-                .scrollOffset(320.0)
-                .readingTimeSeconds(1850)
-                .build();
-        historyRepository.save(hist1);
+                .book(quietMachinist)
+                .status(LibraryStatus.SAVED)
+                .build());
 
-        log.info("Data seeding completed successfully! Seeded books, chapters, users, authors, genres, and comments.");
+        progressRepository.save(ReadingProgress.builder()
+                .user(demoUser)
+                .book(saltAlmanac)
+                .chapter(ch47)
+                .scrollOffset(0.62)
+                .progressPercent(62)
+                .build());
+
+        progressRepository.save(ReadingProgress.builder()
+                .user(demoUser)
+                .book(nineLanterns)
+                .chapter(nineLanternsCh1)
+                .scrollOffset(0.18)
+                .progressPercent(18)
+                .build());
+
+        progressRepository.save(ReadingProgress.builder()
+                .user(demoUser)
+                .book(copperSeason)
+                .chapter(copperCh1)
+                .scrollOffset(0.07)
+                .progressPercent(7)
+                .build());
+
+        historyRepository.save(ReadingHistory.builder()
+                .user(demoUser)
+                .book(saltAlmanac)
+                .chapter(ch47)
+                .progressPercent(62)
+                .readingTimeSeconds(900)
+                .build());
+
+        log.info("Data seeding completed successfully with authentic Bramble novel dataset!");
     }
 }

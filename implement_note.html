@@ -191,10 +191,11 @@
     <h2>8. Kết Quả Kiểm Thử & Tình Trạng Mã Nguồn</h2>
     <ul>
       <li><code>gradlew.bat build</code>: <strong>BUILD SUCCESSFUL</strong> (100% tests & packaging passed).</li>
-      <li><code>gradlew.bat bootRun</code>: <strong>Tomcat started on port 8080 (http)</strong>, DataSeeder seeded successfully.</li>
+      <li><code>gradlew.bat bootRun</code>: <strong>Tomcat started on port 8080 (http)</strong>, kết nối MySQL Workbench thành công, đổi tên bảng <code>user_libraries</code> tránh từ khóa cấm của MySQL.</li>
+      <li><code>UX Library & Discover</code>: Sửa lỗi hiển thị danh sách sách tủ sách và sắp xếp Tag Chips tự nhiên trong `Wrap`.</li>
       <li><code>flutter analyze</code>: <strong>No issues found!</strong> (0 errors, 0 warnings).</li>
       <li><code>flutter test</code>: <strong>8/8 passed (100%)</strong>.</li>
-      <li>Java Spring Boot: Đầy đủ Controller, Service, Repository, DTO, Mapper, Exception, Security, Flyway Migration &amp; Dockerfile.</li>
+      <li>Java Spring Boot: Đầy đủ Controller, Service, Repository, DTO, Mapper, Exception, Security, MySQL profile (`application-mysql.yml`).</li>
     </ul>
   </div>
 </body>

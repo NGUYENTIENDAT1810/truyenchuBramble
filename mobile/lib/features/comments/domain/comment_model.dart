@@ -14,7 +14,7 @@ class CommentModel {
   final bool isLiked;
   final List<CommentModel> replies;
 
-  CommentModel({
+  const CommentModel({
     required this.id,
     required this.chapterId,
     required this.userId,
@@ -30,6 +30,40 @@ class CommentModel {
     this.isLiked = false,
     this.replies = const [],
   });
+
+  CommentModel copyWith({
+    String? id,
+    String? chapterId,
+    String? userId,
+    String? name,
+    String? initial,
+    String? color,
+    String? time,
+    String? quote,
+    int? paragraphIndex,
+    String? text,
+    bool? isSpoiler,
+    int? likes,
+    bool? isLiked,
+    List<CommentModel>? replies,
+  }) {
+    return CommentModel(
+      id: id ?? this.id,
+      chapterId: chapterId ?? this.chapterId,
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      initial: initial ?? this.initial,
+      color: color ?? this.color,
+      time: time ?? this.time,
+      quote: quote ?? this.quote,
+      paragraphIndex: paragraphIndex ?? this.paragraphIndex,
+      text: text ?? this.text,
+      isSpoiler: isSpoiler ?? this.isSpoiler,
+      likes: likes ?? this.likes,
+      isLiked: isLiked ?? this.isLiked,
+      replies: replies ?? this.replies,
+    );
+  }
 
   factory CommentModel.fromJson(Map<String, dynamic> json) {
     return CommentModel(

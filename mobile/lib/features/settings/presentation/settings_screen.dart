@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
-import '../../auth/presentation/auth_controller.dart';
-import '../../reader/presentation/reader_controller.dart';
-import 'settings_preferences_controller.dart';
+import '../../auth/presentation/bloc/auth_bloc.dart';
+import '../../reader/presentation/cubit/reader_settings_cubit.dart';
+import 'cubit/settings_preferences_cubit.dart';
 
-class SettingsScreen extends ConsumerStatefulWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+class _SettingsScreenState extends State<SettingsScreen> {
   bool _confirmDelete = false;
 
-  void _handleLogout() async {
-    await ref.read(authControllerProvider.notifier).logout();
+  void _handleLogout() {
+    context.read<AuthBloc>().add(const AuthLogoutRequested());
     if (mounted) context.go('/login');
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authControllerProvider).user;
-    final readerSettings = ref.watch(readerSettingsProvider);
-    final readerNotifier = ref.read(readerSettingsProvider.notifier);
-    final prefs = ref.watch(settingsPreferencesProvider);
-    final prefsNotifier = ref.read(settingsPreferencesProvider.notifier);
+    final user = context.watch<AuthBloc>().state.user;
+    final readerSettings = context.watch<ReaderSettingsCubit>().state;
+    final readerCubit = context.read<ReaderSettingsCubit>();
+    final prefs = context.watch<SettingsPreferencesCubit>().state;
+    final prefsCubit = context.read<SettingsPreferencesCubit>();
 
     final themeName = readerSettings.themeMode.name;
     final faceName = readerSettings.fontFamily == 'serif' ? 'Lora' : 'Figtree';
@@ -78,70 +78,70 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               GestureDetector(
                 onTap: () => context.push('/profile/edit'),
                 child: Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: BrambleColors.creamSurface,
-                  borderRadius: BorderRadius.circular(28),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 52,
-                      height: 52,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: BrambleColors.sageGreen,
-                      ),
-                      child: Center(
-                        child: Text(
-                          user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'N',
-                          style: BrambleTypography.displaySmall(
-                            color: const Color(0xFFF0FAE1),
-                          ).copyWith(fontSize: 22),
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: BrambleColors.creamSurface,
+                    borderRadius: BorderRadius.circular(28),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 52,
+                        height: 52,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: BrambleColors.sageGreen,
+                        ),
+                        child: Center(
+                          child: Text(
+                            user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'N',
+                            style: BrambleTypography.displaySmall(
+                              color: const Color(0xFFF0FAE1),
+                            ).copyWith(fontSize: 22),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            user?.name ?? 'Noor Rahim',
-                            style: BrambleTypography.bodyLarge(
-                              color: BrambleColors.creamInk,
-                              fontWeight: FontWeight.w700,
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user?.name ?? 'Noor Rahim',
+                              style: BrambleTypography.bodyLarge(
+                                color: BrambleColors.creamInk,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            user?.email ?? 'noor@example.com',
+                            const SizedBox(height: 2),
+                            Text(
+                              user?.email ?? 'noor@example.com',
+                              style: BrambleTypography.bodySmall(
+                                color: BrambleColors.creamMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 24,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: BrambleColors.deepGreen,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Center(
+                          child: Text(
+                            user?.isPremium == true ? 'PREMIUM' : 'TRIAL',
                             style: BrambleTypography.bodySmall(
-                              color: BrambleColors.creamMuted,
-                            ),
+                              color: const Color(0xFFF0FAE1),
+                              fontWeight: FontWeight.w800,
+                            ).copyWith(fontSize: 11),
                           ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      height: 24,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: BrambleColors.deepGreen,
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Center(
-                        child: Text(
-                          user?.isPremium == true ? 'PREMIUM' : 'TRIAL',
-                          style: BrambleTypography.bodySmall(
-                            color: const Color(0xFFF0FAE1),
-                            fontWeight: FontWeight.w800,
-                          ).copyWith(fontSize: 11),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -160,20 +160,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 note: 'Chapters queue until you are on Wi-Fi',
                 isToggle: true,
                 toggleValue: prefs.downloadOverWifiOnly,
-                onToggle: prefsNotifier.setDownloadOverWifiOnly,
+                onToggle: prefsCubit.setDownloadOverWifiOnly,
               ),
               _buildSettingRow(
                 label: 'Keep screen on while reading',
                 isToggle: true,
                 toggleValue: readerSettings.keepScreenOn,
-                onToggle: readerNotifier.setKeepScreenOn,
+                onToggle: readerCubit.setKeepScreenOn,
               ),
               _buildSettingRow(
                 label: 'Hide spoiler notes',
                 note: 'Blur notes from chapters past yours',
                 isToggle: true,
                 toggleValue: readerSettings.hideSpoilers,
-                onToggle: readerNotifier.setHideSpoilers,
+                onToggle: readerCubit.setHideSpoilers,
               ),
               const SizedBox(height: 24),
 
@@ -184,20 +184,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 note: 'From novels in your library',
                 isToggle: true,
                 toggleValue: prefs.newChapterNotif,
-                onToggle: prefsNotifier.setNewChapterNotif,
+                onToggle: prefsCubit.setNewChapterNotif,
               ),
               _buildSettingRow(
                 label: 'Author posts',
                 isToggle: true,
                 toggleValue: prefs.authorPostsNotif,
-                onToggle: prefsNotifier.setAuthorPostsNotif,
+                onToggle: prefsCubit.setAuthorPostsNotif,
               ),
               _buildSettingRow(
                 label: 'Weekly digest',
                 note: 'Sunday, what you read and missed',
                 isToggle: true,
                 toggleValue: prefs.weeklyDigest,
-                onToggle: prefsNotifier.setWeeklyDigest,
+                onToggle: prefsCubit.setWeeklyDigest,
               ),
               const SizedBox(height: 24),
 

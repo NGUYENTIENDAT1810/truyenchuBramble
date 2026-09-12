@@ -1,6 +1,6 @@
 # 🌿 Bramble - Modern Minimalist Novel Reader Platform
 
-Bramble is a mobile-first, production-ready novel reader platform inspired by the editorial design prototype `BrambleScreen.dc.html`. It features warm cream/sepia/night themes, rich typography (`Caprasimo`, `Figtree`, `Lora`), an advanced distraction-free reader engine, chapter discussions, reading stats & streak tracking, offline reading capabilities, and a layered **Java Spring Boot 3.3.x** REST backend with PostgreSQL, Flyway, Spring Security, JWT, and OpenAPI 3.0 documentation.
+Bramble is a mobile-first, production-ready novel reader platform inspired by the editorial design prototype `BrambleScreen.dc.html`. It features warm cream/sepia/night themes, rich typography (`Lora`, `Figtree`, `Caprasimo`), an advanced distraction-free reader engine, chapter discussions, reading stats & streak tracking, offline reading capabilities, an immutable **BLoC / Cubit** state management architecture, and a robust **Java Spring Boot 3.3.x** REST backend with Spring Security, JWT, Spring Data JPA, and OpenAPI 3.0 documentation.
 
 ---
 
@@ -8,23 +8,22 @@ Bramble is a mobile-first, production-ready novel reader platform inspired by th
 
 - **Aesthetic Editorial Design**:
   - 3 Reader Themes: **Cream** (`#f5ead8`), **Sepia** (`#e8d7b4`), **Night** (`#211f1c`).
-  - Font choices: **Lora** (warm book serif) & **Figtree** (interface sans).
-  - Floating pill bottom navigation & smooth sheet transitions.
+  - Typography: **Lora** (warm book serif) & **Figtree** (interface sans).
+  - Floating pill bottom navigation capsule & smooth sheet transitions.
 - **Advanced Reader Engine**:
   - Tap-to-toggle reader chrome (Top sticky header & Bottom reading progress indicator).
-  - Customizable font size (15px-26px), line spacing (1.3-2.4), and margins (Narrow, Regular, Wide).
-  - Paragraph-level likes and inline note jump points.
+  - Customizable font size (14px–30px), line spacing (1.2–2.6), and margins (Narrow, Regular, Wide).
+  - Paragraph-level likes, quotes, and inline note jump points.
   - Automatic progress tracking & estimated reading time calculation.
   - Offline reading support: downloaded chapters cache locally and synchronize seamlessly when online.
 - **Engaging Social & Library System**:
-  - Filterable library shelf: *Reading*, *Saved*, *Downloaded*.
+  - Filterable library shelf: *Reading*, *Saved*, *Downloaded* with bulk-action selection mode.
   - Chapter discussion threads with paragraph quote references.
-  - Author profiles with bibliography and follower support.
-  - Reading goals ring & 7-day reading habit bar chart.
+  - Author profiles with bibliography and novel stats.
+  - Reading goals ring & 7-day reading habit activity chart.
 - **Enterprise-Grade Java Spring Boot Backend**:
-  - Spring Boot 3.3.3 + Java 17 LTS + Spring Data JPA + Hibernate + PostgreSQL.
+  - Spring Boot 3.3.x + Java 17 LTS + Spring Data JPA + Hibernate + MySQL / PostgreSQL.
   - Spring Security with Stateless JWT Authentication & Refresh Token Rotation.
-  - Flyway database migration scripts (`db/migration/V1__create_tables.sql`).
   - Bean Validation (`jakarta.validation`) and centralized `GlobalExceptionHandler`.
   - Layered Architecture (`controller/`, `service/`, `repository/`, `entity/`, `dto/`, `mapper/`, `security/`, `config/`, `exception/`).
   - Interactive OpenAPI / Swagger UI documentation at `/swagger-ui.html`.
@@ -35,19 +34,50 @@ Bramble is a mobile-first, production-ready novel reader platform inspired by th
 ## 🛠️ Tech Stack
 
 ### Frontend (Mobile)
-- **Framework**: Flutter 3.22+
-- **State Management**: Riverpod (`flutter_riverpod`)
-- **Routing**: `go_router` (with `ShellRoute` for navigation bar)
-- **HTTP Client**: `dio` (with `AuthInterceptor` & token refresh)
-- **Typography**: Google Fonts (`Caprasimo`, `Figtree`, `Lora`)
-- **Local Storage**: `shared_preferences`
+- **Framework**: Flutter 3.22+ (Dart 3.4+)
+- **State Management**: **BLoC / Cubit** (`flutter_bloc: ^8.1.6`, `equatable: ^2.0.5`, `bloc_test: ^9.1.7`)
+- **Routing**: `go_router: ^14.1.4` (with `GoRouterRefreshStream` for deterministic authentication)
+- **HTTP Client**: `dio: ^5.4.3+1` (with `AuthInterceptor` & automatic token refresh)
+- **Typography**: Google Fonts (`Lora`, `Figtree`, `Caprasimo`)
+- **Local Storage**: `shared_preferences: ^2.2.3`
 
 ### Backend (API)
-- **Framework**: Java 17 LTS + Spring Boot 3.3.3 + Maven
-- **Database & Migration**: PostgreSQL 16 & Flyway Migration
+- **Framework**: Java 17 LTS + Spring Boot 3.3.x + Gradle Wrapper
+- **Database**: MySQL / PostgreSQL & H2 In-Memory
 - **Security**: Spring Security + JJWT 0.12.5 + BCrypt
 - **API Docs**: Springdoc OpenAPI 2.6.0 (Swagger UI)
-- **Containerization**: Multi-stage Docker & Docker Compose
+- **Containerization**: Docker & Docker Compose
+
+---
+
+## 🏛️ Mobile Clean Architecture & State Management
+
+```
+mobile/lib/
+├── core/
+│   ├── constants/        # API endpoints & app constants
+│   ├── network/          # Dio client & AuthInterceptor
+│   ├── storage/          # LocalStorage (SharedPreferences wrapper)
+│   ├── theme/            # BrambleColors, BrambleTypography, BrambleTheme
+│   └── widgets/          # BrambleButton, BrambleChip, BookCoverView, BrambleBottomBar
+├── features/
+│   ├── admin/            # Admin add/edit novel screens
+│   ├── auth/             # AuthBloc, AuthRepository, UserModel, Login/Signup
+│   ├── books/            # BookDetailCubit, AuthorDetailCubit, NovelDetailScreen, ChapterList
+│   ├── comments/         # CommentsCubit, CommentsRepository, CommentModel, CommentsScreen
+│   ├── discover/         # DiscoverBloc, DiscoverRepository, DiscoverScreen
+│   ├── home/             # HomeBloc, HomeRepository, HomeScreen
+│   ├── library/          # LibraryBloc, LibrarySelectionCubit, LibraryScreen
+│   ├── notifications/    # NotificationsCubit, NotificationsScreen
+│   ├── payment/          # PaymentScreen (Bank, MoMo, ZaloPay, Card)
+│   ├── profile/          # EditProfileScreen
+│   ├── reader/           # ReaderBloc, ReaderSettingsCubit, ReaderScreen, ReaderSettingsSheet
+│   ├── settings/         # SettingsPreferencesCubit, SettingsScreen, AppearanceScreen
+│   └── stats/            # StatsCubit, StatsRepository, StatsScreen
+├── router/
+│   └── app_router.dart   # GoRouter with AuthBloc stream refresh & ShellRoute
+└── main.dart             # DI Composition Root (MultiRepositoryProvider & MultiBlocProvider)
+```
 
 ---
 
@@ -56,32 +86,31 @@ Bramble is a mobile-first, production-ready novel reader platform inspired by th
 ### 1. Prerequisites
 - [Java 17+ LTS](https://www.oracle.com/java/technologies/downloads/)
 - [Flutter SDK](https://flutter.dev/) (v3.22+)
-- [Docker & Docker Compose](https://www.docker.com/)
+- [MySQL](https://www.mysql.com/) or [Docker](https://www.docker.com/)
 
 ---
 
 ### 2. Backend Setup & Run
 
-#### Option A: Run via Docker Compose (Recommended)
-```bash
-docker compose up --build -d
-```
-This starts:
-1. **PostgreSQL** on port `5432` (`bramble_db`)
-2. **Spring Boot API** on `http://localhost:8080`
-3. Automatically executes Flyway migrations and seeds demo novels, authors, chapters, and comments.
-
-#### Option B: Run Locally with Maven / H2 In-Memory (Dev Profile)
+#### Option A: Run Locally via Gradle Wrapper
 ```bash
 cd backend
 
-# Build and run with dev profile (uses embedded H2 database & automatic seed)
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+# Windows
+.\gradlew.bat bootRun
+
+# macOS / Linux
+./gradlew bootRun
 ```
 
-- Backend API Base URL: `http://localhost:8080/api`
-- Swagger UI Documentation: `http://localhost:8080/swagger-ui.html`
-- OpenAPI JSON Spec: `http://localhost:8080/v3/api-docs`
+#### Option B: Run via Docker Compose
+```bash
+docker compose up --build -d
+```
+
+- **Backend API Base URL**: `http://localhost:8080/api`
+- **Swagger UI Documentation**: `http://localhost:8080/swagger-ui.html`
+- **OpenAPI JSON Spec**: `http://localhost:8080/v3/api-docs`
 
 ---
 
@@ -93,14 +122,17 @@ cd mobile
 # 1. Fetch dependencies
 flutter pub get
 
-# 2. Run unit & widget tests
+# 2. Run static analysis (0 errors, 0 warnings guaranteed)
+flutter analyze
+
+# 3. Run unit & widget test suite (17/17 tests passing)
 flutter test
 
-# 3. Run application
+# 4. Run application
 flutter run
 ```
 
-> **Note for Android Emulator**: The app automatically resolves backend host to `http://10.0.2.2:8080/api`. On Web/iOS/Desktop it resolves to `http://localhost:8080/api`.
+> **Note for Android Emulator**: The app automatically resolves the backend host to `http://10.0.2.2:8080/api`. On Web/iOS/Desktop it resolves to `http://localhost:8080/api`.
 
 ---
 
@@ -108,7 +140,7 @@ flutter run
 
 | Role | Email | Password | Features |
 |---|---|---|---|
-| **Reader** | `noor@example.com` | `password123` | Pre-loaded shelf, active reading on *The Starlit Citadel*, 350 coins |
+| **Reader** | `noor@example.com` | `password123` | Pre-loaded shelf, active reading progress, 120 coins |
 | **Admin** | `admin@bramble.com` | `admin123` | Full admin privileges for novels & chapters via `/api/admin/**` |
 
 ---
@@ -121,7 +153,7 @@ flutter run
 - `POST /api/auth/refresh` - Refresh access token
 - `POST /api/auth/logout` - Invalidate refresh token
 - `GET /api/users/me` - Get current user profile and preferences
-- `PUT /api/users/me/preferences` - Update user theme, font size, margins, sound effects
+- `PUT /api/users/me/preferences` - Update user preferences
 
 ### Catalog & Discovery (`/api/books` & `/api/discover`)
 - `GET /api/books` - List/filter books with pagination (`search`, `genre`, `status`, `sortBy`, `page`, `limit`)
@@ -170,4 +202,4 @@ flutter run
 cd mobile
 flutter build apk --release
 ```
-The output APK will be located at `mobile/build/app/outputs/flutter-apk/app-release.apk`.
+Output APK location: `mobile/build/app/outputs/flutter-apk/app-release.apk`.

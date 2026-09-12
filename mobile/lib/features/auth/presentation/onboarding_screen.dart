@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/storage/local_storage.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
 import '../../../core/widgets/bramble_chip.dart';
-import 'auth_controller.dart';
+import 'bloc/auth_bloc.dart';
 
-class OnboardingScreen extends ConsumerStatefulWidget {
+class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
+class _OnboardingScreenState extends State<OnboardingScreen> {
   int _step = 0;
 
   final Map<String, bool> _genres = {
@@ -38,10 +38,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     } else {
       // Save preferences & finish onboarding
       final selectedGenres = _genres.entries.where((e) => e.value).map((e) => e.key).toList();
-      await ref.read(authControllerProvider.notifier).updatePreferences({
-        'selectedGenres': selectedGenres,
-        'readingPace': _pace,
-      });
+      context.read<AuthBloc>().add(
+            AuthUpdatePreferencesRequested({
+              'selectedGenres': selectedGenres,
+              'readingPace': _pace,
+            }),
+          );
       await LocalStorage.setOnboardingCompleted(true);
       if (mounted) context.go('/home');
     }

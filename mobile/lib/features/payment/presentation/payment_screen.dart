@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
-import '../../auth/presentation/auth_controller.dart';
+import '../../auth/presentation/bloc/auth_bloc.dart';
 
 enum _PaymentStage { select, detail, loading, success }
 
-class PaymentScreen extends ConsumerStatefulWidget {
+class PaymentScreen extends StatefulWidget {
   final Map<String, dynamic>? pendingPack;
 
   const PaymentScreen({super.key, this.pendingPack});
 
   @override
-  ConsumerState<PaymentScreen> createState() => _PaymentScreenState();
+  State<PaymentScreen> createState() => _PaymentScreenState();
 }
 
-class _PaymentScreenState extends ConsumerState<PaymentScreen> {
+class _PaymentScreenState extends State<PaymentScreen> {
   _PaymentStage _stage = _PaymentStage.select;
   String? _method;
   final _cardNumController = TextEditingController();
@@ -60,7 +60,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       final pack = widget.pendingPack;
       if (pack != null) {
         final coins = int.tryParse(pack['coins'].toString()) ?? 0;
-        ref.read(authControllerProvider.notifier).addCoins(coins);
+        context.read<AuthBloc>().add(AuthAddCoinsRequested(coins));
       }
       setState(() => _stage = _PaymentStage.success);
     });

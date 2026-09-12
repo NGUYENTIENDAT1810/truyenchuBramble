@@ -4,7 +4,7 @@ import 'package:bramble_mobile/features/auth/domain/user_model.dart';
 void main() {
   group('UserModel Domain Test', () {
     test('JSON serialization & deserialization', () {
-      final user = UserModel(
+      const user = UserModel(
         id: 'user-123',
         email: 'noor@example.com',
         name: 'Noor Rahim',
@@ -24,7 +24,7 @@ void main() {
     });
 
     test('CopyWith updates properties correctly', () {
-      final user = UserModel(
+      const user = UserModel(
         id: 'user-1',
         email: 'test@bramble.com',
         name: 'Test',

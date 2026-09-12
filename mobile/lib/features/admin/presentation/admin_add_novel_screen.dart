@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
 import '../../../core/widgets/bramble_chip.dart';
-import '../../books/presentation/novel_detail_screen.dart' show bookRepositoryProvider;
+import '../../books/data/book_repository.dart';
 
-class AdminAddNovelScreen extends ConsumerStatefulWidget {
+class AdminAddNovelScreen extends StatefulWidget {
   const AdminAddNovelScreen({super.key});
 
   @override
-  ConsumerState<AdminAddNovelScreen> createState() => _AdminAddNovelScreenState();
+  State<AdminAddNovelScreen> createState() => _AdminAddNovelScreenState();
 }
 
-class _AdminAddNovelScreenState extends ConsumerState<AdminAddNovelScreen> {
+class _AdminAddNovelScreenState extends State<AdminAddNovelScreen> {
   final _titleController = TextEditingController();
   final _authorController = TextEditingController();
   final _blurbController = TextEditingController();
@@ -51,7 +51,7 @@ class _AdminAddNovelScreenState extends ConsumerState<AdminAddNovelScreen> {
     if (!_ready || _published || _publishing) return;
     setState(() => _publishing = true);
     try {
-      await ref.read(bookRepositoryProvider).createBook(
+      await context.read<BookRepository>().createBook(
             title: _titleController.text.trim(),
             description: _blurbController.text.trim(),
           );

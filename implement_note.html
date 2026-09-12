@@ -87,77 +87,78 @@
 </head>
 <body>
   <div class="container">
-    <div class="badge">BRAMBLE RELEASE 2.0.0 - JAVA SPRING BOOT 3 & FLUTTER FULLSTACK VERIFIED</div>
+    <div class="badge">BRAMBLE RELEASE 2.1.0 - STATE MANAGEMENT ARCHITECTURAL MIGRATION (BLoC / CUBIT)</div>
     <h1>Implementation Note - Hệ Thống Bramble Novel Reader</h1>
 
     <h2>1. Task</h2>
-    <p>Xây dựng trọn gói hệ thống ứng dụng đọc truyện chữ <strong>Bramble</strong> mobile-first chuẩn production-ready với mobile client bằng Flutter và backend API bằng <strong>Java Spring Boot 3.3.x (Java 17 LTS)</strong>, Spring Data JPA, Hibernate, Spring Security + JWT, Flyway migration, PostgreSQL, OpenAPI/Swagger và Docker Compose.</p>
+    <p>Chuyển đổi toàn diện kiến trúc State Management của ứng dụng Flutter Mobile <strong>Bramble</strong> từ <strong>Flutter Riverpod</strong> sang <strong>BLoC / Cubit</strong> (sử dụng <code>flutter_bloc: ^8.1.6</code>, <code>equatable: ^2.0.5</code>, <code>bloc_test: ^9.1.7</code>). Loại bỏ 100% Riverpod khỏi production codebase mà không làm thay đổi Backend API, Spring Boot backend, MySQL database hay Design System.</p>
 
     <h2>2. Nguyên Nhân & Mục Tiêu</h2>
     <ul>
-      <li>Xây dựng backend bằng <strong>Java Spring Boot</strong> theo kiến trúc nhiều tầng (Layered Architecture): <code>config/</code>, <code>security/</code>, <code>controller/</code>, <code>service/</code>, <code>repository/</code>, <code>entity/</code>, <code>dto/</code>, <code>mapper/</code>, <code>exception/</code>.</li>
-      <li>Hiện thực hóa thiết kế editorial cao cấp của Bramble (nền Cream <code>#f5ead8</code>, Sepia <code>#e8d7b4</code>, Night <code>#211f1c</code>, typography Caprasimo/Figtree/Lora, cards bo góc lớn, reader tối giản).</li>
-      <li>Không hard-code dữ liệu trong Flutter; kết nối thực tế tới REST API với đầy đủ tính năng: xác thực JWT, tủ sách cá nhân, tiến độ đọc auto-sync, bình luận theo đoạn văn, mở khóa chương bằng coin, thống kê và đọc offline.</li>
+      <li>Chuẩn hóa kiến trúc doanh nghiệp theo <strong>BLoC Pattern & Clean Architecture</strong>: phân định rõ ràng giữa Event, State, Cubit, BLoC, Repository và UI Presentation Layer.</li>
+      <li>Quản lý trạng thái bất biến (Immutable State) với <code>Equatable</code>, hỗ trợ testability cao và phân tách rõ luồng xử lý side-effects.</li>
+      <li>Điều hướng xác thực hoàn toàn tất định (Deterministic Auth Routing) bằng <code>GoRouterRefreshStream(authBloc.stream)</code>, giải quyết triệt để rủi ro redirect loop.</li>
+      <li>Giữ nguyên 100% giao diện High-End Editorial / Literary design system, font chữ (Lora, Figtree), theme (Cream, Sepia, Night) và toàn bộ business logic.</li>
     </ul>
 
-    <h2>3. Danh Sách Files Đã Tạo & Cấu Trúc Dự Án</h2>
+    <h2>3. Danh Sách BLoCs, Cubits & Files Đã Di Chuyển</h2>
     <table>
       <thead>
         <tr>
-          <th>Module</th>
-          <th>Thư Mục / File</th>
-          <th>Mô Tả Chức Năng</th>
+          <th>Feature Module</th>
+          <th>BLoC / Cubit / State Classes</th>
+          <th>Presentation Screens Đã Migrate</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Spring Boot API Controllers</strong></td>
-          <td><code>backend/.../controller/*</code></td>
-          <td><code>AuthController</code>, <code>BookController</code>, <code>DiscoverController</code>, <code>ChapterController</code>, <code>LibraryController</code>, <code>ReaderController</code>, <code>CommentController</code>, <code>StatsController</code>, <code>AdminController</code>.</td>
+          <td><strong>Dependency Injection</strong></td>
+          <td><code>MultiRepositoryProvider</code> &amp; <code>MultiBlocProvider</code> tại <code>main.dart</code></td>
+          <td>Cấu hình Composition Root cho toàn bộ Repositories và Global BLoCs/Cubits.</td>
         </tr>
         <tr>
-          <td><strong>Service & Business Layer</strong></td>
-          <td><code>backend/.../service/*</code></td>
-          <td><code>AuthService</code>, <code>BookService</code>, <code>ChapterService</code>, <code>LibraryService</code>, <code>ReaderService</code>, <code>CommentService</code>, <code>StatsService</code>, <code>AdminService</code>.</td>
+          <td><strong>Auth & Routing</strong></td>
+          <td><code>AuthBloc</code> (<code>AuthEvent</code>, <code>AuthState</code>)</td>
+          <td><code>LoginScreen</code>, <code>SignupScreen</code>, <code>OnboardingScreen</code>, <code>EditProfileScreen</code>, <code>AppRouter</code> (với <code>GoRouterRefreshStream</code>).</td>
         </tr>
         <tr>
-          <td><strong>Security & JWT</strong></td>
-          <td><code>backend/.../security/*</code>, <code>backend/.../config/SecurityConfig.java</code></td>
-          <td>Spring Security 6 stateless filter chain, <code>JwtTokenProvider</code> (JJWT 0.12.5), <code>JwtAuthenticationFilter</code>, <code>CustomUserDetailsService</code>, <code>UserPrincipal</code>.</td>
+          <td><strong>Home & Discover</strong></td>
+          <td><code>HomeBloc</code> (<code>HomeEvent</code>, <code>HomeState</code>), <code>DiscoverBloc</code> (<code>DiscoverEvent</code>, <code>DiscoverState</code>)</td>
+          <td><code>HomeScreen</code>, <code>DiscoverScreen</code>.</td>
         </tr>
         <tr>
-          <td><strong>Entities & Repositories</strong></td>
-          <td><code>backend/.../entity/*</code>, <code>backend/.../repository/*</code></td>
-          <td>JPA/Hibernate Entities (<code>User</code>, <code>UserPreferences</code>, <code>Author</code>, <code>Genre</code>, <code>Book</code>, <code>Chapter</code>, <code>Library</code>, <code>ReadingProgress</code>, <code>ReadingHistory</code>, <code>Comment</code>, <code>CommentLike</code>, <code>RefreshToken</code>) & Spring Data JPA Repositories.</td>
+          <td><strong>Books & Authors</strong></td>
+          <td><code>BookDetailCubit</code>, <code>AuthorDetailCubit</code></td>
+          <td><code>NovelDetailScreen</code>, <code>ChapterListScreen</code>, <code>AuthorScreen</code>, <code>AdminAddNovelScreen</code>.</td>
         </tr>
         <tr>
-          <td><strong>Flyway & Seeding</strong></td>
-          <td><code>backend/src/main/resources/db/migration/V1__create_tables.sql</code>, <code>DataSeeder.java</code></td>
-          <td>Flyway migration 13 bảng cơ sở dữ liệu và CommandLineRunner seed 10+ tiểu thuyết, tác giả, thể loại, chương mẫu và bình luận.</td>
+          <td><strong>Library</strong></td>
+          <td><code>LibraryBloc</code> (<code>LibraryEvent</code>, <code>LibraryState</code>), <code>LibrarySelectionCubit</code></td>
+          <td><code>LibraryScreen</code> (hỗ trợ tab filter, multi-select bulk actions).</td>
         </tr>
         <tr>
-          <td><strong>Docker & Infrastructure</strong></td>
-          <td><code>docker-compose.yml</code>, <code>backend/Dockerfile</code></td>
-          <td>Multi-stage Maven + Eclipse Temurin 17 JRE container và persistent PostgreSQL 16 container.</td>
+          <td><strong>Reader Engine</strong></td>
+          <td><code>ReaderBloc</code>, <code>ReaderSettingsCubit</code></td>
+          <td><code>ReaderScreen</code>, <code>ReaderSettingsSheet</code>, <code>PaywallSheet</code>, <code>AppearanceScreen</code>.</td>
         </tr>
         <tr>
-          <td><strong>Flutter Mobile Client</strong></td>
-          <td><code>mobile/lib/*</code></td>
-          <td>Clean Architecture với Riverpod, GoRouter shell navigation, Dio ApiClient, OfflineChapterStorage, và toàn bộ màn hình theo prototype Bramble.</td>
+          <td><strong>Comments, Stats & Preferences</strong></td>
+          <td><code>CommentsCubit</code>, <code>StatsCubit</code>, <code>NotificationsCubit</code>, <code>SettingsPreferencesCubit</code></td>
+          <td><code>CommentsScreen</code>, <code>StatsScreen</code>, <code>NotificationsScreen</code>, <code>SettingsScreen</code>, <code>PaymentScreen</code>.</td>
         </tr>
       </tbody>
     </table>
 
     <h2>4. Logic Thay Đổi & Điểm Nổi Bật</h2>
     <ul>
-      <li><strong>Layered Architecture & Separation of Concerns</strong>: Tách biệt hoàn toàn Controller (HTTP handling) &rarr; Service (Business Logic) &rarr; Repository (Data Access) &rarr; Entity/DTO Mappers.</li>
-      <li><strong>Spring Security + Stateless JWT</strong>: Token-based authentication với Access Token (1 ngày) và Refresh Token rotation (7 ngày) lưu trong database.</li>
-      <li><strong>Reader Engine</strong>: 3 giao diện đọc (Cream, Sepia, Night), tùy biến font/size/line-height/margin, auto-sync scroll vị trí đọc, mở khóa chương VIP bằng coins.</li>
-      <li><strong>Swagger/OpenAPI 3.0</strong>: Tự động tạo tài liệu API tương tác tại <code>http://localhost:8080/swagger-ui.html</code>.</li>
+      <li><strong>Xóa bỏ hoàn toàn Riverpod</strong>: Gỡ bỏ <code>flutter_riverpod</code> trong <code>pubspec.yaml</code>, loại bỏ toàn bộ <code>ProviderScope</code>, <code>ConsumerWidget</code>, <code>ConsumerStatefulWidget</code>, <code>ref.watch</code>, <code>ref.read</code> và thay bằng <code>BlocBuilder</code>, <code>BlocListener</code>, <code>context.read</code>, <code>context.watch</code>.</li>
+      <li><strong>Deterministic Auth Flow</strong>: <code>AppRouter</code> lắng nghe trực tiếp <code>AuthBloc</code> qua Stream; router refresh ngay lập tức khi đăng nhập, đăng ký hoặc đăng xuất.</li>
+      <li><strong>Local Storage Encapsulation</strong>: Tích hợp đọc/ghi dữ liệu cài đặt người dùng (theme, cỡ chữ, khoảng cách lề, quyền thông báo) trực tiếp trong BLoC/Cubit, giữ các widget view hoàn toàn độc lập với storage.</li>
+      <li><strong>Repository Layer Preservation</strong>: Giữ nguyên 100% các repository (<code>AuthRepository</code>, <code>BookRepository</code>, <code>LibraryRepository</code>, <code>ReaderRepository</code>, <code>CommentsRepository</code>, <code>StatsRepository</code>, <code>DiscoverRepository</code>, <code>HomeRepository</code>) và tầng mạng <code>ApiClient</code> (Dio).</li>
     </ul>
 
     <h2>5. Phạm Vi Ảnh Hưởng</h2>
-    <p>Thay thế hoàn toàn runtime backend từ Node.js sang Java Spring Boot 3.3.x tiêu chuẩn. Mobile client đồng bộ port mặc định sang <code>8080</code> và tương thích 100% với các REST endpoints.</p>
+    <p>Chỉ thay đổi tầng State Management và Presentation Layer của ứng dụng Flutter Mobile. Không tác động đến REST API contract, Java Spring Boot backend, cơ sở dữ liệu MySQL hay cơ chế xác thực JWT.</p>
 
     <h2>6. Danh Sách API Liên Quan</h2>
     <ul>
@@ -168,19 +169,14 @@
       <li><code>GET /api/me/active-reading</code> &amp; <code>POST /api/me/books/{bookId}/progress</code></li>
       <li><code>GET /api/chapters/{chapterId}/comments</code> &amp; <code>POST /api/chapters/{chapterId}/comments</code> &amp; <code>POST /api/comments/{id}/like</code></li>
       <li><code>GET /api/me/stats</code></li>
-      <li><code>/api/admin/**</code> (Dành riêng cho ADMIN role)</li>
     </ul>
 
     <h2>7. Cách Kiểm Thử (Testing Guide)</h2>
     <ol>
-      <li><strong>Build Backend bằng Gradle Wrapper</strong>:
-        <pre><code>cd backend && gradlew.bat build</code></pre>
+      <li><strong>Chạy Phân Tích Mã Nguồn Mobile (Linter)</strong>:
+        <pre><code>cd mobile && flutter analyze</code></pre>
       </li>
-      <li><strong>Chạy Backend bằng Gradle Wrapper</strong>:
-        <pre><code>cd backend && gradlew.bat bootRun</code></pre>
-        Truy cập Swagger UI: <a href="http://localhost:8080/swagger-ui.html" target="_blank">http://localhost:8080/swagger-ui.html</a>
-      </li>
-      <li><strong>Chạy Unit Tests cho Mobile</strong>:
+      <li><strong>Chạy Bộ Kiểm Thử Tự Động (Unit & Widget Tests)</strong>:
         <pre><code>cd mobile && flutter test</code></pre>
       </li>
       <li><strong>Chạy Ứng Dụng Flutter Mobile</strong>:
@@ -188,27 +184,19 @@
       </li>
     </ol>
 
-    <h2>8. Kết Quả Kiểm Thử & Tình Trạng Mã Nguồn</h2>
+    <h2>8. Kết Quả Kiểm Thử & Nghiệm Thu</h2>
     <ul>
-      <li><code>Bramble Editorial UI/UX Refactor</code>: Nâng cấp toàn diện giao diện Mobile Flutter theo chuẩn sách in cao cấp (Editorial/Literary), loại bỏ hoàn toàn cảm giác mockup/prototype.</li>
-      <li><code>Design System & Typography</code>: Chuẩn hóa <code>BrambleColors</code> (semantic surfaces, divider, borders), <code>BrambleTypography</code> (Caprasimo Display + Lora/Figtree) và <code>BrambleTheme</code>.</li>
-      <li><code>BookCoverView 2:3</code>: Chuẩn hóa hiển thị bìa truyện tỷ lệ 2:3 với NetworkImage cache, fallback typography sang trọng với hiệu ứng gáy sách (book spine) và inner frame border.</li>
-      <li><code>BrambleBottomBar</code>: Thanh điều hướng dạng floating capsule thanh lịch, tích hợp <code>SafeArea</code> và gradient chống che nội dung.</li>
-      <li><code>Screen Upgrades</code>:
+      <li><code>flutter_riverpod dependency</code>: <strong>Đã gỡ bỏ 100%</strong> khỏi <code>pubspec.yaml</code> và toàn bộ code base.</li>
+      <li><code>flutter analyze</code>: <strong>No issues found!</strong> (0 errors, 0 warnings, 0 infos).</li>
+      <li><code>flutter test</code>: <strong>17/17 tests passed (100%)</strong> bao gồm:
         <ul>
-          <li><strong>Home Screen</strong>: Greeting header, streak badge, notification bell, Continue Reading hero card, New Chapters horizontal list, Curated recommendations.</li>
-          <li><strong>Discover Screen</strong>: Search bar thanh thoát, genre tag filters, danh sách xếp hạng có số thứ tự typography to rõ.</li>
-          <li><strong>Library Screen</strong>: Kệ sách cá nhân (Reading, Saved, Downloaded), progress bar sage green, Select & Bulk Action mode.</li>
-          <li><strong>Novel Detail Screen</strong>: Bìa sách 2:3 lớn, tác giả, tags, stats card 3 cột, expandable blurb, CTA "Start/Continue Reading", Preview chương mới nhất.</li>
-          <li><strong>Table of Contents (Chapter List)</strong>: Scan chương dễ dàng, sắp xếp Newest/Oldest, trạng thái Khóa/Mở/Coins rõ ràng.</li>
-          <li><strong>Reader Screen & Settings</strong>: 3 theme (Cream, Sepia, Night), tùy chỉnh font/size/line-height, ẩn/hiện controls mượt mà, thanh điều hướng Next/Prev chapter ở đáy, Like & Note bar cuối văn bản.</li>
-          <li><strong>Comments & Stats Screen</strong>: Reader notes phong cách blockquote, thống kê thói quen đọc sách 7 ngày và mục tiêu hàng ngày dạng circular chart.</li>
+          <li><code>auth_bloc_test.dart</code>: Kiểm tra toàn diện AuthCheck, AuthLogin, AuthLogout, Error handling.</li>
+          <li><code>reader_settings_cubit_test.dart</code>: Kiểm tra khởi tạo state, đổi theme, clamp cỡ chữ, typeface, margins.</li>
+          <li><code>reader_settings_test.dart</code> &amp; <code>user_model_test.dart</code>: Kiểm tra domain logic và JSON serialization.</li>
+          <li><code>widget_test.dart</code>: Kiểm tra render và tương tác với các widget cốt lõi.</li>
         </ul>
       </li>
-      <li><code>Zero RenderFlex Overflow</code>: Toàn bộ Row/Column chứa dynamic text đã được bọc <code>Expanded</code>/<code>Flexible</code> với <code>TextOverflow.ellipsis</code> và padding an toàn.</li>
-      <li><code>Data & Logic Preservation</code>: Giữ nguyên 100% API contract, Riverpod state management, Spring Boot backend và database. Không hard-code mock data.</li>
-      <li><code>flutter analyze</code>: <strong>No issues found!</strong> (0 errors, 0 warnings).</li>
-      <li><code>flutter test</code>: <strong>All 8 tests passed (100%)</strong>.</li>
+      <li><code>Business Logic & UI Fidelity</code>: Toàn bộ trải nghiệm đọc truyện, tủ sách cá nhân, mua chương bằng coin, bình luận đoạn văn và thiết kế cao cấp được bảo toàn nguyên vẹn.</li>
     </ul>
   </div>
 </body>

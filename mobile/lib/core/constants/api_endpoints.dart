@@ -1,7 +1,7 @@
 class ApiEndpoints {
   // Default to current machine IP (192.168.50.131) or 10.0.2.2 for Android emulator
-  static String baseUrl = 'http://192.168.50.131:8080/api';
-  static String webBaseUrl = 'http://192.168.50.131:8080/api';
+  static String baseUrl = 'http://192.168.50.136:8080/api';
+  static String webBaseUrl = 'http://10.0.2.2:8080/api';
 
   // Auth
   static const String register = '/auth/register';

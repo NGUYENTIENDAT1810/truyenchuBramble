@@ -1,25 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/loading_indicator.dart';
+import '../data/comments_repository.dart';
 import '../domain/comment_model.dart';
-import 'comments_controller.dart';
+import 'cubit/comments_cubit.dart';
 
-class CommentsScreen extends ConsumerStatefulWidget {
+class CommentsScreen extends StatelessWidget {
   final String chapterId;
 
   const CommentsScreen({super.key, required this.chapterId});
 
   @override
-  ConsumerState<CommentsScreen> createState() => _CommentsScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => CommentsCubit(
+        commentsRepository: context.read<CommentsRepository>(),
+      )..loadComments(chapterId),
+      child: _CommentsView(chapterId: chapterId),
+    );
+  }
 }
 
-class _CommentsScreenState extends ConsumerState<CommentsScreen> {
+class _CommentsView extends StatefulWidget {
+  final String chapterId;
+
+  const _CommentsView({required this.chapterId});
+
+  @override
+  State<_CommentsView> createState() => _CommentsViewState();
+}
+
+class _CommentsViewState extends State<_CommentsView> {
   final _commentController = TextEditingController();
-  final Map<String, int> _likeCounts = {};
-  final Map<String, bool> _isLikedMap = {};
 
   @override
   void dispose() {
@@ -27,52 +42,25 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
     super.dispose();
   }
 
-  void _submitComment() async {
+  void _submitComment() {
     final text = _commentController.text.trim();
     if (text.isEmpty) return;
 
     _commentController.clear();
     FocusScope.of(context).unfocus();
 
-    try {
-      final repo = ref.read(commentsRepositoryProvider);
-      await repo.createComment(chapterId: widget.chapterId, content: text);
-      ref.invalidate(chapterCommentsProvider(widget.chapterId));
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: BrambleColors.creamSurface,
-            content: Text(
-              e.toString(),
-              style: BrambleTypography.bodyMedium(color: BrambleColors.creamInk),
-            ),
-          ),
+    context.read<CommentsCubit>().addComment(
+          chapterId: widget.chapterId,
+          content: text,
         );
-      }
-    }
   }
 
-  void _toggleLike(CommentModel c) async {
-    final currentLiked = _isLikedMap[c.id] ?? c.isLiked;
-    final currentLikes = _likeCounts[c.id] ?? c.likes;
-
-    setState(() {
-      _isLikedMap[c.id] = !currentLiked;
-      _likeCounts[c.id] = currentLiked ? (currentLikes - 1) : (currentLikes + 1);
-    });
-
-    try {
-      final repo = ref.read(commentsRepositoryProvider);
-      final isLiked = await repo.toggleLikeComment(c.id);
-      setState(() => _isLikedMap[c.id] = isLiked);
-    } catch (_) {}
+  void _toggleLike(CommentModel c) {
+    context.read<CommentsCubit>().toggleLike(c.id);
   }
 
   @override
   Widget build(BuildContext context) {
-    final commentsAsync = ref.watch(chapterCommentsProvider(widget.chapterId));
-
     return Scaffold(
       backgroundColor: BrambleColors.creamBg,
       body: SafeArea(
@@ -138,13 +126,21 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
 
             // Main List
             Expanded(
-              child: commentsAsync.when(
-                loading: () => const BrambleLoading(message: 'Loading reader notes...'),
-                error: (err, _) => BrambleErrorView(
-                  message: err.toString(),
-                  onRetry: () => ref.refresh(chapterCommentsProvider(widget.chapterId)),
-                ),
-                data: (comments) {
+              child: BlocBuilder<CommentsCubit, CommentsState>(
+                builder: (context, state) {
+                  if (state is CommentsLoading || state is CommentsInitial) {
+                    return const BrambleLoading(message: 'Loading reader notes...');
+                  }
+
+                  if (state is CommentsFailure) {
+                    return BrambleErrorView(
+                      message: state.message,
+                      onRetry: () => context.read<CommentsCubit>().loadComments(widget.chapterId),
+                    );
+                  }
+
+                  final comments = state is CommentsLoaded ? state.comments : <CommentModel>[];
+
                   if (comments.isEmpty) {
                     return const BrambleEmptyState(
                       icon: Icons.chat_bubble_outline_rounded,
@@ -162,8 +158,6 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
                     ),
                     itemBuilder: (context, index) {
                       final c = comments[index];
-                      final isLiked = _isLikedMap[c.id] ?? c.isLiked;
-                      final likesCount = _likeCounts[c.id] ?? c.likes;
 
                       return Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,12 +246,12 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
                                         height: 26,
                                         padding: const EdgeInsets.symmetric(horizontal: 10),
                                         decoration: BoxDecoration(
-                                          color: isLiked
+                                          color: c.isLiked
                                               ? BrambleColors.primaryOrange
                                               : BrambleColors.creamSurface,
                                           borderRadius: BorderRadius.circular(999),
                                           border: Border.all(
-                                            color: isLiked
+                                            color: c.isLiked
                                                 ? BrambleColors.primaryOrange
                                                 : BrambleColors.creamBorder.withOpacity(0.5),
                                             width: 1,
@@ -269,15 +263,15 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
                                             Icon(
                                               Icons.favorite_rounded,
                                               size: 13,
-                                              color: isLiked
+                                              color: c.isLiked
                                                   ? const Color(0xFFFFF2EB)
                                                   : BrambleColors.creamMuted,
                                             ),
                                             const SizedBox(width: 4),
                                             Text(
-                                              '$likesCount',
+                                              '${c.likes}',
                                               style: BrambleTypography.caption(
-                                                color: isLiked
+                                                color: c.isLiked
                                                     ? const Color(0xFFFFF2EB)
                                                     : BrambleColors.creamSubdued,
                                                 fontWeight: FontWeight.w700,

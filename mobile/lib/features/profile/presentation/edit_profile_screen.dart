@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
-import '../../auth/presentation/auth_controller.dart';
+import '../../auth/presentation/bloc/auth_bloc.dart';
 
-class EditProfileScreen extends ConsumerStatefulWidget {
+class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
 
   @override
-  ConsumerState<EditProfileScreen> createState() => _EditProfileScreenState();
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
+class _EditProfileScreenState extends State<EditProfileScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _bioController;
   bool _saving = false;
@@ -20,7 +20,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final user = ref.read(authControllerProvider).user;
+    final user = context.read<AuthBloc>().state.user;
     _nameController = TextEditingController(text: user?.name ?? '');
     _bioController = TextEditingController(text: user?.bio ?? '');
   }
@@ -32,18 +32,20 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     super.dispose();
   }
 
-  void _save() async {
+  void _save() {
     setState(() => _saving = true);
-    await ref.read(authControllerProvider.notifier).updateLocalProfile(
-          name: _nameController.text.trim(),
-          bio: _bioController.text.trim(),
+    context.read<AuthBloc>().add(
+          AuthUpdateProfileRequested(
+            name: _nameController.text.trim(),
+            bio: _bioController.text.trim(),
+          ),
         );
     if (mounted) context.pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authControllerProvider).user;
+    final user = context.watch<AuthBloc>().state.user;
     final initial = user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'N';
 
     return Scaffold(

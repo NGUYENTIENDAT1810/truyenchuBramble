@@ -18,22 +18,24 @@ class BrambleChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
+      child: Container(
         height: height,
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        // alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected ? BrambleColors.primaryOrange : BrambleColors.creamSurface,
+          color: isSelected
+              ? BrambleColors.primaryOrange
+              : BrambleColors.creamSurface,
           borderRadius: BorderRadius.circular(999),
         ),
         child: Text(
           label,
           style: BrambleTypography.bodySmall(
-            color: isSelected ? const Color(0xFFFFF2EB) : const Color(0xFF474238),
-            fontWeight: FontWeight.w700,
+            color:
+                isSelected ? const Color(0xFFFFF2EB) : const Color(0xFF474238),
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),

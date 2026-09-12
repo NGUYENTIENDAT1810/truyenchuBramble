@@ -8,11 +8,11 @@ class UserModel {
   final String? bio;
   final Map<String, dynamic>? preferences;
 
-  UserModel({
+  const UserModel({
     required this.id,
     required this.email,
     required this.name,
-    required this.role,
+    this.role = 'USER',
     this.coins = 120,
     this.isPremium = false,
     this.bio,

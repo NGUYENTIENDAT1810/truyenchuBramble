@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_theme.dart';
 import '../../../core/theme/bramble_typography.dart';
-import '../../reader/presentation/reader_controller.dart';
-import 'settings_preferences_controller.dart';
+import '../../reader/presentation/cubit/reader_settings_cubit.dart';
+import 'cubit/settings_preferences_cubit.dart';
 
-class AppearanceScreen extends ConsumerStatefulWidget {
+class AppearanceScreen extends StatefulWidget {
   const AppearanceScreen({super.key});
 
   @override
-  ConsumerState<AppearanceScreen> createState() => _AppearanceScreenState();
+  State<AppearanceScreen> createState() => _AppearanceScreenState();
 }
 
-class _AppearanceScreenState extends ConsumerState<AppearanceScreen> {
+class _AppearanceScreenState extends State<AppearanceScreen> {
   @override
   Widget build(BuildContext context) {
-    final settings = ref.watch(readerSettingsProvider);
-    final notifier = ref.read(readerSettingsProvider.notifier);
-    final prefs = ref.watch(settingsPreferencesProvider);
-    final prefsNotifier = ref.read(settingsPreferencesProvider.notifier);
+    final settings = context.watch<ReaderSettingsCubit>().state;
+    final notifier = context.read<ReaderSettingsCubit>();
+    final prefs = context.watch<SettingsPreferencesCubit>().state;
+    final prefsNotifier = context.read<SettingsPreferencesCubit>();
     final themeConfig = ReaderThemeConfig.fromMode(settings.themeMode);
 
     final marginOptions = ['Narrow', 'Regular', 'Wide'];

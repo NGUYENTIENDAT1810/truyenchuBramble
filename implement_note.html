@@ -295,6 +295,7 @@
       <li><strong>Universal Index Operator Support</strong>: Mỗi model đều triển khai <code>dynamic operator [](String key)</code> ánh xạ các key JSON phổ biến và các alias cũ, loại bỏ nguy cơ runtime error ở các màn hình view kế thừa.</li>
       <li><strong>ActiveReadingModel Compatibility</strong>: Mở rộng <code>ActiveReadingModel.operator []</code> (hỗ trợ <code>bookTitle</code>, <code>author</code>, <code>coverUrl</code>, <code>percentage</code>, <code>pctText</code>) và loại bỏ ép kiểu cứng <code>as Map&lt;String, dynamic&gt;?</code> tại <code>home_screen.dart</code>.</li>
       <li><strong>BookDetailState ChapterModel Sync</strong>: Cập nhật <code>BookDetailLoaded.chapters</code> từ <code>List&lt;Map&lt;String, dynamic&gt;&gt;</code> sang <code>List&lt;ChapterModel&gt;</code> tại <code>book_detail_cubit.dart</code> và <code>chapter_list_screen.dart</code>.</li>
+      <li><strong>Comments Endpoint Alignment</strong>: Cập nhật endpoint tạo comment trong <code>CommentsRepository</code> sang <code>POST /chapters/{chapterId}/comments</code> đồng bộ với Backend Spring Boot <code>CommentController</code> và nâng cấp <code>CommentModel</code> hỗ trợ <code>operator []</code>.</li>
     </ul>
 
     <h2>5. Phạm Vi Ảnh Hưởng</h2>

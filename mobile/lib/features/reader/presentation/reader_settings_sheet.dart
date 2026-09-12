@@ -71,7 +71,8 @@ class ReaderSettingsSheet extends StatelessWidget {
               // Themes
               Text(
                 'THEME',
-                style: BrambleTypography.labelUppercase(color: BrambleColors.creamMuted),
+                style: BrambleTypography.labelUppercase(
+                    color: BrambleColors.creamMuted),
               ),
               const SizedBox(height: 10),
               Row(
@@ -109,7 +110,8 @@ class ReaderSettingsSheet extends StatelessWidget {
               // Typeface
               Text(
                 'TYPEFACE',
-                style: BrambleTypography.labelUppercase(color: BrambleColors.creamMuted),
+                style: BrambleTypography.labelUppercase(
+                    color: BrambleColors.creamMuted),
               ),
               const SizedBox(height: 10),
               Row(
@@ -141,7 +143,8 @@ class ReaderSettingsSheet extends StatelessWidget {
                 children: [
                   Text(
                     'SIZE',
-                    style: BrambleTypography.labelUppercase(color: BrambleColors.creamMuted),
+                    style: BrambleTypography.labelUppercase(
+                        color: BrambleColors.creamMuted),
                   ),
                   Text(
                     '${settings.fontSize.toInt()} px',
@@ -157,7 +160,8 @@ class ReaderSettingsSheet extends StatelessWidget {
                 children: [
                   Text(
                     'A',
-                    style: BrambleTypography.bodySmall(color: BrambleColors.creamMuted),
+                    style: BrambleTypography.bodySmall(
+                        color: BrambleColors.creamMuted),
                   ),
                   Expanded(
                     child: SliderTheme(
@@ -178,7 +182,8 @@ class ReaderSettingsSheet extends StatelessWidget {
                   ),
                   Text(
                     'A',
-                    style: BrambleTypography.titleLarge(color: BrambleColors.creamInk),
+                    style: BrambleTypography.titleLarge(
+                        color: BrambleColors.creamInk),
                   ),
                 ],
               ),
@@ -190,7 +195,8 @@ class ReaderSettingsSheet extends StatelessWidget {
                 children: [
                   Text(
                     'LINE HEIGHT',
-                    style: BrambleTypography.labelUppercase(color: BrambleColors.creamMuted),
+                    style: BrambleTypography.labelUppercase(
+                        color: BrambleColors.creamMuted),
                   ),
                   Text(
                     settings.lineHeight.toStringAsFixed(2),
@@ -210,7 +216,7 @@ class ReaderSettingsSheet extends StatelessWidget {
                 ),
                 child: Slider(
                   value: settings.lineHeight,
-                  min: 1.3,
+                  min: 1.2,
                   max: 2.4,
                   divisions: 11,
                   onChanged: (val) => cubit.setLineHeight(val),
@@ -221,7 +227,8 @@ class ReaderSettingsSheet extends StatelessWidget {
               // Margins
               Text(
                 'MARGINS',
-                style: BrambleTypography.labelUppercase(color: BrambleColors.creamMuted),
+                style: BrambleTypography.labelUppercase(
+                    color: BrambleColors.creamMuted),
               ),
               const SizedBox(height: 10),
               Container(
@@ -240,18 +247,28 @@ class ReaderSettingsSheet extends StatelessWidget {
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 150),
                           decoration: BoxDecoration(
-                            color: isSel ? BrambleColors.creamBg : Colors.transparent,
+                            color: isSel
+                                ? BrambleColors.creamBg
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(999),
                             boxShadow: isSel
-                                ? const [BoxShadow(color: Color(0x1F2E2B25), blurRadius: 2, offset: Offset(0, 1))]
+                                ? const [
+                                    BoxShadow(
+                                        color: Color(0x1F2E2B25),
+                                        blurRadius: 2,
+                                        offset: Offset(0, 1))
+                                  ]
                                 : null,
                           ),
                           child: Center(
                             child: Text(
                               m,
                               style: BrambleTypography.bodySmall(
-                                color: isSel ? BrambleColors.creamInk : BrambleColors.creamMuted,
-                                fontWeight: isSel ? FontWeight.w700 : FontWeight.w500,
+                                color: isSel
+                                    ? BrambleColors.creamInk
+                                    : BrambleColors.creamMuted,
+                                fontWeight:
+                                    isSel ? FontWeight.w700 : FontWeight.w500,
                               ),
                             ),
                           ),
@@ -281,13 +298,15 @@ class ReaderSettingsSheet extends StatelessWidget {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          height: 64,
-          padding: const EdgeInsets.all(10),
+          height: 80,
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: bg,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? BrambleColors.primaryOrange : BrambleColors.creamBorder.withOpacity(0.5),
+              color: isSelected
+                  ? BrambleColors.primaryOrange
+                  : BrambleColors.creamBorder.withOpacity(0.5),
               width: isSelected ? 2.5 : 1,
             ),
           ),
@@ -331,10 +350,14 @@ class ReaderSettingsSheet extends StatelessWidget {
         duration: const Duration(milliseconds: 150),
         height: 48,
         decoration: BoxDecoration(
-          color: isSelected ? BrambleColors.peachSelection : BrambleColors.creamSurface,
+          color: isSelected
+              ? BrambleColors.peachSelection
+              : BrambleColors.creamSurface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? BrambleColors.primaryOrange : BrambleColors.creamBorder.withOpacity(0.5),
+            color: isSelected
+                ? BrambleColors.primaryOrange
+                : BrambleColors.creamBorder.withOpacity(0.5),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -345,7 +368,9 @@ class ReaderSettingsSheet extends StatelessWidget {
               fontFamily: fontFamily == 'serif' ? 'Lora' : 'Figtree',
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: isSelected ? BrambleColors.primaryOrangeDark : BrambleColors.creamInk,
+              color: isSelected
+                  ? BrambleColors.primaryOrangeDark
+                  : BrambleColors.creamInk,
             ),
           ),
         ),

@@ -25,8 +25,8 @@ public interface ChapterRepository extends JpaRepository<Chapter, String> {
     @Query(value = "SELECT * FROM chapters WHERE book_id = :bookId AND chapter_number > :chapterNumber ORDER BY chapter_number ASC LIMIT 1", nativeQuery = true)
     Optional<Chapter> findNextChapter(@Param("bookId") String bookId, @Param("chapterNumber") Integer chapterNumber);
 
-    @Query(value = "SELECT COUNT(*) > 0 FROM unlocked_chapters WHERE user_id = :userId AND chapter_id = :chapterId", nativeQuery = true)
-    boolean isChapterUnlocked(@Param("userId") String userId, @Param("chapterId") String chapterId);
+    @Query(value = "SELECT COUNT(*) FROM unlocked_chapters WHERE user_id = :userId AND chapter_id = :chapterId", nativeQuery = true)
+    long isChapterUnlocked(@Param("userId") String userId, @Param("chapterId") String chapterId);
 
     @Modifying
     @Query(value = "INSERT IGNORE INTO unlocked_chapters (user_id, chapter_id) VALUES (:userId, :chapterId)", nativeQuery = true)

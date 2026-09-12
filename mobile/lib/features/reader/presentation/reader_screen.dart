@@ -162,7 +162,9 @@ class _ReaderViewState extends State<_ReaderView> {
             if (state is ReaderFailure) {
               return BrambleErrorView(
                 message: state.message,
-                onRetry: () => context.read<ReaderBloc>().add(ReaderChapterRequested(widget.chapterId)),
+                onRetry: () => context
+                    .read<ReaderBloc>()
+                    .add(ReaderChapterRequested(widget.chapterId)),
               );
             }
 
@@ -283,7 +285,8 @@ class _ReaderViewState extends State<_ReaderView> {
                                   ),
                                   const SizedBox(height: 18),
                                   BrambleButton(
-                                    text: 'Unlock for ${chapter['coinPrice'] ?? 30} coins',
+                                    text:
+                                        'Unlock for ${chapter['coinPrice'] ?? 30} coins',
                                     onPressed: () => _openPaywallSheet(chapter),
                                   ),
                                 ],
@@ -333,7 +336,8 @@ class _ReaderViewState extends State<_ReaderView> {
                                   },
                                   child: Container(
                                     height: 34,
-                                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14),
                                     decoration: BoxDecoration(
                                       color: _isChapterLiked
                                           ? BrambleColors.primaryOrange
@@ -342,7 +346,8 @@ class _ReaderViewState extends State<_ReaderView> {
                                       border: Border.all(
                                         color: _isChapterLiked
                                             ? BrambleColors.primaryOrange
-                                            : themeConfig.divider.withOpacity(0.5),
+                                            : themeConfig.divider
+                                                .withOpacity(0.5),
                                         width: 1,
                                       ),
                                     ),
@@ -358,7 +363,9 @@ class _ReaderViewState extends State<_ReaderView> {
                                         ),
                                         const SizedBox(width: 6),
                                         Text(
-                                          _isChapterLiked ? 'Liked' : 'Like Chapter',
+                                          _isChapterLiked
+                                              ? 'Liked'
+                                              : 'Like Chapter',
                                           style: BrambleTypography.bodySmall(
                                             color: _isChapterLiked
                                                 ? const Color(0xFFFFF2EB)
@@ -372,15 +379,18 @@ class _ReaderViewState extends State<_ReaderView> {
                                 ),
                                 const SizedBox(width: 10),
                                 GestureDetector(
-                                  onTap: () => context.push('/comments/${widget.chapterId}'),
+                                  onTap: () => context
+                                      .push('/comments/${widget.chapterId}'),
                                   child: Container(
                                     height: 34,
-                                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14),
                                     decoration: BoxDecoration(
                                       color: themeConfig.surface,
                                       borderRadius: BorderRadius.circular(999),
                                       border: Border.all(
-                                        color: themeConfig.divider.withOpacity(0.5),
+                                        color: themeConfig.divider
+                                            .withOpacity(0.5),
                                         width: 1,
                                       ),
                                     ),
@@ -482,7 +492,8 @@ class _ReaderViewState extends State<_ReaderView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         'Reader Notes',
@@ -491,11 +502,13 @@ class _ReaderViewState extends State<_ReaderView> {
                                         ),
                                       ),
                                       GestureDetector(
-                                        onTap: () => context.push('/comments/${widget.chapterId}'),
+                                        onTap: () => context.push(
+                                            '/comments/${widget.chapterId}'),
                                         child: Text(
                                           'View all →',
                                           style: BrambleTypography.bodySmall(
-                                            color: BrambleColors.primaryOrangeDark,
+                                            color:
+                                                BrambleColors.primaryOrangeDark,
                                             fontWeight: FontWeight.w700,
                                           ),
                                         ),
@@ -507,7 +520,8 @@ class _ReaderViewState extends State<_ReaderView> {
                                     builder: (context, commentsState) {
                                       if (commentsState is CommentsLoading) {
                                         return const Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 12),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 12),
                                           child: BrambleLoading(),
                                         );
                                       }
@@ -516,37 +530,46 @@ class _ReaderViewState extends State<_ReaderView> {
                                         final comments = commentsState.comments;
                                         if (comments.isEmpty) {
                                           return Padding(
-                                            padding: const EdgeInsets.symmetric(vertical: 12),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12),
                                             child: Text(
                                               'No notes on this chapter yet. Be the first to share your thoughts!',
-                                              style: BrambleTypography.bodyMedium(
+                                              style:
+                                                  BrambleTypography.bodyMedium(
                                                 color: themeConfig.muted,
                                               ),
                                             ),
                                           );
                                         }
 
-                                        final preview = comments.take(2).toList();
+                                        final preview =
+                                            comments.take(2).toList();
                                         return Column(
                                           children: preview.map((c) {
                                             return Padding(
-                                              padding: const EdgeInsets.only(bottom: 14),
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 14),
                                               child: Row(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Container(
                                                     width: 34,
                                                     height: 34,
                                                     decoration: BoxDecoration(
                                                       shape: BoxShape.circle,
-                                                      color: themeConfig.surface,
+                                                      color:
+                                                          themeConfig.surface,
                                                     ),
                                                     child: Center(
                                                       child: Text(
                                                         c.initial,
-                                                        style: BrambleTypography.bodyMedium(
-                                                          color: themeConfig.ink,
-                                                          fontWeight: FontWeight.w700,
+                                                        style: BrambleTypography
+                                                            .bodyMedium(
+                                                          color:
+                                                              themeConfig.ink,
+                                                          fontWeight:
+                                                              FontWeight.w700,
                                                         ),
                                                       ),
                                                     ),
@@ -554,31 +577,48 @@ class _ReaderViewState extends State<_ReaderView> {
                                                   const SizedBox(width: 10),
                                                   Expanded(
                                                     child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Row(
                                                           children: [
                                                             Text(
                                                               c.name,
-                                                              style: BrambleTypography.bodyMedium(
-                                                                color: themeConfig.ink,
-                                                                fontWeight: FontWeight.w700,
+                                                              style:
+                                                                  BrambleTypography
+                                                                      .bodyMedium(
+                                                                color:
+                                                                    themeConfig
+                                                                        .ink,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
                                                               ),
                                                             ),
-                                                            const SizedBox(width: 8),
+                                                            const SizedBox(
+                                                                width: 8),
                                                             Text(
                                                               c.time,
-                                                              style: BrambleTypography.caption(
-                                                                color: themeConfig.muted,
+                                                              style:
+                                                                  BrambleTypography
+                                                                      .caption(
+                                                                color:
+                                                                    themeConfig
+                                                                        .muted,
                                                               ),
                                                             ),
                                                           ],
                                                         ),
-                                                        const SizedBox(height: 3),
+                                                        const SizedBox(
+                                                            height: 3),
                                                         Text(
                                                           c.text,
-                                                          style: BrambleTypography.bodyMedium(
-                                                            color: themeConfig.ink,
+                                                          style:
+                                                              BrambleTypography
+                                                                  .bodyMedium(
+                                                            color:
+                                                                themeConfig.ink,
                                                           ),
                                                         ),
                                                       ],
@@ -610,7 +650,8 @@ class _ReaderViewState extends State<_ReaderView> {
                       left: 0,
                       right: 0,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
                           color: themeConfig.chrome,
                           border: Border(
@@ -656,7 +697,8 @@ class _ReaderViewState extends State<_ReaderView> {
                             ),
                             const SizedBox(width: 10),
                             GestureDetector(
-                              onTap: () => context.push('/book/${chapter['bookId']}/toc'),
+                              onTap: () => context
+                                  .push('/book/${chapter['bookId']}/toc'),
                               child: Container(
                                 width: 38,
                                 height: 38,
@@ -724,46 +766,67 @@ class _ReaderViewState extends State<_ReaderView> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                GestureDetector(
-                                  onTap: prevCh != null
-                                      ? () => context.pushReplacement('/reader/${prevCh['id']}')
-                                      : null,
-                                  child: Text(
-                                    '← Prev Chapter',
-                                    style: BrambleTypography.bodySmall(
-                                      color: prevCh != null
-                                          ? themeConfig.ink
-                                          : themeConfig.muted.withOpacity(0.5),
-                                      fontWeight: FontWeight.w700,
+                                Expanded(
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: GestureDetector(
+                                      onTap: prevCh != null
+                                          ? () => context.pushReplacement(
+                                              '/reader/${prevCh['id']}')
+                                          : null,
+                                      child: Text(
+                                        '← Prev Chapter',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: BrambleTypography.bodySmall(
+                                          color: prevCh != null
+                                              ? themeConfig.ink
+                                              : themeConfig.muted
+                                                  .withOpacity(0.5),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                                Text(
-                                  '$pctInt% · $estMinutes min left',
-                                  style: BrambleTypography.caption(
-                                    color: themeConfig.muted,
-                                    fontWeight: FontWeight.w600,
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 6),
+                                  child: Text(
+                                    '$pctInt% · $estMinutes min left',
+                                    style: BrambleTypography.caption(
+                                      color: themeConfig.muted,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: nextCh != null
-                                      ? () {
-                                          if (nextCh['isLocked'] == true) {
-                                            _openPaywallSheet(nextCh);
-                                          } else {
-                                            context.pushReplacement('/reader/${nextCh['id']}');
-                                          }
-                                        }
-                                      : null,
-                                  child: Text(
-                                    'Next Chapter →',
-                                    style: BrambleTypography.bodySmall(
-                                      color: nextCh != null
-                                          ? BrambleColors.primaryOrangeDark
-                                          : themeConfig.muted.withOpacity(0.5),
-                                      fontWeight: FontWeight.w700,
+                                Expanded(
+                                  child: Align(
+                                    alignment: Alignment.centerRight,
+                                    child: GestureDetector(
+                                      onTap: nextCh != null
+                                          ? () {
+                                              if (nextCh['isLocked'] == true) {
+                                                _openPaywallSheet(nextCh);
+                                              } else {
+                                                context.pushReplacement(
+                                                    '/reader/${nextCh['id']}');
+                                              }
+                                            }
+                                          : null,
+                                      child: Text(
+                                        'Next Chapter →',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: BrambleTypography.bodySmall(
+                                          color: nextCh != null
+                                              ? BrambleColors.primaryOrangeDark
+                                              : themeConfig.muted
+                                                  .withOpacity(0.5),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),

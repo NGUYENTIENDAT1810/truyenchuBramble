@@ -41,7 +41,9 @@ class BrambleButton extends StatelessWidget {
 
     switch (variant) {
       case BrambleButtonVariant.primary:
-        bg = isEnabled ? BrambleColors.primaryOrange : BrambleColors.creamDivider;
+        bg = isEnabled
+            ? BrambleColors.primaryOrange
+            : BrambleColors.creamDivider;
         fg = isEnabled ? const Color(0xFFFFF2EB) : BrambleColors.creamMuted;
         if (isEnabled) {
           shadows = [
@@ -54,7 +56,8 @@ class BrambleButton extends StatelessWidget {
         }
         break;
       case BrambleButtonVariant.secondary:
-        bg = isEnabled ? BrambleColors.creamSurface : BrambleColors.creamDivider;
+        bg =
+            isEnabled ? BrambleColors.creamSurface : BrambleColors.creamDivider;
         fg = isEnabled ? BrambleColors.creamInk : BrambleColors.creamMuted;
         break;
       case BrambleButtonVariant.dark:
@@ -62,13 +65,16 @@ class BrambleButton extends StatelessWidget {
         fg = isEnabled ? const Color(0xFFF0FAE1) : BrambleColors.creamMuted;
         break;
       case BrambleButtonVariant.peach:
-        bg = isEnabled ? BrambleColors.peachSelection : BrambleColors.creamDivider;
+        bg = isEnabled
+            ? BrambleColors.peachSelection
+            : BrambleColors.creamDivider;
         fg = isEnabled ? BrambleColors.peachDark : BrambleColors.creamMuted;
         break;
       case BrambleButtonVariant.outline:
         bg = Colors.transparent;
         fg = BrambleColors.creamInk;
-        border = Border.all(color: BrambleColors.creamInk.withOpacity(0.3), width: 1.5);
+        border = Border.all(
+            color: BrambleColors.creamInk.withOpacity(0.3), width: 1.5);
         break;
     }
 
@@ -105,12 +111,14 @@ class BrambleButton extends StatelessWidget {
                         icon!,
                         const SizedBox(width: 8),
                       ],
-                      Text(
-                        text,
-                        style: BrambleTypography.bodyLarge(
-                          color: fg,
-                          fontWeight: FontWeight.w700,
-                        ).copyWith(fontSize: 16),
+                      Flexible(
+                        child: Text(
+                          text,
+                          style: BrambleTypography.bodyLarge(
+                            color: fg,
+                            fontWeight: FontWeight.w700,
+                          ).copyWith(fontSize: 12),
+                        ),
                       ),
                     ],
                   ),

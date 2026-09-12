@@ -9,8 +9,17 @@ class CommentsRepository {
 
   Future<List<CommentModel>> getCommentsByChapter(String chapterId) async {
     final res = await _client.get('${ApiEndpoints.chapterComments}/$chapterId');
-    final items = res as List? ?? [];
-    return items.map((e) => CommentModel.fromJson(e as Map<String, dynamic>)).toList();
+    final List<dynamic> items;
+    if (res is Map<String, dynamic> && res['items'] is List<dynamic>) {
+      items = res['items'] as List<dynamic>;
+    } else if (res is List) {
+      items = res;
+    } else {
+      items = [];
+    }
+    return items
+        .map((e) => CommentModel.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   Future<CommentModel> createComment({
@@ -31,7 +40,8 @@ class CommentsRepository {
   }
 
   Future<bool> toggleLikeComment(String commentId) async {
-    final res = await _client.post('${ApiEndpoints.likeComment}/$commentId/like');
+    final res =
+        await _client.post('${ApiEndpoints.likeComment}/$commentId/like');
     return res['isLiked'] ?? false;
   }
 }

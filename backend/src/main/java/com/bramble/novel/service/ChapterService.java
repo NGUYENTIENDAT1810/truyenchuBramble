@@ -91,7 +91,7 @@ public class ChapterService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-        if (chapterRepository.isChapterUnlocked(userId, chapterId)) {
+        if (chapterRepository.isChapterUnlocked(userId, chapterId) > 0) {
             return UnlockResponse.builder()
                     .success(true)
                     .chapterId(chapterId)
@@ -129,6 +129,6 @@ public class ChapterService {
         if (userId == null) {
             return false;
         }
-        return chapterRepository.isChapterUnlocked(userId, chapter.getId());
+        return chapterRepository.isChapterUnlocked(userId, chapter.getId()) > 0;
     }
 }

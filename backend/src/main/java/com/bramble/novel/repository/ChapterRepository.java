@@ -29,7 +29,7 @@ public interface ChapterRepository extends JpaRepository<Chapter, String> {
     boolean isChapterUnlocked(@Param("userId") String userId, @Param("chapterId") String chapterId);
 
     @Modifying
-    @Query(value = "INSERT INTO unlocked_chapters (user_id, chapter_id) VALUES (:userId, :chapterId) ON CONFLICT DO NOTHING", nativeQuery = true)
+    @Query(value = "INSERT IGNORE INTO unlocked_chapters (user_id, chapter_id) VALUES (:userId, :chapterId)", nativeQuery = true)
     void unlockChapter(@Param("userId") String userId, @Param("chapterId") String chapterId);
 
     long countByBookId(String bookId);

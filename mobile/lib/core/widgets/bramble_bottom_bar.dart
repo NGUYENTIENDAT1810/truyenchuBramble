@@ -18,34 +18,40 @@ class BrambleBottomBar extends StatelessWidget {
       (label: 'Home', icon: Icons.home_rounded),
       (label: 'Library', icon: Icons.auto_stories_rounded),
       (label: 'Discover', icon: Icons.search_rounded),
-      (label: 'You', icon: Icons.person_rounded),
+      (label: 'Stats', icon: Icons.insights_rounded),
     ];
 
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Container(
-      padding: const EdgeInsets.fromLTRB(10, 8, 10, 18),
+      padding: EdgeInsets.fromLTRB(16, 8, 16, bottomPadding > 0 ? bottomPadding + 4 : 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
             BrambleColors.creamBg.withOpacity(0.0),
-            BrambleColors.creamBg.withOpacity(0.85),
+            BrambleColors.creamBg.withOpacity(0.88),
             BrambleColors.creamBg,
           ],
-          stops: const [0.0, 0.4, 0.7],
+          stops: const [0.0, 0.45, 0.85],
         ),
       ),
       child: Container(
-        height: 60,
-        padding: const EdgeInsets.all(6),
+        height: 56,
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
         decoration: BoxDecoration(
           color: BrambleColors.creamSurface,
           borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: BrambleColors.creamBorder.withOpacity(0.6),
+            width: 1,
+          ),
           boxShadow: const [
             BoxShadow(
-              color: Color(0x382E2B25),
-              blurRadius: 32,
-              offset: Offset(0, 12),
+              color: Color(0x1F2E2B25),
+              blurRadius: 24,
+              offset: Offset(0, 8),
             ),
           ],
         ),
@@ -60,18 +66,18 @@ class BrambleBottomBar extends StatelessWidget {
                 onTap: () => onTap(index),
                 behavior: HitTestBehavior.opaque,
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
+                  duration: const Duration(milliseconds: 200),
                   curve: Curves.easeOutCubic,
-                  height: 48,
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  height: 44,
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
                   decoration: BoxDecoration(
                     color: isActive ? BrambleColors.primaryOrange : Colors.transparent,
                     borderRadius: BorderRadius.circular(999),
                     boxShadow: isActive
                         ? const [
                             BoxShadow(
-                              color: Color(0x282E2B25),
-                              blurRadius: 10,
+                              color: Color(0x28C67139),
+                              blurRadius: 8,
                               offset: Offset(0, 3),
                             ),
                           ]
@@ -95,7 +101,7 @@ class BrambleBottomBar extends StatelessWidget {
                             style: BrambleTypography.bodySmall(
                               color: const Color(0xFFFFF2EB),
                               fontWeight: FontWeight.w800,
-                            ).copyWith(fontSize: 13.5),
+                            ).copyWith(fontSize: 13),
                           ),
                         ),
                       ],

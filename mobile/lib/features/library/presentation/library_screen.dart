@@ -31,8 +31,8 @@ class LibraryScreen extends ConsumerWidget {
                 16,
                 22,
                 selection.isSelectMode && selection.selectedIds.isNotEmpty
-                    ? 108
-                    : 100,
+                    ? 110
+                    : 110,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,16 +44,34 @@ class LibraryScreen extends ConsumerWidget {
                         'Library',
                         style: BrambleTypography.displayLarge(
                           color: BrambleColors.creamInk,
-                        ).copyWith(fontSize: 31),
+                        ),
                       ),
                       GestureDetector(
                         onTap: selectionNotifier.toggleSelectMode,
-                        child: Text(
-                          selection.isSelectMode ? 'Done' : 'Select',
-                          style: BrambleTypography.bodySmall(
-                            color: BrambleColors.primaryOrangeDark,
-                            fontWeight: FontWeight.w700,
-                          ).copyWith(fontSize: 13.5),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: selection.isSelectMode
+                                ? BrambleColors.peachSelection
+                                : BrambleColors.creamSurface,
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: BrambleColors.creamBorder.withOpacity(0.5),
+                              width: 1,
+                            ),
+                          ),
+                          child: Text(
+                            selection.isSelectMode ? 'Done' : 'Select',
+                            style: BrambleTypography.caption(
+                              color: selection.isSelectMode
+                                  ? BrambleColors.primaryOrangeDark
+                                  : BrambleColors.creamInk,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -62,11 +80,15 @@ class LibraryScreen extends ConsumerWidget {
 
                   // Segmented Tabs Pill
                   Container(
-                    height: 46,
+                    height: 44,
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       color: BrambleColors.creamSurface,
                       borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: BrambleColors.creamBorder.withOpacity(0.5),
+                        width: 1,
+                      ),
                     ),
                     child: Row(
                       children: tabs.map((label) {
@@ -76,8 +98,9 @@ class LibraryScreen extends ConsumerWidget {
                             onTap: () => ref
                                 .read(currentLibraryTabProvider.notifier)
                                 .state = label,
+                            behavior: HitTestBehavior.opaque,
                             child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 150),
+                              duration: const Duration(milliseconds: 180),
                               decoration: BoxDecoration(
                                 color: isActive
                                     ? BrambleColors.creamBg
@@ -86,9 +109,9 @@ class LibraryScreen extends ConsumerWidget {
                                 boxShadow: isActive
                                     ? const [
                                         BoxShadow(
-                                          color: Color(0x242E2B25),
-                                          blurRadius: 4,
-                                          offset: Offset(0, 1),
+                                          color: Color(0x1A2E2B25),
+                                          blurRadius: 6,
+                                          offset: Offset(0, 2),
                                         ),
                                       ]
                                     : null,
@@ -100,8 +123,10 @@ class LibraryScreen extends ConsumerWidget {
                                     color: isActive
                                         ? BrambleColors.creamInk
                                         : BrambleColors.creamMuted,
-                                    fontWeight: FontWeight.w700,
-                                  ).copyWith(fontSize: 13.5),
+                                    fontWeight: isActive
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ),
@@ -112,48 +137,35 @@ class LibraryScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // List of books
+                  // List of Books
                   Expanded(
                     child: libraryAsync.when(
                       loading: () =>
-                          const BrambleLoading(message: 'Loading shelf...'),
+                          const BrambleLoading(message: 'Opening your library shelf...'),
                       error: (err, _) => BrambleErrorView(
                         message: err.toString(),
                         onRetry: () => ref.refresh(libraryListProvider),
                       ),
                       data: (items) {
                         if (items.isEmpty) {
-                          return Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: BrambleColors.creamSurface,
-                                  ),
-                                  child: const Icon(
-                                    Icons.auto_stories_outlined,
-                                    size: 30,
-                                    color: BrambleColors.creamMuted,
-                                  ),
-                                ),
-                                const SizedBox(height: 14),
-                                Text(
-                                  currentTab == 'Saved'
-                                      ? 'Nothing saved yet. Tap Save on a novel to keep it here.'
-                                      : (currentTab == 'Downloaded'
-                                          ? 'No chapters downloaded. Download from a novel page to read offline.'
-                                          : 'No books reading currently.'),
-                                  textAlign: TextAlign.center,
-                                  style: BrambleTypography.bodyMedium(
-                                    color: BrambleColors.creamMuted,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          return BrambleEmptyState(
+                            icon: currentTab == 'Saved'
+                                ? Icons.bookmark_border_rounded
+                                : (currentTab == 'Downloaded'
+                                    ? Icons.download_done_rounded
+                                    : Icons.auto_stories_outlined),
+                            title: currentTab == 'Saved'
+                                ? 'No saved novels yet'
+                                : (currentTab == 'Downloaded'
+                                    ? 'No offline chapters downloaded'
+                                    : 'Your bookshelf is empty'),
+                            subtitle: currentTab == 'Saved'
+                                ? 'Tap bookmark on any novel to save it for later.'
+                                : (currentTab == 'Downloaded'
+                                    ? 'Download chapters from novel pages to read offline without internet.'
+                                    : 'Explore trending and featured novels to start reading.'),
+                            actionLabel: 'Explore Discover',
+                            onAction: () => context.go('/discover'),
                           );
                         }
 
@@ -165,8 +177,13 @@ class LibraryScreen extends ConsumerWidget {
                           child: ListView.separated(
                             physics: const AlwaysScrollableScrollPhysics(),
                             itemCount: items.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: 16),
+                            separatorBuilder: (_, __) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Divider(
+                                color: BrambleColors.creamDivider.withOpacity(0.5),
+                                height: 1,
+                              ),
+                            ),
                             itemBuilder: (context, index) {
                               final item = items[index];
                               final book = (item['book'] is Map<String, dynamic>)
@@ -177,6 +194,7 @@ class LibraryScreen extends ConsumerWidget {
                               final title = (book['title'] ?? item['title'] ?? 'Untitled').toString();
                               final author = (book['author'] ?? item['author'] ?? 'Unknown author').toString();
                               final totalChapters = book['totalChapters'] ?? item['totalChapters'] ?? 100;
+                              final coverUrl = (book['coverUrl'] ?? item['coverUrl'])?.toString();
                               final coverColor = book['coverColor']?.toString() ?? item['coverColor']?.toString();
                               final coverInkColor = book['coverInkColor']?.toString() ?? item['coverInkColor']?.toString();
 
@@ -187,7 +205,7 @@ class LibraryScreen extends ConsumerWidget {
                                   ? 'Chapter $lastChNum of $totalChapters'
                                   : (currentTab == 'Downloaded'
                                       ? 'Available offline'
-                                      : (pct > 0 ? '${(pct * 100).toInt()}% through' : 'Not started'));
+                                      : (pct > 0 ? '${(pct * 100).toInt()}% read' : 'Not started'));
 
                               final isSelected = selection.selectedIds.contains(bookId);
                               final isDownloading = selection.downloadingIds.contains(bookId);
@@ -201,18 +219,24 @@ class LibraryScreen extends ConsumerWidget {
                                       onTap: () => selectionNotifier.toggleItem(bookId),
                                       child: AnimatedContainer(
                                         duration: const Duration(milliseconds: 150),
-                                        width: 26,
-                                        height: 26,
+                                        width: 24,
+                                        height: 24,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: isSelected
                                               ? BrambleColors.primaryOrange
-                                              : BrambleColors.creamDivider,
+                                              : BrambleColors.creamSurface,
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? BrambleColors.primaryOrange
+                                                : BrambleColors.creamBorder,
+                                            width: 1.5,
+                                          ),
                                         ),
                                         child: isSelected
                                             ? const Icon(
                                                 Icons.check_rounded,
-                                                size: 16,
+                                                size: 15,
                                                 color: Colors.white,
                                               )
                                             : null,
@@ -234,81 +258,69 @@ class LibraryScreen extends ConsumerWidget {
                                           context.push('/book/$bookId');
                                         }
                                       },
+                                      behavior: HitTestBehavior.opaque,
                                       child: Row(
                                         children: [
                                           BookCoverView(
                                             title: title,
+                                            coverUrl: coverUrl,
                                             coverColorHex: coverColor,
                                             coverInkColorHex: coverInkColor,
-                                            width: 62,
-                                            height: 88,
-                                            borderRadius: 14,
+                                            width: 58,
+                                            height: 84,
+                                            borderRadius: 10,
                                             showTitle: false,
                                           ),
                                           const SizedBox(width: 14),
                                           Expanded(
-                                            child: SizedBox(
-                                              height: 88,
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        title,
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: BrambleTypography.bodyMedium(
-                                                          color: BrambleColors.creamInk,
-                                                          fontWeight: FontWeight.w700,
-                                                        ).copyWith(fontSize: 16),
-                                                      ),
-                                                      const SizedBox(height: 3),
-                                                      Text(
-                                                        '$author · $totalChapters chapters',
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: BrambleTypography.bodySmall(
-                                                          color: BrambleColors.creamMuted,
-                                                        ),
-                                                      ),
-                                                    ],
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  title,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: BrambleTypography.titleMedium(
+                                                    color: BrambleColors.creamInk,
                                                   ),
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      // Progress bar
-                                                      Container(
-                                                        height: 5,
-                                                        width: double.infinity,
-                                                        decoration: BoxDecoration(
-                                                          color: BrambleColors.creamDivider,
-                                                          borderRadius: BorderRadius.circular(999),
-                                                        ),
-                                                        child: FractionallySizedBox(
-                                                          alignment: Alignment.centerLeft,
-                                                          widthFactor: pct.clamp(0.0, 1.0),
-                                                          child: Container(
-                                                            decoration: BoxDecoration(
-                                                              color: BrambleColors.sageGreen,
-                                                              borderRadius: BorderRadius.circular(999),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(height: 5),
-                                                      Text(
-                                                        stateText,
-                                                        style: BrambleTypography.bodySmall(
-                                                          color: BrambleColors.creamMuted,
-                                                        ).copyWith(fontSize: 11.5),
-                                                      ),
-                                                    ],
+                                                ),
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  '$author · $totalChapters ch',
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: BrambleTypography.caption(
+                                                    color: BrambleColors.creamSubdued,
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                                const SizedBox(height: 8),
+                                                // Progress bar
+                                                Container(
+                                                  height: 4,
+                                                  width: double.infinity,
+                                                  decoration: BoxDecoration(
+                                                    color: BrambleColors.creamDivider,
+                                                    borderRadius: BorderRadius.circular(999),
+                                                  ),
+                                                  child: FractionallySizedBox(
+                                                    alignment: Alignment.centerLeft,
+                                                    widthFactor: pct.clamp(0.0, 1.0),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: BrambleColors.sageGreen,
+                                                        borderRadius: BorderRadius.circular(999),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  stateText,
+                                                  style: BrambleTypography.caption(
+                                                    color: BrambleColors.creamMuted,
+                                                  ).copyWith(fontSize: 11),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
@@ -320,21 +332,27 @@ class LibraryScreen extends ConsumerWidget {
                                     GestureDetector(
                                       onTap: () => selectionNotifier.downloadOne(bookId),
                                       child: Container(
-                                        width: 38,
-                                        height: 38,
+                                        width: 36,
+                                        height: 36,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: isDownloaded
                                               ? BrambleColors.lightSage
                                               : BrambleColors.creamSurface,
+                                          border: Border.all(
+                                            color: isDownloaded
+                                                ? BrambleColors.sageGreen.withOpacity(0.3)
+                                                : BrambleColors.creamBorder.withOpacity(0.4),
+                                            width: 1,
+                                          ),
                                         ),
                                         child: isDownloading
                                             ? const Center(
                                                 child: SizedBox(
-                                                  width: 16,
-                                                  height: 16,
+                                                  width: 14,
+                                                  height: 14,
                                                   child: CircularProgressIndicator(
-                                                    strokeWidth: 2.2,
+                                                    strokeWidth: 2,
                                                     color: BrambleColors.primaryOrange,
                                                   ),
                                                 ),
@@ -343,7 +361,7 @@ class LibraryScreen extends ConsumerWidget {
                                                 isDownloaded
                                                     ? Icons.check_rounded
                                                     : Icons.download_rounded,
-                                                size: 20,
+                                                size: 18,
                                                 color: isDownloaded
                                                     ? BrambleColors.deepGreen
                                                     : BrambleColors.creamSubdued,
@@ -363,31 +381,35 @@ class LibraryScreen extends ConsumerWidget {
               ),
             ),
 
-            // Bulk Actions Footer when in Select Mode
+            // Bulk Actions Footer in Select Mode
             if (selection.isSelectMode && selection.selectedIds.isNotEmpty)
               Positioned(
                 bottom: 0,
                 left: 0,
                 right: 0,
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(22, 12, 22, 24),
+                  padding: const EdgeInsets.fromLTRB(22, 14, 22, 28),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [
-                        BrambleColors.creamBg,
-                        BrambleColors.creamBg.withOpacity(0.92),
-                        BrambleColors.creamBg.withOpacity(0.0),
-                      ],
+                    color: BrambleColors.creamSurface,
+                    border: Border(
+                      top: BorderSide(
+                        color: BrambleColors.creamBorder.withOpacity(0.6),
+                      ),
                     ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x1F2E2B25),
+                        blurRadius: 16,
+                        offset: Offset(0, -4),
+                      ),
+                    ],
                   ),
                   child: Row(
                     children: [
                       Text(
                         '${selection.selectedIds.length} selected',
                         style: BrambleTypography.bodyMedium(
-                          color: BrambleColors.creamSubdued,
+                          color: BrambleColors.creamInk,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -401,7 +423,7 @@ class LibraryScreen extends ConsumerWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(999),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         ),
                         child: const Text(
                           'Download',
@@ -418,7 +440,7 @@ class LibraryScreen extends ConsumerWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(999),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                         ),
                         child: const Text(
                           'Remove',

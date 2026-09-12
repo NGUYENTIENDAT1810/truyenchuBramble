@@ -17,7 +17,7 @@ public interface AuthorRepository extends JpaRepository<Author, String> {
     boolean isFollowingAuthor(@Param("userId") String userId, @Param("authorId") String authorId);
 
     @Modifying
-    @Query(value = "INSERT INTO followed_authors (user_id, author_id) VALUES (:userId, :authorId) ON CONFLICT DO NOTHING", nativeQuery = true)
+    @Query(value = "INSERT IGNORE INTO followed_authors (user_id, author_id) VALUES (:userId, :authorId)", nativeQuery = true)
     void followAuthor(@Param("userId") String userId, @Param("authorId") String authorId);
 
     @Modifying

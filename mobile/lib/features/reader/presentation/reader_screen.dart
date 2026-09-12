@@ -8,10 +8,23 @@ import '../../../core/theme/bramble_theme.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
 import '../../../core/widgets/loading_indicator.dart';
+import '../../auth/presentation/auth_controller.dart';
 import '../../comments/presentation/comments_controller.dart';
+import '../data/reader_repository.dart';
 import 'paywall_sheet.dart';
 import 'reader_controller.dart';
 import 'reader_settings_sheet.dart';
+
+final readerRepositoryProvider = Provider<ReaderRepository>((ref) {
+  final client = ref.watch(apiClientProvider);
+  return ReaderRepository(client);
+});
+
+final chapterContentProvider =
+    FutureProvider.autoDispose.family<Map<String, dynamic>, String>((ref, id) async {
+  final repo = ref.watch(readerRepositoryProvider);
+  return repo.getChapterContent(id);
+});
 
 class ReaderScreen extends ConsumerStatefulWidget {
   final String chapterId;
@@ -26,7 +39,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _showChrome = true;
   double _readingProgress = 0.0;
-  final Map<int, bool> _paraLikes = {};
+  bool _isChapterLiked = false;
   Timer? _syncTimer;
   DateTime _startTime = DateTime.now();
 
@@ -144,10 +157,11 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
             );
 
             final nextCh = chapter['nextChapter'] as Map<String, dynamic>?;
+            final prevCh = chapter['prevChapter'] as Map<String, dynamic>?;
 
             return Stack(
               children: [
-                // Reading content
+                // Reading content view
                 GestureDetector(
                   onTap: _toggleChrome,
                   behavior: HitTestBehavior.translucent,
@@ -155,14 +169,14 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                     controller: _scrollController,
                     padding: EdgeInsets.fromLTRB(
                       settings.horizontalPadding,
-                      _showChrome ? 70 : 34,
+                      _showChrome ? 68 : 28,
                       settings.horizontalPadding,
-                      _showChrome ? 90 : 40,
+                      _showChrome ? 110 : 50,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Chapter numeral
+                        // Chapter Number
                         Text(
                           'CHAPTER ${chapter['chapterNumber']}'.toUpperCase(),
                           style: BrambleTypography.labelUppercase(
@@ -176,52 +190,86 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                           chapter['title'] ?? '',
                           style: BrambleTypography.displayMedium(
                             color: themeConfig.ink,
-                          ).copyWith(fontSize: 30, height: 1.12),
+                          ).copyWith(fontSize: 28, height: 1.15),
                         ),
-                        const SizedBox(height: 22),
+                        const SizedBox(height: 10),
 
-                        // If locked view
+                        // Chapter Metadata
+                        Row(
+                          children: [
+                            Text(
+                              '${chapter['wordCount'] ?? 3400} words',
+                              style: BrambleTypography.caption(
+                                color: themeConfig.muted,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '·',
+                              style: TextStyle(color: themeConfig.muted),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${estMinutes}m read',
+                              style: BrambleTypography.caption(
+                                color: themeConfig.muted,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+
                         if (isLocked) ...[
+                          // Locked Paywall Placeholder
                           Container(
-                            padding: const EdgeInsets.all(22),
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(24),
                             decoration: BoxDecoration(
                               color: themeConfig.surface,
-                              borderRadius: BorderRadius.circular(28),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: themeConfig.divider.withOpacity(0.5),
+                                width: 1,
+                              ),
                             ),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                const Icon(
+                                  Icons.lock_outline_rounded,
+                                  size: 40,
+                                  color: BrambleColors.primaryOrange,
+                                ),
+                                const SizedBox(height: 14),
                                 Text(
-                                  'Chapter Locked',
-                                  style: BrambleTypography.displaySmall(
+                                  'This chapter is locked',
+                                  style: BrambleTypography.titleLarge(
                                     color: themeConfig.ink,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 6),
                                 Text(
-                                  'Unlock this chapter to continue reading the story.',
+                                  'Unlock this chapter with coins to continue reading.',
+                                  textAlign: TextAlign.center,
                                   style: BrambleTypography.bodyMedium(
                                     color: themeConfig.muted,
                                   ),
                                 ),
                                 const SizedBox(height: 18),
                                 BrambleButton(
-                                  text:
-                                      'Unlock for ${chapter['coinPrice'] ?? 30} coins',
+                                  text: 'Unlock for ${chapter['coinPrice'] ?? 30} coins',
                                   onPressed: () => _openPaywallSheet(chapter),
                                 ),
                               ],
                             ),
                           ),
                         ] else ...[
-                          // Paragraphs
+                          // Paragraphs (Clean Editorial Text Reading Experience)
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: paragraphs.length,
                             itemBuilder: (context, index) {
                               final p = paragraphs[index];
-                              final isLiked = _paraLikes[index] ?? false;
 
                               final textStyle = settings.fontFamily == 'serif'
                                   ? BrambleTypography.readerSerif(
@@ -236,129 +284,129 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                     );
 
                               return Padding(
-                                padding: const EdgeInsets.only(bottom: 19),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      p,
-                                      style: textStyle,
-                                    ),
-                                    const SizedBox(height: 6),
-                                    // Paragraph interaction
-                                    Row(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              _paraLikes[index] = !isLiked;
-                                            });
-                                          },
-                                          child: Container(
-                                            height: 26,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 11),
-                                            decoration: BoxDecoration(
-                                              color: isLiked
-                                                  ? BrambleColors.primaryOrange
-                                                  : themeConfig.ink
-                                                      .withOpacity(0.08),
-                                              borderRadius:
-                                                  BorderRadius.circular(999),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(
-                                                  Icons.favorite_rounded,
-                                                  size: 13,
-                                                  color: isLiked
-                                                      ? const Color(0xFFFFF2EB)
-                                                      : themeConfig.muted,
-                                                ),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  isLiked ? 'Liked' : 'Like',
-                                                  style: BrambleTypography
-                                                      .bodySmall(
-                                                    color: isLiked
-                                                        ? const Color(
-                                                            0xFFFFF2EB)
-                                                        : themeConfig.muted,
-                                                    fontWeight: FontWeight.w700,
-                                                  ).copyWith(fontSize: 11.5),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        GestureDetector(
-                                          onTap: () => context.push(
-                                              '/comments/${widget.chapterId}'),
-                                          child: Container(
-                                            height: 26,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 11),
-                                            decoration: BoxDecoration(
-                                              color: themeConfig.ink
-                                                  .withOpacity(0.08),
-                                              borderRadius:
-                                                  BorderRadius.circular(999),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(
-                                                  Icons
-                                                      .chat_bubble_outline_rounded,
-                                                  size: 13,
-                                                  color: themeConfig.muted,
-                                                ),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  'Note',
-                                                  style: BrambleTypography
-                                                      .bodySmall(
-                                                    color: themeConfig.muted,
-                                                    fontWeight: FontWeight.w700,
-                                                  ).copyWith(fontSize: 11.5),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                padding: const EdgeInsets.only(bottom: 22),
+                                child: Text(
+                                  p,
+                                  style: textStyle,
                                 ),
                               );
                             },
                           ),
 
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 12),
+
+                          // Interaction Bar at the end of reading content
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _isChapterLiked = !_isChapterLiked;
+                                  });
+                                },
+                                child: Container(
+                                  height: 34,
+                                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                                  decoration: BoxDecoration(
+                                    color: _isChapterLiked
+                                        ? BrambleColors.primaryOrange
+                                        : themeConfig.surface,
+                                    borderRadius: BorderRadius.circular(999),
+                                    border: Border.all(
+                                      color: _isChapterLiked
+                                          ? BrambleColors.primaryOrange
+                                          : themeConfig.divider.withOpacity(0.5),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.favorite_rounded,
+                                        size: 15,
+                                        color: _isChapterLiked
+                                            ? const Color(0xFFFFF2EB)
+                                            : themeConfig.muted,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        _isChapterLiked ? 'Liked' : 'Like Chapter',
+                                        style: BrambleTypography.bodySmall(
+                                          color: _isChapterLiked
+                                              ? const Color(0xFFFFF2EB)
+                                              : themeConfig.muted,
+                                          fontWeight: FontWeight.w700,
+                                        ).copyWith(fontSize: 12.5),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              GestureDetector(
+                                onTap: () => context.push('/comments/${widget.chapterId}'),
+                                child: Container(
+                                  height: 34,
+                                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                                  decoration: BoxDecoration(
+                                    color: themeConfig.surface,
+                                    borderRadius: BorderRadius.circular(999),
+                                    border: Border.all(
+                                      color: themeConfig.divider.withOpacity(0.5),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.chat_bubble_outline_rounded,
+                                        size: 15,
+                                        color: themeConfig.muted,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        'Comments',
+                                        style: BrambleTypography.bodySmall(
+                                          color: themeConfig.muted,
+                                          fontWeight: FontWeight.w700,
+                                        ).copyWith(fontSize: 12.5),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 28),
 
                           // End of Chapter Card
                           Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: themeConfig.surface.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(28),
+                              color: themeConfig.surface,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: themeConfig.divider.withOpacity(0.5),
+                                width: 1,
+                              ),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'End of chapter ${chapter['chapterNumber']}',
-                                  style: BrambleTypography.displaySmall(
+                                  style: BrambleTypography.titleLarge(
                                     color: themeConfig.ink,
-                                  ).copyWith(fontSize: 20),
+                                  ),
                                 ),
                                 const SizedBox(height: 6),
                                 if (nextCh != null) ...[
                                   Text(
                                     nextCh['isLocked'] == true
-                                        ? 'Chapter ${nextCh['chapterNumber']} unlocks in 6 hours, or open it now with coins.'
+                                        ? 'Chapter ${nextCh['chapterNumber']} is available to unlock.'
                                         : '“${nextCh['title']}” is ready to read.',
                                     style: BrambleTypography.bodyMedium(
                                       color: themeConfig.muted,
@@ -367,7 +415,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                   const SizedBox(height: 14),
                                   BrambleButton(
                                     text: nextCh['isLocked'] == true
-                                        ? 'Unlock ch. ${nextCh['chapterNumber']}'
+                                        ? 'Unlock Chapter ${nextCh['chapterNumber']}'
                                         : 'Next: Chapter ${nextCh['chapterNumber']}',
                                     onPressed: () {
                                       if (nextCh['isLocked'] == true) {
@@ -390,15 +438,16 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                             ),
                           ),
 
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 28),
 
-                          // Comments Section
+                          // Comments Section Preview
                           Container(
-                            padding: const EdgeInsets.only(top: 24),
+                            padding: const EdgeInsets.only(top: 20),
                             decoration: BoxDecoration(
                               border: Border(
                                 top: BorderSide(
-                                  color: themeConfig.ink.withOpacity(0.15),
+                                  color: themeConfig.divider.withOpacity(0.6),
+                                  width: 1,
                                 ),
                               ),
                             ),
@@ -406,151 +455,98 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      'Comments',
-                                      style: BrambleTypography.displaySmall(
+                                      'Reader Notes',
+                                      style: BrambleTypography.titleLarge(
                                         color: themeConfig.ink,
-                                      ).copyWith(fontSize: 21),
+                                      ),
                                     ),
-                                    Text(
-                                      '${chapter['commentsCount'] ?? 218} on this chapter',
-                                      style: BrambleTypography.bodySmall(
-                                        color: themeConfig.muted,
-                                        fontWeight: FontWeight.w700,
-                                      ).copyWith(fontSize: 13),
+                                    GestureDetector(
+                                      onTap: () => context.push('/comments/${widget.chapterId}'),
+                                      child: Text(
+                                        'View all →',
+                                        style: BrambleTypography.bodySmall(
+                                          color: BrambleColors.primaryOrangeDark,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
                                 const SizedBox(height: 14),
-
-                                // Comment input bar
-                                GestureDetector(
-                                  onTap: () => context
-                                      .push('/comments/${widget.chapterId}'),
-                                  child: Container(
-                                    height: 50,
-                                    padding:
-                                        const EdgeInsets.fromLTRB(16, 0, 8, 0),
-                                    decoration: BoxDecoration(
-                                      color: themeConfig.surface,
-                                      borderRadius: BorderRadius.circular(999),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            'Say something about chapter ${chapter['chapterNumber']}…',
-                                            style: BrambleTypography.bodyMedium(
-                                              color: themeConfig.muted,
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 38,
-                                          height: 38,
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: BrambleColors.primaryOrange,
-                                          ),
-                                          child: const Center(
-                                            child: Icon(
-                                              Icons.arrow_upward_rounded,
-                                              color: Color(0xFFFFF2EB),
-                                              size: 20,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-
-                                const SizedBox(height: 20),
-
-                                // Top comments preview
                                 commentsAsync.when(
-                                  loading: () => const SizedBox.shrink(),
+                                  loading: () => const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    child: BrambleLoading(),
+                                  ),
                                   error: (_, __) => const SizedBox.shrink(),
                                   data: (comments) {
-                                    final top = comments.take(2).toList();
+                                    if (comments.isEmpty) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                        child: Text(
+                                          'No notes on this chapter yet. Be the first to share your thoughts!',
+                                          style: BrambleTypography.bodyMedium(
+                                            color: themeConfig.muted,
+                                          ),
+                                        ),
+                                      );
+                                    }
+
+                                    final preview = comments.take(2).toList();
                                     return Column(
-                                      children: top.map((c) {
+                                      children: preview.map((c) {
                                         return Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 16),
+                                          padding: const EdgeInsets.only(bottom: 14),
                                           child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              GestureDetector(
-                                                onTap: () => context.push(
-                                                  '/profile/${c.userId}',
-                                                  extra: {
-                                                    'name': c.name,
-                                                    'initial': c.initial,
-                                                    'color': c.color,
-                                                  },
+                                              Container(
+                                                width: 34,
+                                                height: 34,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: themeConfig.surface,
                                                 ),
-                                                child: Container(
-                                                  width: 38,
-                                                  height: 38,
-                                                  decoration: const BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: BrambleColors
-                                                        .primaryOrangeHover,
-                                                  ),
-                                                  child: Center(
-                                                    child: Text(
-                                                      c.initial,
-                                                      style: BrambleTypography
-                                                          .displaySmall(
-                                                        color: const Color(
-                                                            0xFFFFF2EB),
-                                                      ).copyWith(fontSize: 16),
+                                                child: Center(
+                                                  child: Text(
+                                                    c.initial,
+                                                    style: BrambleTypography.bodyMedium(
+                                                      color: themeConfig.ink,
+                                                      fontWeight: FontWeight.w700,
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                              const SizedBox(width: 12),
+                                              const SizedBox(width: 10),
                                               Expanded(
                                                 child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     Row(
                                                       children: [
                                                         Text(
                                                           c.name,
-                                                          style:
-                                                              BrambleTypography
-                                                                  .bodyMedium(
-                                                            color:
-                                                                themeConfig.ink,
-                                                            fontWeight:
-                                                                FontWeight.w700,
+                                                          style: BrambleTypography.bodyMedium(
+                                                            color: themeConfig.ink,
+                                                            fontWeight: FontWeight.w700,
                                                           ),
                                                         ),
-                                                        const SizedBox(
-                                                            width: 8),
+                                                        const SizedBox(width: 8),
                                                         Text(
                                                           c.time,
-                                                          style:
-                                                              BrambleTypography
-                                                                  .bodySmall(
-                                                            color: themeConfig
-                                                                .muted,
+                                                          style: BrambleTypography.caption(
+                                                            color: themeConfig.muted,
                                                           ),
                                                         ),
                                                       ],
                                                     ),
-                                                    const SizedBox(height: 6),
+                                                    const SizedBox(height: 3),
                                                     Text(
                                                       c.text,
-                                                      style: BrambleTypography
-                                                          .bodyMedium(
+                                                      style: BrambleTypography.bodyMedium(
                                                         color: themeConfig.ink,
                                                       ),
                                                     ),
@@ -564,14 +560,6 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                     );
                                   },
                                 ),
-
-                                const SizedBox(height: 8),
-                                BrambleButton(
-                                  text: 'See all comments',
-                                  variant: BrambleButtonVariant.outline,
-                                  onPressed: () => context
-                                      .push('/comments/${widget.chapterId}'),
-                                ),
                               ],
                             ),
                           ),
@@ -581,17 +569,22 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                   ),
                 ),
 
-                // Top Chrome Bar
+                // Top Floating Chrome Bar
                 if (_showChrome)
                   Positioned(
                     top: 0,
                     left: 0,
                     right: 0,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
                         color: themeConfig.chrome,
+                        border: Border(
+                          bottom: BorderSide(
+                            color: themeConfig.divider.withOpacity(0.5),
+                            width: 1,
+                          ),
+                        ),
                       ),
                       child: Row(
                         children: [
@@ -605,7 +598,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                               height: 38,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: themeConfig.ink.withOpacity(0.06),
+                                color: themeConfig.surface,
                               ),
                               child: Icon(
                                 Icons.chevron_left_rounded,
@@ -624,19 +617,18 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                               style: BrambleTypography.bodyMedium(
                                 color: themeConfig.ink,
                                 fontWeight: FontWeight.w600,
-                              ).copyWith(fontSize: 13),
+                              ).copyWith(fontSize: 13.5),
                             ),
                           ),
                           const SizedBox(width: 10),
                           GestureDetector(
-                            onTap: () =>
-                                context.push('/book/${chapter['bookId']}/toc'),
+                            onTap: () => context.push('/book/${chapter['bookId']}/toc'),
                             child: Container(
                               width: 38,
                               height: 38,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: themeConfig.ink.withOpacity(0.06),
+                                color: themeConfig.surface,
                               ),
                               child: Icon(
                                 Icons.format_list_bulleted_rounded,
@@ -653,14 +645,14 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                               height: 38,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: themeConfig.ink.withOpacity(0.06),
+                                color: themeConfig.surface,
                               ),
                               child: Center(
                                 child: Text(
                                   'Aa',
-                                  style: BrambleTypography.displaySmall(
+                                  style: BrambleTypography.titleMedium(
                                     color: themeConfig.ink,
-                                  ).copyWith(fontSize: 16),
+                                  ),
                                 ),
                               ),
                             ),
@@ -670,25 +662,86 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                     ),
                   ),
 
-                // Bottom Chrome Progress Bar
+                // Bottom Floating Chrome Bar with Navigation & Progress
                 if (_showChrome)
                   Positioned(
                     bottom: 0,
                     left: 0,
                     right: 0,
                     child: Container(
-                      padding: const EdgeInsets.fromLTRB(18, 12, 18, 28),
+                      padding: EdgeInsets.fromLTRB(
+                        18,
+                        12,
+                        18,
+                        MediaQuery.of(context).padding.bottom > 0
+                            ? MediaQuery.of(context).padding.bottom + 8
+                            : 20,
+                      ),
                       decoration: BoxDecoration(
                         color: themeConfig.chrome,
+                        border: Border(
+                          top: BorderSide(
+                            color: themeConfig.divider.withOpacity(0.5),
+                            width: 1,
+                          ),
+                        ),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                onTap: prevCh != null
+                                    ? () => context.pushReplacement('/reader/${prevCh['id']}')
+                                    : null,
+                                child: Text(
+                                  '← Prev Chapter',
+                                  style: BrambleTypography.bodySmall(
+                                    color: prevCh != null
+                                        ? themeConfig.ink
+                                        : themeConfig.muted.withOpacity(0.5),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                '$pctInt% · $estMinutes min left',
+                                style: BrambleTypography.caption(
+                                  color: themeConfig.muted,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: nextCh != null
+                                    ? () {
+                                        if (nextCh['isLocked'] == true) {
+                                          _openPaywallSheet(nextCh);
+                                        } else {
+                                          context.pushReplacement('/reader/${nextCh['id']}');
+                                        }
+                                      }
+                                    : null,
+                                child: Text(
+                                  'Next Chapter →',
+                                  style: BrambleTypography.bodySmall(
+                                    color: nextCh != null
+                                        ? BrambleColors.primaryOrangeDark
+                                        : themeConfig.muted.withOpacity(0.5),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          // Progress Bar
                           Container(
-                            height: 5,
+                            height: 4,
                             width: double.infinity,
                             decoration: BoxDecoration(
-                              color: themeConfig.ink.withOpacity(0.18),
+                              color: themeConfig.divider,
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: FractionallySizedBox(
@@ -701,26 +754,6 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 7),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '$pctInt% · $estMinutes min left in chapter',
-                                style: BrambleTypography.bodySmall(
-                                  color: themeConfig.muted,
-                                  fontWeight: FontWeight.w600,
-                                ).copyWith(fontSize: 11.5),
-                              ),
-                              Text(
-                                'Downloaded',
-                                style: BrambleTypography.bodySmall(
-                                  color: themeConfig.muted,
-                                  fontWeight: FontWeight.w600,
-                                ).copyWith(fontSize: 11.5),
-                              ),
-                            ],
                           ),
                         ],
                       ),

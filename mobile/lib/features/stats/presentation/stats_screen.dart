@@ -15,14 +15,14 @@ class StatsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final statsAsync = ref.watch(userStatsProvider);
     final user = ref.watch(authControllerProvider).user;
-    final initial = user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'N';
+    final initial = user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'B';
 
     return Scaffold(
       backgroundColor: BrambleColors.creamBg,
       body: SafeArea(
         bottom: false,
         child: statsAsync.when(
-          loading: () => const BrambleLoading(message: 'Loading your reading statistics...'),
+          loading: () => const BrambleLoading(message: 'Loading your reading insights...'),
           error: (err, _) => BrambleErrorView(
             message: err.toString(),
             onRetry: () => ref.refresh(userStatsProvider),
@@ -33,25 +33,25 @@ class StatsScreen extends ConsumerWidget {
             final statCards = stats['statCards'] as List? ?? [];
             final weekList = stats['week'] as List? ?? [];
             final peakInsight = stats['peakInsight'] ??
-                'You read most between 21:00 and 23:00. Bramble now holds new chapters until then.';
+                'You read most between 21:00 and 23:00. Bramble delivers fresh chapters tailored to your reading time.';
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(22, 16, 22, 100),
+              padding: const EdgeInsets.fromLTRB(22, 16, 22, 110),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Top bar
+                  // Top Editorial Bar
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Text(
-                          'Your reading',
+                          'Your Reading',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: BrambleTypography.displayLarge(
                             color: BrambleColors.creamInk,
-                          ).copyWith(fontSize: 31),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -60,45 +60,53 @@ class StatsScreen extends ConsumerWidget {
                           GestureDetector(
                             onTap: () => context.push('/settings'),
                             child: Container(
-                              height: 44,
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              height: 38,
+                              padding: const EdgeInsets.symmetric(horizontal: 14),
                               decoration: BoxDecoration(
                                 color: BrambleColors.creamSurface,
                                 borderRadius: BorderRadius.circular(999),
+                                border: Border.all(
+                                  color: BrambleColors.creamBorder.withOpacity(0.5),
+                                  width: 1,
+                                ),
                               ),
                               child: Row(
                                 children: [
                                   const Icon(
                                     Icons.settings_outlined,
-                                    size: 18,
-                                    color: BrambleColors.creamSubdued,
+                                    size: 17,
+                                    color: BrambleColors.creamInk,
                                   ),
-                                  const SizedBox(width: 7),
+                                  const SizedBox(width: 6),
                                   Text(
                                     'Settings',
                                     style: BrambleTypography.bodySmall(
                                       color: BrambleColors.creamInk,
                                       fontWeight: FontWeight.w700,
-                                    ).copyWith(fontSize: 13.5),
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
                           ),
-                          const SizedBox(width: 9),
+                          const SizedBox(width: 8),
                           Container(
-                            width: 44,
-                            height: 44,
-                            decoration: const BoxDecoration(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: BrambleColors.sageGreen,
+                              border: Border.all(
+                                color: BrambleColors.creamBg,
+                                width: 2,
+                              ),
                             ),
                             child: Center(
                               child: Text(
                                 initial,
-                                style: BrambleTypography.displaySmall(
+                                style: BrambleTypography.titleMedium(
                                   color: const Color(0xFFF0FAE1),
-                                ).copyWith(fontSize: 18),
+                                ),
                               ),
                             ),
                           ),
@@ -106,24 +114,28 @@ class StatsScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 20),
 
                   // Today's Goal Ring Card
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: BrambleColors.creamSurface,
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: BrambleColors.creamBorder.withOpacity(0.5),
+                        width: 1,
+                      ),
                     ),
                     child: Row(
                       children: [
                         SizedBox(
-                          width: 88,
-                          height: 88,
+                          width: 80,
+                          height: 80,
                           child: CustomPaint(
                             painter: _CircularProgressPainter(
                               progress: (todayMin / goalMin).clamp(0.0, 1.0),
-                              strokeWidth: 11,
+                              strokeWidth: 9,
                               trackColor: BrambleColors.creamDivider,
                               progressColor: BrambleColors.primaryOrange,
                             ),
@@ -136,16 +148,16 @@ class StatsScreen extends ConsumerWidget {
                             children: [
                               Text(
                                 '$todayMin of $goalMin min',
-                                style: BrambleTypography.displayMedium(
+                                style: BrambleTypography.displaySmall(
                                   color: BrambleColors.creamInk,
-                                ).copyWith(fontSize: 27),
+                                ),
                               ),
-                              const SizedBox(height: 5),
+                              const SizedBox(height: 4),
                               Text(
-                                "Today's goal. One more chapter does it.",
-                                style: BrambleTypography.bodySmall(
+                                "Today's literary goal. You're making great daily progress!",
+                                style: BrambleTypography.caption(
                                   color: BrambleColors.creamSubdued,
-                                ).copyWith(fontSize: 13.5, height: 1.45),
+                                ).copyWith(height: 1.4),
                               ),
                             ],
                           ),
@@ -172,27 +184,31 @@ class StatsScreen extends ConsumerWidget {
                       return Expanded(
                         child: Container(
                           margin: const EdgeInsets.symmetric(horizontal: 4),
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                           decoration: BoxDecoration(
                             color: bg,
-                            borderRadius: BorderRadius.circular(22),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: BrambleColors.creamBorder.withOpacity(0.4),
+                              width: 1,
+                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 c['value'] ?? '',
-                                style: BrambleTypography.displaySmall(
+                                style: BrambleTypography.titleLarge(
                                   color: ink,
-                                ).copyWith(fontSize: 24),
+                                ),
                               ),
-                              const SizedBox(height: 6),
+                              const SizedBox(height: 4),
                               Text(
                                 c['label'] ?? '',
-                                style: BrambleTypography.bodySmall(
+                                style: BrambleTypography.caption(
                                   color: ink,
                                   fontWeight: FontWeight.w700,
-                                ).copyWith(fontSize: 11.5, letterSpacing: 0.2),
+                                ).copyWith(fontSize: 10.5, letterSpacing: 0.2),
                               ),
                             ],
                           ),
@@ -202,25 +218,29 @@ class StatsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 14),
 
-                  // 7 Days Chart Card
+                  // 7 Days Reading Habit Chart Card
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: BrambleColors.creamSurface,
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: BrambleColors.creamBorder.withOpacity(0.5),
+                        width: 1,
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'LAST 7 DAYS',
+                          'WEEKLY READING HABIT',
                           style: BrambleTypography.labelUppercase(
                             color: BrambleColors.creamMuted,
                           ),
                         ),
-                        const SizedBox(height: 18),
+                        const SizedBox(height: 16),
                         SizedBox(
-                          height: 104,
+                          height: 96,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: weekList.map((d) {
@@ -237,13 +257,13 @@ class StatsScreen extends ConsumerWidget {
                                         child: Align(
                                           alignment: Alignment.bottomCenter,
                                           child: FractionallySizedBox(
-                                            heightFactor: val.clamp(0.15, 1.0),
+                                            heightFactor: val.clamp(0.12, 1.0),
                                             child: Container(
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 color: isToday
                                                     ? BrambleColors.primaryOrange
-                                                    : const Color(0xFFAEBF92),
+                                                    : BrambleColors.sageGreen,
                                                 borderRadius: BorderRadius.circular(999),
                                               ),
                                             ),
@@ -253,9 +273,11 @@ class StatsScreen extends ConsumerWidget {
                                       const SizedBox(height: 8),
                                       Text(
                                         d['label'] ?? '',
-                                        style: BrambleTypography.bodySmall(
-                                          color: BrambleColors.creamMuted,
-                                          fontWeight: FontWeight.w700,
+                                        style: BrambleTypography.caption(
+                                          color: isToday
+                                              ? BrambleColors.primaryOrangeDark
+                                              : BrambleColors.creamMuted,
+                                          fontWeight: isToday ? FontWeight.w800 : FontWeight.w600,
                                         ).copyWith(fontSize: 11),
                                       ),
                                     ],
@@ -272,17 +294,34 @@ class StatsScreen extends ConsumerWidget {
 
                   // Insight Card
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                    padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       color: BrambleColors.lightSage,
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: BrambleColors.sageGreen.withOpacity(0.3),
+                        width: 1,
+                      ),
                     ),
-                    child: Text(
-                      peakInsight,
-                      style: BrambleTypography.bodyMedium(
-                        color: BrambleColors.deepGreen,
-                        fontWeight: FontWeight.w500,
-                      ).copyWith(fontSize: 14, height: 1.55),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(
+                          Icons.lightbulb_outline_rounded,
+                          size: 20,
+                          color: BrambleColors.deepGreen,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            peakInsight,
+                            style: BrambleTypography.bodySmall(
+                              color: BrambleColors.deepGreen,
+                              fontWeight: FontWeight.w600,
+                            ).copyWith(height: 1.5),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

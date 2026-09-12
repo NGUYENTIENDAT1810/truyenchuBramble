@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS reading_progress (
     CONSTRAINT uq_user_book_progress UNIQUE (user_id, book_id)
 );
 
-CREATE TABLE IF NOT EXISTS library (
+CREATE TABLE IF NOT EXISTS user_libraries (
     id VARCHAR(36) PRIMARY KEY,
     user_id VARCHAR(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     book_id VARCHAR(36) NOT NULL REFERENCES books(id) ON DELETE CASCADE,
@@ -170,4 +170,4 @@ CREATE INDEX IF NOT EXISTS idx_books_author_id ON books(author_id);
 CREATE INDEX IF NOT EXISTS idx_chapters_book_id ON chapters(book_id);
 CREATE INDEX IF NOT EXISTS idx_comments_chapter_id ON comments(chapter_id);
 CREATE INDEX IF NOT EXISTS idx_reading_progress_user_id ON reading_progress(user_id);
-CREATE INDEX IF NOT EXISTS idx_library_user_id ON library(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_libraries_user_id ON user_libraries(user_id);

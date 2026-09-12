@@ -51,26 +51,30 @@ class _AuthorScreenState extends ConsumerState<AuthorScreen> {
             final works = (author['works'] as List? ?? []);
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 30),
+              padding: const EdgeInsets.only(bottom: 48),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Back button
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 10, 18, 0),
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                     child: GestureDetector(
                       onTap: () => context.pop(),
                       child: Container(
-                        width: 40,
-                        height: 40,
+                        width: 38,
+                        height: 38,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: BrambleColors.creamInk.withOpacity(0.06),
+                          color: BrambleColors.creamSurface,
+                          border: Border.all(
+                            color: BrambleColors.creamBorder.withOpacity(0.5),
+                            width: 1,
+                          ),
                         ),
                         child: const Icon(
                           Icons.chevron_left_rounded,
                           color: BrambleColors.creamInk,
-                          size: 28,
+                          size: 26,
                         ),
                       ),
                     ),
@@ -84,18 +88,29 @@ class _AuthorScreenState extends ConsumerState<AuthorScreen> {
                       children: [
                         // Avatar Circle
                         Container(
-                          width: 92,
-                          height: 92,
-                          decoration: const BoxDecoration(
+                          width: 84,
+                          height: 84,
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: BrambleColors.oliveGreen,
+                            border: Border.all(
+                              color: BrambleColors.creamBg,
+                              width: 3,
+                            ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x1F2E2B25),
+                                blurRadius: 12,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
                           ),
                           child: Center(
                             child: Text(
                               author['avatarInitial'] ?? 'A',
                               style: BrambleTypography.displayLarge(
                                 color: const Color(0xFFF0FAE1),
-                              ).copyWith(fontSize: 38),
+                              ).copyWith(fontSize: 34),
                             ),
                           ),
                         ),
@@ -104,32 +119,33 @@ class _AuthorScreenState extends ConsumerState<AuthorScreen> {
                           author['name'] ?? '',
                           style: BrambleTypography.displayMedium(
                             color: BrambleColors.creamInk,
-                          ).copyWith(fontSize: 30),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          '${((author['followersCount'] ?? 14200) / 1000).toStringAsFixed(1)}k readers · ${author['novelsCount'] ?? 3} novels · joined ${author['joinedYear'] ?? 2021}',
-                          style: BrambleTypography.bodySmall(
-                            color: BrambleColors.creamMuted,
                           ),
                         ),
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${((author['followersCount'] ?? 14200) / 1000).toStringAsFixed(1)}k readers · ${author['novelsCount'] ?? 3} novels · joined ${author['joinedYear'] ?? 2021}',
+                          style: BrambleTypography.caption(
+                            color: BrambleColors.creamMuted,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
                         Text(
                           author['bio'] ?? '',
                           style: BrambleTypography.bodyMedium(
-                            color: const Color(0xFF474238),
-                          ).copyWith(fontSize: 15, height: 1.65),
+                            color: BrambleColors.creamInk,
+                          ).copyWith(height: 1.55),
                         ),
                         const SizedBox(height: 18),
                         Row(
                           children: [
                             Expanded(
                               child: BrambleButton(
-                                text: isFollowed ? 'Following' : 'Follow ${author['name']}',
+                                text: isFollowed ? 'Following' : 'Follow Author',
                                 variant: isFollowed
                                     ? BrambleButtonVariant.dark
                                     : BrambleButtonVariant.primary,
-                                height: 50,
+                                height: 48,
                                 onPressed: () => _toggleFollow(isFollowed),
                               ),
                             ),
@@ -137,10 +153,19 @@ class _AuthorScreenState extends ConsumerState<AuthorScreen> {
                             BrambleButton(
                               text: 'Support',
                               variant: BrambleButtonVariant.secondary,
-                              height: 50,
+                              height: 48,
+                              width: 110,
                               onPressed: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Supported ${author['name']}!')),
+                                  SnackBar(
+                                    backgroundColor: BrambleColors.creamSurface,
+                                    content: Text(
+                                      'Supported ${author['name']}!',
+                                      style: BrambleTypography.bodyMedium(
+                                        color: BrambleColors.creamInk,
+                                      ),
+                                    ),
+                                  ),
                                 );
                               },
                             ),
@@ -151,89 +176,98 @@ class _AuthorScreenState extends ConsumerState<AuthorScreen> {
                   ),
 
                   // Novels Section
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(22, 26, 22, 0),
-                    child: Text(
-                      'NOVELS',
-                      style: BrambleTypography.labelUppercase(
-                        color: BrambleColors.creamMuted,
+                  if (works.isNotEmpty) ...[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(22, 26, 22, 0),
+                      child: Text(
+                        'NOVELS BY AUTHOR',
+                        style: BrambleTypography.labelUppercase(
+                          color: BrambleColors.creamMuted,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 210,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 22),
-                      itemCount: works.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 14),
-                      itemBuilder: (context, index) {
-                        final work = works[index];
-                        return GestureDetector(
-                          onTap: () => context.push('/book/${work['id']}'),
-                          child: SizedBox(
-                            width: 104,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                BookCoverView(
-                                  title: work['title'] ?? '',
-                                  coverColorHex: work['coverColor'],
-                                  coverInkColorHex: work['coverInkColor'],
-                                  width: 104,
-                                  height: 148,
-                                  fontSize: 14,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  work['title'] ?? '',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: BrambleTypography.bodySmall(
-                                    color: BrambleColors.creamInk,
-                                    fontWeight: FontWeight.w700,
-                                  ).copyWith(fontSize: 13),
-                                ),
-                                Text(
-                                  work['meta'] ?? '',
-                                  style: BrambleTypography.bodySmall(
-                                    color: BrambleColors.creamMuted,
-                                  ).copyWith(fontSize: 11.5),
-                                ),
-                              ],
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: 216,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 22),
+                        itemCount: works.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 14),
+                        itemBuilder: (context, index) {
+                          final work = works[index];
+                          return GestureDetector(
+                            onTap: () => context.push('/book/${work['id']}'),
+                            child: SizedBox(
+                              width: 112,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  BookCoverView(
+                                    title: work['title'] ?? '',
+                                    coverUrl: work['coverUrl'] as String?,
+                                    coverColorHex: work['coverColor'],
+                                    coverInkColorHex: work['coverInkColor'],
+                                    width: 112,
+                                    height: 156,
+                                    fontSize: 14,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    work['title'] ?? '',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: BrambleTypography.bodySmall(
+                                      color: BrambleColors.creamInk,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  Text(
+                                    work['meta'] ?? '',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: BrambleTypography.caption(
+                                      color: BrambleColors.creamMuted,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
+                  ],
 
                   // Note from Author card
                   if (author['authorNote'] != null && author['authorNote'].toString().isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(22, 24, 22, 0),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                        padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(
                           color: BrambleColors.peachSelection,
-                          borderRadius: BorderRadius.circular(28),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: BrambleColors.primaryOrange.withOpacity(0.2),
+                            width: 1,
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'Note from ${author['name'].toString().split(' ').first}',
-                              style: BrambleTypography.displaySmall(
+                              style: BrambleTypography.titleMedium(
                                 color: BrambleColors.peachDark,
-                              ).copyWith(fontSize: 19),
+                              ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
                             Text(
                               author['authorNote'],
                               style: BrambleTypography.bodyMedium(
                                 color: BrambleColors.peachDark,
-                              ).copyWith(fontSize: 14, height: 1.55),
+                              ).copyWith(height: 1.55),
                             ),
                           ],
                         ),

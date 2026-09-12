@@ -12,16 +12,20 @@ class ReaderThemeConfig {
   final Color bg;
   final Color ink;
   final Color surface;
+  final Color surfaceElevated;
   final Color chrome;
   final Color muted;
+  final Color divider;
   final bool isDark;
 
   const ReaderThemeConfig({
     required this.bg,
     required this.ink,
     required this.surface,
+    required this.surfaceElevated,
     required this.chrome,
     required this.muted,
+    required this.divider,
     required this.isDark,
   });
 
@@ -29,8 +33,10 @@ class ReaderThemeConfig {
     bg: BrambleColors.creamBg,
     ink: BrambleColors.creamInk,
     surface: BrambleColors.creamSurface,
-    chrome: Color(0xDCF5EAD8),
+    surfaceElevated: BrambleColors.creamSurfaceElevated,
+    chrome: Color(0xECF5EAD8),
     muted: BrambleColors.creamMuted,
+    divider: BrambleColors.creamDivider,
     isDark: false,
   );
 
@@ -38,8 +44,10 @@ class ReaderThemeConfig {
     bg: BrambleColors.sepiaBg,
     ink: BrambleColors.sepiaInk,
     surface: BrambleColors.sepiaSurface,
-    chrome: Color(0xDCE8D7B4),
+    surfaceElevated: BrambleColors.sepiaSurfaceElevated,
+    chrome: Color(0xECE8D7B4),
     muted: BrambleColors.sepiaMuted,
+    divider: BrambleColors.sepiaDivider,
     isDark: false,
   );
 
@@ -47,8 +55,10 @@ class ReaderThemeConfig {
     bg: BrambleColors.nightBg,
     ink: BrambleColors.nightInk,
     surface: BrambleColors.nightSurface,
-    chrome: Color(0xDC211F1C),
+    surfaceElevated: BrambleColors.nightSurfaceElevated,
+    chrome: Color(0xEC1B1917),
     muted: BrambleColors.nightMuted,
+    divider: BrambleColors.nightDivider,
     isDark: true,
   );
 
@@ -74,12 +84,20 @@ class BrambleTheme {
         primary: BrambleColors.primaryOrange,
         surface: BrambleColors.creamSurface,
         onSurface: BrambleColors.creamInk,
+        error: BrambleColors.error,
       ),
+      dividerColor: BrambleColors.creamDivider,
+      splashFactory: InkSparkle.splashFactory,
       appBarTheme: const AppBarTheme(
         backgroundColor: BrambleColors.creamBg,
         elevation: 0,
         scrolledUnderElevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          systemNavigationBarColor: BrambleColors.creamBg,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
       ),
     );
   }

@@ -190,12 +190,25 @@
 
     <h2>8. Kết Quả Kiểm Thử & Tình Trạng Mã Nguồn</h2>
     <ul>
-      <li><code>gradlew.bat build</code>: <strong>BUILD SUCCESSFUL</strong> (100% tests & packaging passed).</li>
-      <li><code>gradlew.bat bootRun</code>: <strong>Tomcat started on port 8080 (http)</strong>, kết nối MySQL Workbench thành công, đổi tên bảng <code>user_libraries</code> tránh từ khóa cấm của MySQL.</li>
-      <li><code>UX Library & Discover</code>: Sửa lỗi hiển thị danh sách sách tủ sách và sắp xếp Tag Chips tự nhiên trong `Wrap`.</li>
+      <li><code>Bramble Editorial UI/UX Refactor</code>: Nâng cấp toàn diện giao diện Mobile Flutter theo chuẩn sách in cao cấp (Editorial/Literary), loại bỏ hoàn toàn cảm giác mockup/prototype.</li>
+      <li><code>Design System & Typography</code>: Chuẩn hóa <code>BrambleColors</code> (semantic surfaces, divider, borders), <code>BrambleTypography</code> (Caprasimo Display + Lora/Figtree) và <code>BrambleTheme</code>.</li>
+      <li><code>BookCoverView 2:3</code>: Chuẩn hóa hiển thị bìa truyện tỷ lệ 2:3 với NetworkImage cache, fallback typography sang trọng với hiệu ứng gáy sách (book spine) và inner frame border.</li>
+      <li><code>BrambleBottomBar</code>: Thanh điều hướng dạng floating capsule thanh lịch, tích hợp <code>SafeArea</code> và gradient chống che nội dung.</li>
+      <li><code>Screen Upgrades</code>:
+        <ul>
+          <li><strong>Home Screen</strong>: Greeting header, streak badge, notification bell, Continue Reading hero card, New Chapters horizontal list, Curated recommendations.</li>
+          <li><strong>Discover Screen</strong>: Search bar thanh thoát, genre tag filters, danh sách xếp hạng có số thứ tự typography to rõ.</li>
+          <li><strong>Library Screen</strong>: Kệ sách cá nhân (Reading, Saved, Downloaded), progress bar sage green, Select & Bulk Action mode.</li>
+          <li><strong>Novel Detail Screen</strong>: Bìa sách 2:3 lớn, tác giả, tags, stats card 3 cột, expandable blurb, CTA "Start/Continue Reading", Preview chương mới nhất.</li>
+          <li><strong>Table of Contents (Chapter List)</strong>: Scan chương dễ dàng, sắp xếp Newest/Oldest, trạng thái Khóa/Mở/Coins rõ ràng.</li>
+          <li><strong>Reader Screen & Settings</strong>: 3 theme (Cream, Sepia, Night), tùy chỉnh font/size/line-height, ẩn/hiện controls mượt mà, thanh điều hướng Next/Prev chapter ở đáy, Like & Note bar cuối văn bản.</li>
+          <li><strong>Comments & Stats Screen</strong>: Reader notes phong cách blockquote, thống kê thói quen đọc sách 7 ngày và mục tiêu hàng ngày dạng circular chart.</li>
+        </ul>
+      </li>
+      <li><code>Zero RenderFlex Overflow</code>: Toàn bộ Row/Column chứa dynamic text đã được bọc <code>Expanded</code>/<code>Flexible</code> với <code>TextOverflow.ellipsis</code> và padding an toàn.</li>
+      <li><code>Data & Logic Preservation</code>: Giữ nguyên 100% API contract, Riverpod state management, Spring Boot backend và database. Không hard-code mock data.</li>
       <li><code>flutter analyze</code>: <strong>No issues found!</strong> (0 errors, 0 warnings).</li>
-      <li><code>flutter test</code>: <strong>8/8 passed (100%)</strong>.</li>
-      <li>Java Spring Boot: Đầy đủ Controller, Service, Repository, DTO, Mapper, Exception, Security, MySQL profile (`application-mysql.yml`).</li>
+      <li><code>flutter test</code>: <strong>All 8 tests passed (100%)</strong>.</li>
     </ul>
   </div>
 </body>

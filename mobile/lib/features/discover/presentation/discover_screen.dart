@@ -29,8 +29,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     final state = ref.watch(discoverControllerProvider);
     final notifier = ref.read(discoverControllerProvider.notifier);
 
-    final heading = (state.query.isNotEmpty || state.selectedTag != 'All')
-        ? '${state.books.length} RESULTS'
+    final isSearching = state.query.isNotEmpty || state.selectedTag != 'All';
+    final heading = isSearching
+        ? '${state.books.length} NOVELS FOUND'
         : 'RISING THIS WEEK';
 
     return Scaffold(
@@ -38,42 +39,50 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(22, 16, 22, 100),
+          padding: const EdgeInsets.fromLTRB(22, 16, 22, 110),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Discover',
-                style: BrambleTypography.displayLarge(color: BrambleColors.creamInk).copyWith(
-                  fontSize: 31,
+                style: BrambleTypography.displayLarge(
+                  color: BrambleColors.creamInk,
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 16),
 
               // Search Bar
               Container(
-                height: 50,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                height: 48,
+                padding: const EdgeInsets.symmetric(horizontal: 14),
                 decoration: BoxDecoration(
                   color: BrambleColors.creamSurface,
                   borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: BrambleColors.creamBorder.withOpacity(0.6),
+                    width: 1,
+                  ),
                 ),
                 child: Row(
                   children: [
                     const Icon(
                       Icons.search_rounded,
                       color: BrambleColors.creamMuted,
-                      size: 22,
+                      size: 20,
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: TextField(
                         controller: _searchController,
                         onChanged: (val) => notifier.setQuery(val),
-                        style: BrambleTypography.bodyLarge(color: BrambleColors.creamInk),
+                        style: BrambleTypography.bodyMedium(
+                          color: BrambleColors.creamInk,
+                        ),
                         decoration: InputDecoration(
-                          hintText: 'Titles, authors, tags',
-                          hintStyle: BrambleTypography.bodyLarge(color: BrambleColors.creamMuted),
+                          hintText: 'Search titles, authors, genres...',
+                          hintStyle: BrambleTypography.bodyMedium(
+                            color: BrambleColors.creamMuted,
+                          ),
                           border: InputBorder.none,
                           isDense: true,
                           contentPadding: EdgeInsets.zero,
@@ -97,7 +106,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Tag Chips
+              // Tag Filter Chips
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -110,62 +119,98 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 22),
+              const SizedBox(height: 24),
 
-              // Rank Heading
-              Text(
-                heading,
-                style: BrambleTypography.labelUppercase(color: BrambleColors.creamMuted),
+              // Editorial Heading
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    heading,
+                    style: BrambleTypography.labelUppercase(
+                      color: BrambleColors.creamMuted,
+                    ),
+                  ),
+                  if (isSearching)
+                    GestureDetector(
+                      onTap: () {
+                        _searchController.clear();
+                        notifier.setQuery('');
+                        notifier.setTag('All');
+                      },
+                      child: Text(
+                        'Reset',
+                        style: BrambleTypography.caption(
+                          color: BrambleColors.primaryOrangeDark,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                ],
               ),
               const SizedBox(height: 14),
 
-              // Books List
+              // Books Ranking List
               if (state.isLoading)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 40),
-                  child: BrambleLoading(),
+                  child: BrambleLoading(message: 'Searching novels...'),
                 )
               else if (state.books.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 40),
-                  child: Center(
-                    child: Text(
-                      'No books found',
-                      style: BrambleTypography.bodyMedium(color: BrambleColors.creamMuted),
-                    ),
-                  ),
+                BrambleEmptyState(
+                  icon: Icons.search_off_rounded,
+                  title: 'No novels found',
+                  subtitle: 'Try searching with different keywords or genre filters.',
+                  actionLabel: 'Clear filters',
+                  onAction: () {
+                    _searchController.clear();
+                    notifier.setQuery('');
+                    notifier.setTag('All');
+                  },
                 )
               else
                 ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: state.books.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 14),
+                  separatorBuilder: (_, __) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Divider(
+                      color: BrambleColors.creamDivider.withOpacity(0.6),
+                      height: 1,
+                    ),
+                  ),
                   itemBuilder: (context, index) {
                     final book = state.books[index];
                     final rankNumber = index + 1;
 
                     return GestureDetector(
                       onTap: () => context.push('/book/${book.id}'),
+                      behavior: HitTestBehavior.opaque,
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          // Rank number
                           SizedBox(
-                            width: 26,
+                            width: 28,
                             child: Text(
                               '$rankNumber',
                               style: BrambleTypography.displayMedium(
-                                color: const Color(0xFFC0B6A5),
-                              ).copyWith(fontSize: 24),
+                                color: rankNumber <= 3
+                                    ? BrambleColors.primaryOrange
+                                    : BrambleColors.creamBorder,
+                              ).copyWith(fontSize: 22),
                             ),
                           ),
                           const SizedBox(width: 8),
                           BookCoverView(
                             title: book.title,
+                            coverUrl: book.coverImageUrl,
                             coverColorHex: book.coverColor,
                             coverInkColorHex: book.coverInkColor,
                             width: 52,
-                            height: 74,
-                            borderRadius: 13,
+                            height: 76,
+                            borderRadius: 10,
                             showTitle: false,
                           ),
                           const SizedBox(width: 14),
@@ -177,26 +222,67 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                                   book.title,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: BrambleTypography.bodyMedium(
+                                  style: BrambleTypography.titleMedium(
                                     color: BrambleColors.creamInk,
-                                    fontWeight: FontWeight.w700,
-                                  ).copyWith(fontSize: 15.5),
+                                  ),
                                 ),
-                                const SizedBox(height: 3),
+                                const SizedBox(height: 2),
                                 Text(
                                   book.author,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: BrambleTypography.bodySmall(
+                                  style: BrambleTypography.caption(
                                     color: BrambleColors.creamSubdued,
                                   ),
                                 ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  '${book.totalChapters} ch · ${book.tag}',
-                                  style: BrambleTypography.bodySmall(
-                                    color: BrambleColors.creamMuted,
-                                  ).copyWith(fontSize: 12),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    if (book.tag.isNotEmpty) ...[
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 7,
+                                          vertical: 2,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: BrambleColors.creamSurface,
+                                          borderRadius: BorderRadius.circular(999),
+                                        ),
+                                        child: Text(
+                                          book.tag,
+                                          style: BrambleTypography.caption(
+                                            color: BrambleColors.creamInk,
+                                            fontWeight: FontWeight.w600,
+                                          ).copyWith(fontSize: 10),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                    ],
+                                    Text(
+                                      '${book.totalChapters} ch',
+                                      style: BrambleTypography.caption(
+                                        color: BrambleColors.creamMuted,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.star_rounded,
+                                          size: 14,
+                                          color: BrambleColors.warning,
+                                        ),
+                                        const SizedBox(width: 2),
+                                        Text(
+                                          '${book.rating}',
+                                          style: BrambleTypography.caption(
+                                            color: BrambleColors.creamInk,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

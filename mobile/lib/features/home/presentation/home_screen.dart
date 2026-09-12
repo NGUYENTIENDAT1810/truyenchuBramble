@@ -14,6 +14,13 @@ import 'home_controller.dart';
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final homeAsync = ref.watch(homeDataProvider);
@@ -42,65 +49,72 @@ class HomeScreen extends ConsumerWidget {
               onRefresh: () async => ref.refresh(homeDataProvider),
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(0, 14, 0, 100),
+                padding: const EdgeInsets.fromLTRB(0, 16, 0, 110),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Top Greeting Bar
+                    // Top Editorial Greeting Bar
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 22),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Wednesday evening',
-                                  style: BrambleTypography.bodySmall(
+                                  _getGreeting(),
+                                  style: BrambleTypography.caption(
                                     color: BrambleColors.creamMuted,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  'Welcome back, $userName',
-                                  style: BrambleTypography.displayLarge(
+                                  'Welcome, $userName',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: BrambleTypography.displayMedium(
                                     color: BrambleColors.creamInk,
-                                  ).copyWith(fontSize: 30),
+                                  ),
                                 ),
                               ],
                             ),
                           ),
+                          const SizedBox(width: 12),
                           Row(
                             children: [
-                              // Notification bell
+                              // Notification Bell
                               Consumer(
                                 builder: (context, ref, _) {
                                   final hasUnread = ref.watch(notificationsUnreadProvider);
                                   return GestureDetector(
                                     onTap: () => context.push('/notifications'),
                                     child: Container(
-                                      width: 34,
-                                      height: 34,
-                                      decoration: const BoxDecoration(
+                                      width: 38,
+                                      height: 38,
+                                      decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: BrambleColors.creamSurface,
+                                        border: Border.all(
+                                          color: BrambleColors.creamBorder.withOpacity(0.5),
+                                          width: 1,
+                                        ),
                                       ),
                                       child: Stack(
                                         alignment: Alignment.center,
                                         children: [
                                           const Icon(
-                                            Icons.notifications_none_rounded,
-                                            size: 19,
-                                            color: Color(0xFF474238),
+                                            Icons.notifications_outlined,
+                                            size: 20,
+                                            color: BrambleColors.creamInk,
                                           ),
                                           if (hasUnread)
                                             Positioned(
-                                              top: 6,
-                                              right: 7,
+                                              top: 8,
+                                              right: 8,
                                               child: Container(
                                                 width: 8,
                                                 height: 8,
@@ -109,7 +123,7 @@ class HomeScreen extends ConsumerWidget {
                                                   color: BrambleColors.primaryOrange,
                                                   border: Border.all(
                                                     color: BrambleColors.creamBg,
-                                                    width: 2,
+                                                    width: 1.5,
                                                   ),
                                                 ),
                                               ),
@@ -120,36 +134,36 @@ class HomeScreen extends ConsumerWidget {
                                   );
                                 },
                               ),
-                              const SizedBox(width: 9),
-                              // Streak badge
+                              const SizedBox(width: 8),
+                              // Streak Badge
                               GestureDetector(
                                 onTap: () => context.go('/stats'),
                                 child: Container(
-                                  height: 34,
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 13),
+                                  height: 38,
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
                                   decoration: BoxDecoration(
                                     color: BrambleColors.lightSage,
                                     borderRadius: BorderRadius.circular(999),
+                                    border: Border.all(
+                                      color: BrambleColors.sageGreen.withOpacity(0.3),
+                                      width: 1,
+                                    ),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Container(
-                                        width: 8,
-                                        height: 8,
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: BrambleColors.mutedGreen,
-                                        ),
+                                      const Icon(
+                                        Icons.local_fire_department_rounded,
+                                        size: 18,
+                                        color: BrambleColors.deepGreen,
                                       ),
-                                      const SizedBox(width: 6),
+                                      const SizedBox(width: 4),
                                       Text(
                                         '$streak',
                                         style: BrambleTypography.bodySmall(
                                           color: BrambleColors.deepGreen,
-                                          fontWeight: FontWeight.w700,
-                                        ).copyWith(fontSize: 13.5),
+                                          fontWeight: FontWeight.w800,
+                                        ).copyWith(fontSize: 13),
                                       ),
                                     ],
                                   ),
@@ -160,9 +174,10 @@ class HomeScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 18),
 
-                    // Continue Reading Section
+                    const SizedBox(height: 20),
+
+                    // Continue Reading Hero Section
                     if (active != null) ...[
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 22),
@@ -173,379 +188,351 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 11),
+                      const SizedBox(height: 10),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 22),
-                        child: GestureDetector(
-                          onTap: () {
-                            final chapterId = active['chapterId'] as String?;
-                            if (chapterId != null && chapterId.isNotEmpty) {
-                              context.push('/reader/$chapterId');
-                            } else {
-                              context.push('/book/${active['bookId']}');
-                            }
-                          },
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                              color: BrambleColors.creamSurface,
-                              borderRadius: BorderRadius.circular(28),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color(0x282E2B25),
-                                  blurRadius: 10,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: BrambleColors.creamSurface,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: BrambleColors.creamBorder.withOpacity(0.6),
+                              width: 1,
                             ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                BookCoverView(
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x142E2B25),
+                                blurRadius: 16,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () => context.push('/book/${active['bookId']}'),
+                                child: BookCoverView(
                                   title: active['bookTitle'] ?? 'Novel',
+                                  coverUrl: active['coverUrl'] as String?,
                                   coverColorHex: active['coverColor'],
                                   coverInkColorHex: active['coverInkColor'],
-                                  width: 78,
-                                  height: 112,
-                                  fontSize: 14,
+                                  width: 82,
+                                  height: 122,
+                                  fontSize: 13,
                                 ),
-                                const SizedBox(width: 15),
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 122,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              active['bookTitle'] ?? '',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: BrambleTypography
-                                                  .displaySmall(
-                                                color: BrambleColors.creamInk,
-                                              ).copyWith(fontSize: 19),
-                                            ),
-                                            // const SizedBox(height: 2),
-                                            Text(
-                                              '${active['author'] ?? ''} · Chapter ${active['chapterNumber'] ?? 1}',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style:
-                                                  BrambleTypography.bodySmall(
-                                                color:
-                                                    BrambleColors.creamSubdued,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Text(
-                                              '“${active['chapterTitle'] ?? ''}”',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style:
-                                                  BrambleTypography.bodyMedium(
-                                                color: BrambleColors.creamInk,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      active['bookTitle'] ?? '',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: BrambleTypography.titleMedium(
+                                        color: BrambleColors.creamInk,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      '${active['author'] ?? ''} · Ch. ${active['chapterNumber'] ?? 1}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: BrambleTypography.caption(
+                                        color: BrambleColors.creamSubdued,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    if (active['chapterTitle'] != null &&
+                                        active['chapterTitle'].toString().isNotEmpty) ...[
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '“${active['chapterTitle']}”',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: BrambleTypography.bodySmall(
+                                          color: BrambleColors.creamInk,
                                         ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            // Progress bar
-                                            Container(
-                                              height: 6,
-                                              width: double.infinity,
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    BrambleColors.creamDivider,
-                                                borderRadius:
-                                                    BorderRadius.circular(999),
-                                              ),
-                                              child: FractionallySizedBox(
-                                                alignment: Alignment.centerLeft,
-                                                widthFactor: ((active[
-                                                                'percentage']
-                                                            is num)
-                                                        ? (active['percentage']
-                                                                as num)
-                                                            .toDouble()
-                                                        : 0.0)
-                                                    .clamp(0.05, 1.0),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: BrambleColors
-                                                        .primaryOrange,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            999),
-                                                  ),
-                                                ),
-                                              ),
+                                      ),
+                                    ],
+                                    const SizedBox(height: 10),
+                                    // Progress Bar
+                                    Container(
+                                      height: 5,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: BrambleColors.creamDivider,
+                                        borderRadius: BorderRadius.circular(999),
+                                      ),
+                                      child: FractionallySizedBox(
+                                        alignment: Alignment.centerLeft,
+                                        widthFactor: ((active['percentage'] is num)
+                                                ? (active['percentage'] as num).toDouble()
+                                                : 0.0)
+                                            .clamp(0.04, 1.0),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: BrambleColors.primaryOrange,
+                                            borderRadius: BorderRadius.circular(999),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          active['pctText'] ?? '0% read',
+                                          style: BrambleTypography.caption(
+                                            color: BrambleColors.creamMuted,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            final chapterId = active['chapterId'] as String?;
+                                            if (chapterId != null && chapterId.isNotEmpty) {
+                                              context.push('/reader/$chapterId');
+                                            } else {
+                                              context.push('/book/${active['bookId']}');
+                                            }
+                                          },
+                                          child: Text(
+                                            'Resume →',
+                                            style: BrambleTypography.bodySmall(
+                                              color: BrambleColors.primaryOrangeDark,
+                                              fontWeight: FontWeight.w700,
                                             ),
-                                            // const SizedBox(height: 6),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                    child: Text(
-                                                  active['pctText'] ??
-                                                      '0% through',
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: BrambleTypography
-                                                      .bodySmall(
-                                                    color: BrambleColors
-                                                        .creamMuted,
-                                                  ).copyWith(fontSize: 12),
-                                                )),
-                                                const SizedBox(width: 8),
-                                                Flexible(
-                                                    child: Text(
-                                                  active['timeLeft'] ?? '',
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  textAlign: TextAlign.end,
-                                                  style: BrambleTypography
-                                                      .bodySmall(
-                                                    color: BrambleColors
-                                                        .creamMuted,
-                                                  ).copyWith(fontSize: 12),
-                                                )),
-                                              ],
-                                            ),
-                                          ],
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
+                      const SizedBox(height: 24),
                     ],
 
-                    const SizedBox(height: 26),
-
-                    // New chapters today
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 22),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            'NEW CHAPTERS TODAY',
-                            style: BrambleTypography.labelUppercase(
-                              color: BrambleColors.creamMuted,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () => context.go('/library'),
-                            child: Text(
-                              'Library',
-                              style: BrambleTypography.bodySmall(
-                                color: BrambleColors.primaryOrangeDark,
-                                fontWeight: FontWeight.w700,
-                              ).copyWith(fontSize: 13),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      height: 220,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
+                    // New Chapters Today Section
+                    if (newChapters.isNotEmpty) ...[
+                      Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 22),
-                        itemCount: newChapters.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 14),
-                        itemBuilder: (context, index) {
-                          final book = newChapters[index];
-                          return GestureDetector(
-                            onTap: () => context.push('/book/${book.id}'),
-                            child: SizedBox(
-                              width: 112,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  BookCoverView(
-                                    title: book.title,
-                                    coverColorHex: book.coverColor,
-                                    coverInkColorHex: book.coverInkColor,
-                                    badge: book.badge,
-                                    width: 112,
-                                    height: 158,
-                                    fontSize: 15,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    book.title,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: BrambleTypography.bodySmall(
-                                      color: BrambleColors.creamInk,
-                                      fontWeight: FontWeight.w700,
-                                    ).copyWith(fontSize: 13.5),
-                                  ),
-                                  Text(
-                                    book.author,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: BrambleTypography.bodySmall(
-                                      color: BrambleColors.creamMuted,
-                                    ).copyWith(fontSize: 12),
-                                  ),
-                                ],
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              'NEW CHAPTERS TODAY',
+                              style: BrambleTypography.labelUppercase(
+                                color: BrambleColors.creamMuted,
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    ),
-
-                    const SizedBox(height: 22),
-
-                    // Recommendations
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 22),
-                      child: Text(
-                        'BECAUSE YOU READ SLOW FANTASY',
-                        style: BrambleTypography.labelUppercase(
-                          color: BrambleColors.creamMuted,
+                            GestureDetector(
+                              onTap: () => context.go('/library'),
+                              child: Text(
+                                'Library',
+                                style: BrambleTypography.bodySmall(
+                                  color: BrambleColors.primaryOrangeDark,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 22),
-                      child: Column(
-                        children: recs.map((book) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: GestureDetector(
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        height: 216,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 22),
+                          itemCount: newChapters.length,
+                          separatorBuilder: (_, __) => const SizedBox(width: 14),
+                          itemBuilder: (context, index) {
+                            final book = newChapters[index];
+                            return GestureDetector(
                               onTap: () => context.push('/book/${book.id}'),
-                              child: Container(
-                                padding: const EdgeInsets.all(11),
-                                decoration: BoxDecoration(
-                                  color: BrambleColors.creamSurface,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Row(
+                              child: SizedBox(
+                                width: 114,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     BookCoverView(
                                       title: book.title,
+                                      coverUrl: book.coverImageUrl,
                                       coverColorHex: book.coverColor,
                                       coverInkColorHex: book.coverInkColor,
-                                      width: 46,
-                                      height: 64,
-                                      borderRadius: 12,
-                                      showTitle: false,
+                                      badge: book.badge,
+                                      width: 114,
+                                      height: 156,
+                                      fontSize: 14,
                                     ),
-                                    const SizedBox(width: 13),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            book.title,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: BrambleTypography.bodyMedium(
-                                              color: BrambleColors.creamInk,
-                                              fontWeight: FontWeight.w700,
-                                            ).copyWith(fontSize: 15),
-                                          ),
-                                          const SizedBox(height: 3),
-                                          Text(
-                                            '${book.author} · ${book.totalChapters} chapters',
-                                            style: BrambleTypography.bodySmall(
-                                              color: BrambleColors.creamSubdued,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 7),
-                                          Wrap(
-                                            spacing: 6,
-                                            runSpacing: 4,
-                                            children: [
-                                              Container(
-                                                height: 21,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 9),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      BrambleColors.lightSage,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          999),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    book.tag,
-                                                    style: BrambleTypography
-                                                        .bodySmall(
-                                                      color: BrambleColors
-                                                          .deepGreen,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                    ).copyWith(fontSize: 11),
-                                                  ),
-                                                ),
-                                              ),
-                                              Container(
-                                                height: 21,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 9),
-                                                decoration: BoxDecoration(
-                                                  color: BrambleColors
-                                                      .peachSelection,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          999),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    '${book.rating} ★',
-                                                    style: BrambleTypography
-                                                        .bodySmall(
-                                                      color: BrambleColors
-                                                          .peachDark,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                    ).copyWith(fontSize: 11),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      book.title,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: BrambleTypography.bodySmall(
+                                        color: BrambleColors.creamInk,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    Text(
+                                      book.author,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: BrambleTypography.caption(
+                                        color: BrambleColors.creamMuted,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                          );
-                        }).toList(),
+                            );
+                          },
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 22),
+                    ],
+
+                    // Recommendations Section
+                    if (recs.isNotEmpty) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 22),
+                        child: Text(
+                          'CURATED RECOMMENDATIONS',
+                          style: BrambleTypography.labelUppercase(
+                            color: BrambleColors.creamMuted,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 22),
+                        child: Column(
+                          children: recs.map((book) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: GestureDetector(
+                                onTap: () => context.push('/book/${book.id}'),
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: BrambleColors.creamSurface,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: BrambleColors.creamBorder.withOpacity(0.5),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      BookCoverView(
+                                        title: book.title,
+                                        coverUrl: book.coverImageUrl,
+                                        coverColorHex: book.coverColor,
+                                        coverInkColorHex: book.coverInkColor,
+                                        width: 50,
+                                        height: 72,
+                                        borderRadius: 10,
+                                        showTitle: false,
+                                      ),
+                                      const SizedBox(width: 14),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              book.title,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: BrambleTypography.bodyMedium(
+                                                color: BrambleColors.creamInk,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              '${book.author} · ${book.totalChapters} chapters',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: BrambleTypography.caption(
+                                                color: BrambleColors.creamSubdued,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Row(
+                                              children: [
+                                                if (book.tag.isNotEmpty)
+                                                  Container(
+                                                    padding: const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 2,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: BrambleColors.lightSage,
+                                                      borderRadius: BorderRadius.circular(999),
+                                                    ),
+                                                    child: Text(
+                                                      book.tag,
+                                                      style: BrambleTypography.caption(
+                                                        color: BrambleColors.deepGreen,
+                                                        fontWeight: FontWeight.w700,
+                                                      ).copyWith(fontSize: 10.5),
+                                                    ),
+                                                  ),
+                                                const SizedBox(width: 6),
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical: 2,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: BrambleColors.peachSelection,
+                                                    borderRadius: BorderRadius.circular(999),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.star_rounded,
+                                                        size: 12,
+                                                        color: BrambleColors.peachDark,
+                                                      ),
+                                                      const SizedBox(width: 2),
+                                                      Text(
+                                                        '${book.rating}',
+                                                        style: BrambleTypography.caption(
+                                                          color: BrambleColors.peachDark,
+                                                          fontWeight: FontWeight.w700,
+                                                        ).copyWith(fontSize: 10.5),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

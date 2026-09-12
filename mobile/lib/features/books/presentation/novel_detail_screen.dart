@@ -38,6 +38,7 @@ class NovelDetailScreen extends ConsumerStatefulWidget {
 
 class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
   bool? _isSavedOverride;
+  bool _isDescriptionExpanded = false;
 
   void _toggleSave(bool current) async {
     final newState = !current;
@@ -55,7 +56,7 @@ class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
       backgroundColor: BrambleColors.creamBg,
       body: SafeArea(
         child: bookAsync.when(
-          loading: () => const BrambleLoading(message: 'Loading novel...'),
+          loading: () => const BrambleLoading(message: 'Loading novel details...'),
           error: (err, _) => BrambleErrorView(
             message: err.toString(),
             onRetry: () => ref.refresh(bookDetailProvider(widget.bookId)),
@@ -64,32 +65,65 @@ class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
             final isSaved = _isSavedOverride ?? book.isSaved;
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 40),
+              padding: const EdgeInsets.only(bottom: 48),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Back button
+                  // Top Navigation Bar
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 10, 18, 0),
-                    child: GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: BrambleColors.creamInk.withOpacity(0.06),
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () => context.pop(),
+                          child: Container(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: BrambleColors.creamSurface,
+                              border: Border.all(
+                                color: BrambleColors.creamBorder.withOpacity(0.5),
+                                width: 1,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.chevron_left_rounded,
+                              color: BrambleColors.creamInk,
+                              size: 26,
+                            ),
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.chevron_left_rounded,
-                          color: BrambleColors.creamInk,
-                          size: 28,
+                        GestureDetector(
+                          onTap: () => _toggleSave(isSaved),
+                          child: Container(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isSaved
+                                  ? BrambleColors.peachSelection
+                                  : BrambleColors.creamSurface,
+                              border: Border.all(
+                                color: BrambleColors.creamBorder.withOpacity(0.5),
+                                width: 1,
+                              ),
+                            ),
+                            child: Icon(
+                              isSaved ? Icons.bookmark_rounded : Icons.bookmark_outline_rounded,
+                              color: isSaved
+                                  ? BrambleColors.primaryOrange
+                                  : BrambleColors.creamInk,
+                              size: 20,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
 
-                  // Header: Cover + Meta
+                  // Header Editorial Layout: Cover + Meta
                   Padding(
                     padding: const EdgeInsets.fromLTRB(22, 14, 22, 0),
                     child: Row(
@@ -97,12 +131,13 @@ class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
                       children: [
                         BookCoverView(
                           title: book.title,
+                          coverUrl: book.coverImageUrl,
                           coverColorHex: book.coverColor,
                           coverInkColorHex: book.coverInkColor,
-                          width: 122,
-                          height: 174,
-                          borderRadius: 22,
-                          fontSize: 18,
+                          width: 116,
+                          height: 168,
+                          borderRadius: 14,
+                          fontSize: 16,
                         ),
                         const SizedBox(width: 18),
                         Expanded(
@@ -111,13 +146,13 @@ class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
                             children: [
                               Text(
                                 book.title,
-                                maxLines: 2,
+                                maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
-                                style: BrambleTypography.displayMedium(
+                                style: BrambleTypography.displaySmall(
                                   color: BrambleColors.creamInk,
-                                ).copyWith(fontSize: 25, height: 1.1),
+                                ),
                               ),
-                              const SizedBox(height: 7),
+                              const SizedBox(height: 6),
                               GestureDetector(
                                 onTap: () {
                                   if (book.authorId != null) {
@@ -126,6 +161,8 @@ class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
                                 },
                                 child: Text(
                                   book.author,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: BrambleTypography.bodyMedium(
                                     color: BrambleColors.primaryOrangeDark,
                                     fontWeight: FontWeight.w700,
@@ -134,40 +171,41 @@ class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
                               ),
                               const SizedBox(height: 12),
                               Wrap(
-                                spacing: 7,
-                                runSpacing: 7,
+                                spacing: 6,
+                                runSpacing: 6,
                                 children: [
-                                  Container(
-                                    height: 24,
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                                    decoration: BoxDecoration(
-                                      color: BrambleColors.peachSelection,
-                                      borderRadius: BorderRadius.circular(999),
-                                    ),
-                                    child: Center(
+                                  if (book.tag.isNotEmpty)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 9,
+                                        vertical: 3,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: BrambleColors.peachSelection,
+                                        borderRadius: BorderRadius.circular(999),
+                                      ),
                                       child: Text(
                                         book.tag,
-                                        style: BrambleTypography.bodySmall(
+                                        style: BrambleTypography.caption(
                                           color: BrambleColors.peachDark,
                                           fontWeight: FontWeight.w700,
-                                        ).copyWith(fontSize: 11.5),
+                                        ),
                                       ),
                                     ),
-                                  ),
                                   Container(
-                                    height: 24,
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 9,
+                                      vertical: 3,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: BrambleColors.lightSage,
                                       borderRadius: BorderRadius.circular(999),
                                     ),
-                                    child: Center(
-                                      child: Text(
-                                        book.status ?? 'Ongoing',
-                                        style: BrambleTypography.bodySmall(
-                                          color: BrambleColors.deepGreen,
-                                          fontWeight: FontWeight.w700,
-                                        ).copyWith(fontSize: 11.5),
+                                    child: Text(
+                                      book.status ?? 'Ongoing',
+                                      style: BrambleTypography.caption(
+                                        color: BrambleColors.deepGreen,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
                                   ),
@@ -182,35 +220,86 @@ class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
 
                   // Stats Row
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(22, 22, 22, 0),
+                    padding: const EdgeInsets.fromLTRB(22, 18, 22, 0),
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
                         color: BrambleColors.creamSurface,
-                        borderRadius: BorderRadius.circular(22),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: BrambleColors.creamBorder.withOpacity(0.5),
+                          width: 1,
+                        ),
                       ),
                       child: Row(
                         children: [
                           _buildStatItem('${book.rating} ★', 'RATING'),
+                          Container(
+                            width: 1,
+                            height: 28,
+                            color: BrambleColors.creamDivider,
+                          ),
                           _buildStatItem('${book.totalChapters}', 'CHAPTERS'),
-                          _buildStatItem('${(book.readersCount / 1000).toStringAsFixed(1)}k', 'READERS'),
+                          Container(
+                            width: 1,
+                            height: 28,
+                            color: BrambleColors.creamDivider,
+                          ),
+                          _buildStatItem(
+                            book.readersCount > 1000
+                                ? '${(book.readersCount / 1000).toStringAsFixed(1)}k'
+                                : '${book.readersCount}',
+                            'READERS',
+                          ),
                         ],
                       ),
                     ),
                   ),
 
-                  // Blurb
+                  // Synopsis / Blurb
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(22, 20, 22, 0),
-                    child: Text(
-                      book.blurb,
-                      style: BrambleTypography.bodyMedium(
-                        color: const Color(0xFF474238),
-                      ).copyWith(fontSize: 15, height: 1.65),
+                    padding: const EdgeInsets.fromLTRB(22, 18, 22, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'SYNOPSIS',
+                          style: BrambleTypography.labelUppercase(
+                            color: BrambleColors.creamMuted,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        GestureDetector(
+                          onTap: () => setState(() => _isDescriptionExpanded = !_isDescriptionExpanded),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                book.blurb,
+                                maxLines: _isDescriptionExpanded ? null : 4,
+                                overflow: _isDescriptionExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                                style: BrambleTypography.bodyMedium(
+                                  color: BrambleColors.creamInk,
+                                ).copyWith(height: 1.55),
+                              ),
+                              if (book.blurb.length > 180) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  _isDescriptionExpanded ? 'Show less' : 'Read more',
+                                  style: BrambleTypography.caption(
+                                    color: BrambleColors.primaryOrangeDark,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
 
-                  // Actions: Continue reading / Save
+                  // Primary Reading CTA & Save Action
                   Padding(
                     padding: const EdgeInsets.fromLTRB(22, 22, 22, 0),
                     child: Row(
@@ -219,10 +308,11 @@ class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
                           child: BrambleButton(
                             text: book.readingProgress != null
                                 ? 'Continue ch. ${book.readingProgress!['chapterNumber'] ?? 1}'
-                                : 'Start reading',
+                                : 'Start Reading',
+                            height: 50,
                             onPressed: () {
                               final chId = book.readingProgress?['chapterId'] as String?;
-                              if (chId != null) {
+                              if (chId != null && chId.isNotEmpty) {
                                 context.push('/reader/$chId');
                               } else {
                                 chaptersAsync.whenData((chapters) {
@@ -240,7 +330,8 @@ class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
                           variant: isSaved
                               ? BrambleButtonVariant.dark
                               : BrambleButtonVariant.secondary,
-                          width: 100,
+                          height: 50,
+                          width: 96,
                           onPressed: () => _toggleSave(isSaved),
                         ),
                       ],
@@ -267,32 +358,52 @@ class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
                             GestureDetector(
                               onTap: () => context.push('/book/${widget.bookId}/toc'),
                               child: Text(
-                                'All ${book.totalChapters}',
+                                'All ${book.totalChapters} →',
                                 style: BrambleTypography.bodySmall(
                                   color: BrambleColors.primaryOrangeDark,
                                   fontWeight: FontWeight.w700,
-                                ).copyWith(fontSize: 13),
+                                ),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 12),
                         chaptersAsync.when(
-                          loading: () => const BrambleLoading(),
-                          error: (e, _) => Text('Failed to load chapters: $e'),
+                          loading: () => const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            child: BrambleLoading(),
+                          ),
+                          error: (e, _) => BrambleErrorView(
+                            message: 'Could not load chapters: $e',
+                            onRetry: () => ref.refresh(bookChaptersProvider(widget.bookId)),
+                          ),
                           data: (chapters) {
+                            if (chapters.isEmpty) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                child: Text(
+                                  'No chapters published yet.',
+                                  style: BrambleTypography.bodyMedium(
+                                    color: BrambleColors.creamMuted,
+                                  ),
+                                ),
+                              );
+                            }
+
                             final latest = chapters.reversed.take(3).toList();
                             return Column(
                               children: latest.map((ch) {
                                 final isLocked = ch['isLocked'] == true;
                                 return GestureDetector(
                                   onTap: () => context.push('/reader/${ch['id']}'),
+                                  behavior: HitTestBehavior.opaque,
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(vertical: 12),
                                     decoration: BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(
-                                          color: BrambleColors.creamInk.withOpacity(0.1),
+                                          color: BrambleColors.creamDivider.withOpacity(0.6),
+                                          width: 1,
                                         ),
                                       ),
                                     ),
@@ -311,18 +422,19 @@ class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
-                                              const SizedBox(height: 3),
+                                              const SizedBox(height: 2),
                                               Text(
                                                 '${ch['wordCount'] ?? 3400} words',
-                                                style: BrambleTypography.bodySmall(
+                                                style: BrambleTypography.caption(
                                                   color: BrambleColors.creamMuted,
-                                                ).copyWith(fontSize: 12),
+                                                ),
                                               ),
                                             ],
                                           ),
                                         ),
+                                        const SizedBox(width: 8),
                                         Container(
-                                          height: 24,
+                                          height: 26,
                                           padding: const EdgeInsets.symmetric(horizontal: 10),
                                           decoration: BoxDecoration(
                                             color: isLocked
@@ -332,13 +444,13 @@ class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
                                           ),
                                           child: Center(
                                             child: Text(
-                                              isLocked ? '30 coins' : 'Read',
-                                              style: BrambleTypography.bodySmall(
+                                              isLocked ? '${ch['coinPrice'] ?? 30} coins' : 'Read',
+                                              style: BrambleTypography.caption(
                                                 color: isLocked
                                                     ? BrambleColors.peachDark
                                                     : BrambleColors.deepGreen,
                                                 fontWeight: FontWeight.w800,
-                                              ).copyWith(fontSize: 11),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -368,16 +480,17 @@ class _NovelDetailScreenState extends ConsumerState<NovelDetailScreen> {
         children: [
           Text(
             value,
-            style: BrambleTypography.displaySmall(
+            style: BrambleTypography.titleLarge(
               color: BrambleColors.creamInk,
-            ).copyWith(fontSize: 21),
+            ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
             label,
-            style: BrambleTypography.labelUppercase(
+            style: BrambleTypography.caption(
               color: BrambleColors.creamMuted,
-            ),
+              fontWeight: FontWeight.w700,
+            ).copyWith(fontSize: 10, letterSpacing: 0.8),
           ),
         ],
       ),

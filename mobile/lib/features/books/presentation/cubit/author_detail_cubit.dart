@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/book_repository.dart';
 
+import '../../domain/book_detail_model.dart';
+
 abstract class AuthorDetailState extends Equatable {
   const AuthorDetailState();
 
@@ -18,7 +20,7 @@ class AuthorDetailLoading extends AuthorDetailState {
 }
 
 class AuthorDetailLoaded extends AuthorDetailState {
-  final Map<String, dynamic> authorData;
+  final AuthorModel authorData;
   final bool? isFollowedOverride;
 
   const AuthorDetailLoaded({
@@ -27,10 +29,10 @@ class AuthorDetailLoaded extends AuthorDetailState {
   });
 
   bool get isFollowed =>
-      isFollowedOverride ?? (authorData['isFollowed'] as bool? ?? false);
+      isFollowedOverride ?? authorData.isFollowed;
 
   AuthorDetailLoaded copyWith({
-    Map<String, dynamic>? authorData,
+    AuthorModel? authorData,
     bool? isFollowedOverride,
   }) {
     return AuthorDetailLoaded(

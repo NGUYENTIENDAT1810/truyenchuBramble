@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/stats_repository.dart';
+import '../../domain/stats_model.dart';
 
 abstract class StatsState extends Equatable {
   const StatsState();
@@ -18,7 +19,7 @@ class StatsLoading extends StatsState {
 }
 
 class StatsLoaded extends StatsState {
-  final Map<String, dynamic> data;
+  final StatsResponseModel data;
 
   const StatsLoaded(this.data);
 

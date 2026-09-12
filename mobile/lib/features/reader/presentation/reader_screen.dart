@@ -126,7 +126,7 @@ class _ReaderViewState extends State<_ReaderView> {
     );
   }
 
-  void _openPaywallSheet(Map<String, dynamic> nextCh) {
+  void _openPaywallSheet(dynamic nextCh) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

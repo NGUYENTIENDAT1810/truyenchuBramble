@@ -5,6 +5,7 @@ import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/book_cover_view.dart';
 import '../../../core/widgets/loading_indicator.dart';
+import '../domain/library_item_model.dart';
 import 'bloc/library_bloc.dart';
 import 'cubit/library_selection_cubit.dart';
 
@@ -171,7 +172,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                   );
                                 }
 
-                                final items = state is LibraryLoaded ? state.items : <Map<String, dynamic>>[];
+                                final items = state is LibraryLoaded ? state.items : <LibraryItemModel>[];
 
                                 if (items.isEmpty) {
                                   return BrambleEmptyState(
@@ -213,21 +214,19 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                     ),
                                     itemBuilder: (context, index) {
                                       final item = items[index];
-                                      final book = (item['book'] is Map<String, dynamic>)
-                                          ? item['book'] as Map<String, dynamic>
-                                          : item;
+                                      final book = item.book;
 
-                                      final bookId = (book['id'] ?? item['bookId'] ?? item['id'])?.toString() ?? '';
-                                      final title = (book['title'] ?? item['title'] ?? 'Untitled').toString();
-                                      final author = (book['author'] ?? item['author'] ?? 'Unknown author').toString();
-                                      final totalChapters = book['totalChapters'] ?? item['totalChapters'] ?? 100;
-                                      final coverUrl = (book['coverUrl'] ?? item['coverUrl'])?.toString();
-                                      final coverColor = book['coverColor']?.toString() ?? item['coverColor']?.toString();
-                                      final coverInkColor = book['coverInkColor']?.toString() ?? item['coverInkColor']?.toString();
+                                      final bookId = book?.id.isNotEmpty == true ? book!.id : item.bookId;
+                                      final title = book?.title ?? 'Untitled';
+                                      final author = book?.author ?? 'Unknown author';
+                                      final totalChapters = book?.totalChapters ?? 100;
+                                      final coverUrl = book?.coverImageUrl;
+                                      final coverColor = book?.coverColor;
+                                      final coverInkColor = book?.coverInkColor;
 
-                                      final rawPct = item['progressPercent'] ?? item['pctValue'] ?? 0;
-                                      final pct = ((rawPct as num).toDouble()) / 100.0;
-                                      final lastChNum = item['lastReadChapterNumber'];
+                                      final rawPct = item.progressPercent;
+                                      final pct = (rawPct.toDouble()) / 100.0;
+                                      final lastChNum = item.lastReadChapterNumber;
                                       final stateText = (lastChNum != null && lastChNum > 0)
                                           ? 'Chapter $lastChNum of $totalChapters'
                                           : (currentTab == 'Downloaded'
@@ -278,7 +277,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                                   selectionCubit.toggleItem(bookId);
                                                   return;
                                                 }
-                                                final lastCh = item['lastReadChapterId'] as String?;
+                                                final lastCh = item.lastReadChapterId;
                                                 if (lastCh != null && lastCh.isNotEmpty) {
                                                   context.push('/reader/$lastCh');
                                                 } else {

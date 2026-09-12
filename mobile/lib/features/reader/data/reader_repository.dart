@@ -1,33 +1,35 @@
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/storage/offline_chapter_storage.dart';
+import '../domain/chapter_detail_model.dart';
 
 class ReaderRepository {
   final ApiClient _client;
 
   ReaderRepository(this._client);
 
-  Future<Map<String, dynamic>> getChapterContent(String chapterId) async {
+  Future<ChapterDetailModel> getChapterContent(String chapterId) async {
     // 1. Try local offline cache first if present
     final cached = OfflineChapterStorage.getChapter(chapterId);
     if (cached != null) {
-      return cached;
+      return ChapterDetailModel.fromJson(cached);
     }
 
     // 2. Fetch from backend API
     try {
       final res = await _client.get('${ApiEndpoints.chapterContent}/$chapterId');
-      return Map<String, dynamic>.from(res);
+      final map = Map<String, dynamic>.from(res);
+      return ChapterDetailModel.fromJson(map);
     } catch (e) {
       // If network fails, re-check offline storage
-      if (cached != null) return cached;
+      if (cached != null) return ChapterDetailModel.fromJson(cached);
       rethrow;
     }
   }
 
-  Future<Map<String, dynamic>> unlockChapter(String chapterId) async {
+  Future<UnlockResponseModel> unlockChapter(String chapterId) async {
     final res = await _client.post('${ApiEndpoints.unlockChapter}/$chapterId/unlock');
-    return Map<String, dynamic>.from(res);
+    return UnlockResponseModel.fromJson(Map<String, dynamic>.from(res));
   }
 
   Future<void> syncProgress({

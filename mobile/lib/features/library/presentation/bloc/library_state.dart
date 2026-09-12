@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../domain/library_item_model.dart';
 
 abstract class LibraryState extends Equatable {
   final String currentTab;
@@ -18,7 +19,7 @@ class LibraryLoading extends LibraryState {
 }
 
 class LibraryLoaded extends LibraryState {
-  final List<Map<String, dynamic>> items;
+  final List<LibraryItemModel> items;
 
   const LibraryLoaded({
     required super.currentTab,

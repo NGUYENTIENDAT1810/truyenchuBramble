@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../books/domain/book_detail_model.dart';
 import '../../data/discover_repository.dart';
 import 'discover_event.dart';
 import 'discover_state.dart';
@@ -58,16 +57,7 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
       final allBooks =
           await _discoverRepository.searchBooks(query: '', tag: 'All');
 
-      final genresRaw =
-          (res['popularGenres'] as List? ?? res['tags'] as List? ?? []);
-      final tagsList = ['All'];
-      for (var genre in genresRaw) {
-        if (genre is Map && genre['name'] != null) {
-          tagsList.add(genre['name'].toString());
-        } else {
-          tagsList.add(genre);
-        }
-      }
+      final tagsList = ['All', ...res.popularGenres.map((g) => g.name)];
       emit(state.copyWith(
         books: allBooks,
         tags: tagsList.length > 1 ? tagsList : state.tags,

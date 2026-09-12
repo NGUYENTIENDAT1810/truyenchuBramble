@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../domain/chapter_detail_model.dart';
 
 abstract class ReaderState extends Equatable {
   const ReaderState();
@@ -22,7 +23,7 @@ class ReaderLoading extends ReaderState {
 
 class ReaderLoaded extends ReaderState {
   final String chapterId;
-  final Map<String, dynamic> chapterData;
+  final ChapterDetailModel chapterData;
 
   const ReaderLoaded({
     required this.chapterId,

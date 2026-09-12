@@ -50,13 +50,14 @@ class _HomeScreenState extends State<HomeScreen> {
             if (state is HomeFailure) {
               return BrambleErrorView(
                 message: state.message,
-                onRetry: () => context.read<HomeBloc>().add(const HomeFetchStarted()),
+                onRetry: () =>
+                    context.read<HomeBloc>().add(const HomeFetchStarted()),
               );
             }
 
             if (state is HomeLoaded) {
               final data = state.data;
-              final active = data['activeReading'] as Map<String, dynamic>?;
+              final active = data['activeReading'];
               final newChapters = data['newChapters'] as List<BookModel>? ?? [];
               final recs = data['recommendations'] as List<BookModel>? ?? [];
               final streak = data['streak'] ?? 12;
@@ -84,9 +85,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: BlocBuilder<AuthBloc, AuthState>(
                                 builder: (context, authState) {
                                   final user = authState.user;
-                                  final userName = user?.name.split(' ').first ?? 'Reader';
+                                  final userName =
+                                      user?.name.split(' ').first ?? 'Reader';
                                   return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         _getGreeting(),
@@ -116,7 +119,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 BlocBuilder<NotificationsCubit, bool>(
                                   builder: (context, hasUnread) {
                                     return GestureDetector(
-                                      onTap: () => context.push('/notifications'),
+                                      onTap: () =>
+                                          context.push('/notifications'),
                                       child: Container(
                                         width: 38,
                                         height: 38,
@@ -124,7 +128,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           shape: BoxShape.circle,
                                           color: BrambleColors.creamSurface,
                                           border: Border.all(
-                                            color: BrambleColors.creamBorder.withOpacity(0.5),
+                                            color: BrambleColors.creamBorder
+                                                .withOpacity(0.5),
                                             width: 1,
                                           ),
                                         ),
@@ -145,9 +150,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   height: 8,
                                                   decoration: BoxDecoration(
                                                     shape: BoxShape.circle,
-                                                    color: BrambleColors.primaryOrange,
+                                                    color: BrambleColors
+                                                        .primaryOrange,
                                                     border: Border.all(
-                                                      color: BrambleColors.creamBg,
+                                                      color:
+                                                          BrambleColors.creamBg,
                                                       width: 1.5,
                                                     ),
                                                   ),
@@ -165,12 +172,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onTap: () => context.go('/stats'),
                                   child: Container(
                                     height: 38,
-                                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12),
                                     decoration: BoxDecoration(
                                       color: BrambleColors.lightSage,
                                       borderRadius: BorderRadius.circular(999),
                                       border: Border.all(
-                                        color: BrambleColors.sageGreen.withOpacity(0.3),
+                                        color: BrambleColors.sageGreen
+                                            .withOpacity(0.3),
                                         width: 1,
                                       ),
                                     ),
@@ -223,7 +232,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: BrambleColors.creamSurface,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: BrambleColors.creamBorder.withOpacity(0.6),
+                                color:
+                                    BrambleColors.creamBorder.withOpacity(0.6),
                                 width: 1,
                               ),
                               boxShadow: const [
@@ -238,7 +248,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 GestureDetector(
-                                  onTap: () => context.push('/book/${active['bookId']}'),
+                                  onTap: () =>
+                                      context.push('/book/${active['bookId']}'),
                                   child: BookCoverView(
                                     title: active['bookTitle'] ?? 'Novel',
                                     coverUrl: active['coverUrl'] as String?,
@@ -252,7 +263,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         active['bookTitle'] ?? '',
@@ -273,7 +285,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                       if (active['chapterTitle'] != null &&
-                                          active['chapterTitle'].toString().isNotEmpty) ...[
+                                          active['chapterTitle']
+                                              .toString()
+                                              .isNotEmpty) ...[
                                         const SizedBox(height: 4),
                                         Text(
                                           '“${active['chapterTitle']}”',
@@ -291,25 +305,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                         width: double.infinity,
                                         decoration: BoxDecoration(
                                           color: BrambleColors.creamDivider,
-                                          borderRadius: BorderRadius.circular(999),
+                                          borderRadius:
+                                              BorderRadius.circular(999),
                                         ),
                                         child: FractionallySizedBox(
                                           alignment: Alignment.centerLeft,
-                                          widthFactor: ((active['percentage'] is num)
-                                                  ? (active['percentage'] as num).toDouble()
-                                                  : 0.0)
-                                              .clamp(0.04, 1.0),
+                                          widthFactor:
+                                              ((active['percentage'] is num)
+                                                      ? (active['percentage']
+                                                              as num)
+                                                          .toDouble()
+                                                      : 0.0)
+                                                  .clamp(0.04, 1.0),
                                           child: Container(
                                             decoration: BoxDecoration(
-                                              color: BrambleColors.primaryOrange,
-                                              borderRadius: BorderRadius.circular(999),
+                                              color:
+                                                  BrambleColors.primaryOrange,
+                                              borderRadius:
+                                                  BorderRadius.circular(999),
                                             ),
                                           ),
                                         ),
                                       ),
                                       const SizedBox(height: 6),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             active['pctText'] ?? '0% read',
@@ -319,17 +340,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                           GestureDetector(
                                             onTap: () {
-                                              final chapterId = active['chapterId'] as String?;
-                                              if (chapterId != null && chapterId.isNotEmpty) {
-                                                context.push('/reader/$chapterId');
+                                              final chapterId =
+                                                  active['chapterId']
+                                                      as String?;
+                                              if (chapterId != null &&
+                                                  chapterId.isNotEmpty) {
+                                                context
+                                                    .push('/reader/$chapterId');
                                               } else {
-                                                context.push('/book/${active['bookId']}');
+                                                context.push(
+                                                    '/book/${active['bookId']}');
                                               }
                                             },
                                             child: Text(
                                               'Resume →',
-                                              style: BrambleTypography.bodySmall(
-                                                color: BrambleColors.primaryOrangeDark,
+                                              style:
+                                                  BrambleTypography.bodySmall(
+                                                color: BrambleColors
+                                                    .primaryOrangeDark,
                                                 fontWeight: FontWeight.w700,
                                               ),
                                             ),
@@ -381,7 +409,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             scrollDirection: Axis.horizontal,
                             padding: const EdgeInsets.symmetric(horizontal: 22),
                             itemCount: newChapters.length,
-                            separatorBuilder: (_, __) => const SizedBox(width: 14),
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(width: 14),
                             itemBuilder: (context, index) {
                               final book = newChapters[index];
                               return GestureDetector(
@@ -389,7 +418,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: SizedBox(
                                   width: 114,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       BookCoverView(
                                         title: book.title,
@@ -455,7 +485,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       color: BrambleColors.creamSurface,
                                       borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
-                                        color: BrambleColors.creamBorder.withOpacity(0.5),
+                                        color: BrambleColors.creamBorder
+                                            .withOpacity(0.5),
                                         width: 1,
                                       ),
                                     ),
@@ -474,13 +505,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                         const SizedBox(width: 14),
                                         Expanded(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 book.title,
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
-                                                style: BrambleTypography.bodyMedium(
+                                                style: BrambleTypography
+                                                    .bodyMedium(
                                                   color: BrambleColors.creamInk,
                                                   fontWeight: FontWeight.w700,
                                                 ),
@@ -490,8 +523,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 '${book.author} · ${book.totalChapters} chapters',
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
-                                                style: BrambleTypography.caption(
-                                                  color: BrambleColors.creamSubdued,
+                                                style:
+                                                    BrambleTypography.caption(
+                                                  color: BrambleColors
+                                                      .creamSubdued,
                                                 ),
                                               ),
                                               const SizedBox(height: 6),
@@ -499,47 +534,68 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 children: [
                                                   if (book.tag.isNotEmpty)
                                                     Container(
-                                                      padding: const EdgeInsets.symmetric(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
                                                         horizontal: 8,
                                                         vertical: 2,
                                                       ),
                                                       decoration: BoxDecoration(
-                                                        color: BrambleColors.lightSage,
-                                                        borderRadius: BorderRadius.circular(999),
+                                                        color: BrambleColors
+                                                            .lightSage,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(999),
                                                       ),
                                                       child: Text(
                                                         book.tag,
-                                                        style: BrambleTypography.caption(
-                                                          color: BrambleColors.deepGreen,
-                                                          fontWeight: FontWeight.w700,
-                                                        ).copyWith(fontSize: 10.5),
+                                                        style: BrambleTypography
+                                                            .caption(
+                                                          color: BrambleColors
+                                                              .deepGreen,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                        ).copyWith(
+                                                            fontSize: 10.5),
                                                       ),
                                                     ),
                                                   const SizedBox(width: 6),
                                                   Container(
-                                                    padding: const EdgeInsets.symmetric(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
                                                       horizontal: 8,
                                                       vertical: 2,
                                                     ),
                                                     decoration: BoxDecoration(
-                                                      color: BrambleColors.peachSelection,
-                                                      borderRadius: BorderRadius.circular(999),
+                                                      color: BrambleColors
+                                                          .peachSelection,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              999),
                                                     ),
                                                     child: Row(
-                                                      mainAxisSize: MainAxisSize.min,
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
                                                       children: [
                                                         const Icon(
                                                           Icons.star_rounded,
                                                           size: 12,
-                                                          color: BrambleColors.peachDark,
+                                                          color: BrambleColors
+                                                              .peachDark,
                                                         ),
-                                                        const SizedBox(width: 2),
+                                                        const SizedBox(
+                                                            width: 2),
                                                         Text(
                                                           '${book.rating}',
-                                                          style: BrambleTypography.caption(
-                                                            color: BrambleColors.peachDark,
-                                                            fontWeight: FontWeight.w700,
-                                                          ).copyWith(fontSize: 10.5),
+                                                          style:
+                                                              BrambleTypography
+                                                                  .caption(
+                                                            color: BrambleColors
+                                                                .peachDark,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                          ).copyWith(
+                                                                  fontSize:
+                                                                      10.5),
                                                         ),
                                                       ],
                                                     ),

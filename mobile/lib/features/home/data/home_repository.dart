@@ -1,6 +1,22 @@
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../books/domain/book_detail_model.dart';
+import '../../reader/domain/chapter_detail_model.dart';
+import '../../stats/domain/stats_model.dart';
+
+class HomeDataModel {
+  final ActiveReadingModel? activeReading;
+  final List<BookModel> newChapters;
+  final List<BookModel> recommendations;
+  final int streak;
+
+  const HomeDataModel({
+    this.activeReading,
+    this.newChapters = const [],
+    this.recommendations = const [],
+    this.streak = 0,
+  });
+}
 
 class HomeRepository {
   final ApiClient _client;
@@ -14,23 +30,35 @@ class HomeRepository {
       _client.get(ApiEndpoints.stats),
     ]);
 
-    final activeReading = results[0] as Map<String, dynamic>?;
-    final discover = results[1] as Map<String, dynamic>;
-    final stats = results[2] as Map<String, dynamic>?;
+    final rawActiveReading = results[0] as Map<String, dynamic>?;
+    final activeReading = rawActiveReading != null && rawActiveReading.isNotEmpty
+        ? ActiveReadingModel.fromJson(rawActiveReading)
+        : null;
 
-    final trendingList = (discover['trending'] as List? ?? [])
-        .map((e) => BookModel.fromJson(e as Map<String, dynamic>))
+    final discover = results[1] is Map<String, dynamic> ? results[1] as Map<String, dynamic> : <String, dynamic>{};
+    final rawStats = results[2] as Map<String, dynamic>?;
+    final stats = rawStats != null ? StatsResponseModel.fromJson(rawStats) : null;
+
+    final trendingList = (discover['trending'] as List? ??
+            discover['featured'] as List? ??
+            discover['newReleases'] as List? ??
+            [])
+        .whereType<Map<String, dynamic>>()
+        .map((e) => BookModel.fromJson(e))
         .toList();
 
-    final recommendedList = (discover['recommended'] as List? ?? [])
-        .map((e) => BookModel.fromJson(e as Map<String, dynamic>))
+    final recommendedList = (discover['recommended'] as List? ??
+            discover['featured'] as List? ??
+            trendingList)
+        .whereType<Map<String, dynamic>>()
+        .map((e) => BookModel.fromJson(e))
         .toList();
 
     return {
       'activeReading': activeReading,
       'newChapters': trendingList,
       'recommendations': recommendedList,
-      'streak': stats?['streakDays'] ?? 12,
+      'streak': stats?.currentStreakDays ?? 12,
     };
   }
 }

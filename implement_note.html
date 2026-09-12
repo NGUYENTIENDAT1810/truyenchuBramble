@@ -188,8 +188,9 @@
     <ul>
       <li><code>flutter_riverpod dependency</code>: <strong>Đã gỡ bỏ 100%</strong> khỏi <code>pubspec.yaml</code> và toàn bộ code base.</li>
       <li><code>flutter analyze</code>: <strong>No issues found!</strong> (0 errors, 0 warnings, 0 infos).</li>
-      <li><code>flutter test</code>: <strong>17/17 tests passed (100%)</strong> bao gồm:
+      <li><code>flutter test</code>: <strong>28/28 tests passed (100%)</strong> bao gồm:
         <ul>
+          <li><code>domain_models_test.dart</code>: Kiểm tra 100% các models mới, serialization/deserialization, pagination và operator indexing.</li>
           <li><code>auth_bloc_test.dart</code>: Kiểm tra toàn diện AuthCheck, AuthLogin, AuthLogout, Error handling.</li>
           <li><code>reader_settings_cubit_test.dart</code>: Kiểm tra khởi tạo state, đổi theme, clamp cỡ chữ, typeface, margins.</li>
           <li><code>reader_settings_test.dart</code> &amp; <code>user_model_test.dart</code>: Kiểm tra domain logic và JSON serialization.</li>
@@ -197,6 +198,111 @@
         </ul>
       </li>
       <li><code>Business Logic & UI Fidelity</code>: Toàn bộ trải nghiệm đọc truyện, tủ sách cá nhân, mua chương bằng coin, bình luận đoạn văn và thiết kế cao cấp được bảo toàn nguyên vẹn.</li>
+    </ul>
+
+    <hr style="margin: 36px 0; border: none; border-top: 1px dashed #dcd3c4;">
+
+    <div class="badge">BRAMBLE RELEASE 2.2.0 - STRONGLY-TYPED DOMAIN MODELS & DTO PARITY MIGRATION</div>
+    <h1>Implementation Note - Hệ Thống Mô Hình Dữ Liệu Type-Safe (Domain Models)</h1>
+
+    <h2>1. Task</h2>
+    <p>Xây dựng hệ thống <strong>Domain Models strongly-typed</strong> cho ứng dụng Flutter Mobile đồng bộ 1-to-1 với toàn bộ DTOs của Spring Boot Backend (<code>backend/src/main/java/com/bramble/novel/dto/*</code>). Nâng cấp toàn bộ Repositories và BLoCs/Cubits sang trả về và quản lý các đối tượng Model chuẩn hóa thay vì dùng <code>Map&lt;String, dynamic&gt;</code> thô, đồng thời tích hợp cơ chế <code>dynamic operator [](String key)</code> để đảm bảo 100% backward-compatibility với các Widget UI hiện tại.</p>
+
+    <h2>2. Nguyên Nhân & Mục Tiêu</h2>
+    <ul>
+      <li>Khắc phục tình trạng sử dụng <code>Map&lt;String, dynamic&gt;</code> rời rạc gây khó khăn trong bảo trì, thiếu auto-complete và rủi ro runtime casting lỗi (ClassCastException / Null Safety).</li>
+      <li>Khớp hoàn toàn 1:1 với các DTOs phía Spring Boot: <code>BookResponse</code>, <code>BookDetailResponse</code>, <code>ChapterResponse</code>, <code>ChapterDetailResponse</code>, <code>DiscoverResponse</code>, <code>LibraryItemResponse</code>, <code>StatsResponse</code>, <code>AuthResponse</code>, <code>UserPreferencesDto</code>, <code>ApiResponse&lt;T&gt;</code>, <code>PageResponse&lt;T&gt;</code>.</li>
+      <li>Đảm bảo <strong>Zero-Breaking Changes</strong>: Tầng UI có thể truy cập vừa theo getter type-safe (ví dụ <code>chapter.content</code>, <code>book.title</code>) vừa qua cú pháp index operator <code>chapter['content']</code>, <code>book['title']</code>.</li>
+    </ul>
+
+    <h2>3. Danh Sách File Đã Tạo / Sửa Đổi</h2>
+    <table>
+      <tr>
+        <th>File</th>
+        <th>Hạng Mục</th>
+        <th>Mô Tả Thay Đổi</th>
+      </tr>
+      <tr>
+        <td><code>mobile/lib/core/network/api_response.dart</code></td>
+        <td>Core Network</td>
+        <td>Định nghĩa generic models <code>ApiResponse&lt;T&gt;</code> và <code>PageResponse&lt;T&gt;</code> tương ứng <code>com.bramble.novel.dto.ApiResponse</code> và <code>PageResponse</code>.</td>
+      </tr>
+      <tr>
+        <td><code>mobile/lib/features/auth/domain/user_preferences_model.dart</code></td>
+        <td>Auth Domain</td>
+        <td>Model <code>UserPreferencesModel</code> tương ứng <code>UserPreferencesDto</code> của Backend.</td>
+      </tr>
+      <tr>
+        <td><code>mobile/lib/features/auth/domain/auth_response.dart</code></td>
+        <td>Auth Domain</td>
+        <td>Model <code>AuthResponseModel</code> tương ứng <code>AuthResponse</code> backend.</td>
+      </tr>
+      <tr>
+        <td><code>mobile/lib/features/auth/domain/user_model.dart</code></td>
+        <td>Auth Domain</td>
+        <td>Cập nhật <code>UserModel</code> hỗ trợ <code>isVip</code>, <code>isPremium</code>, <code>avatarUrl</code> và <code>operator []</code>.</td>
+      </tr>
+      <tr>
+        <td><code>mobile/lib/features/books/domain/chapter_model.dart</code></td>
+        <td>Books Domain</td>
+        <td>Model <code>ChapterModel</code> tương ứng <code>ChapterResponse</code> backend.</td>
+      </tr>
+      <tr>
+        <td><code>mobile/lib/features/books/domain/book_detail_model.dart</code></td>
+        <td>Books Domain</td>
+        <td>Các model <code>GenreModel</code>, <code>AuthorModel</code>, <code>BookModel</code>, <code>BookDetailModel</code> tương ứng backend DTOs.</td>
+      </tr>
+      <tr>
+        <td><code>mobile/lib/features/discover/domain/discover_response_model.dart</code></td>
+        <td>Discover Domain</td>
+        <td>Model <code>DiscoverResponseModel</code> tương ứng <code>DiscoverResponse</code> backend.</td>
+      </tr>
+      <tr>
+        <td><code>mobile/lib/features/reader/domain/chapter_detail_model.dart</code></td>
+        <td>Reader Domain</td>
+        <td>Các model <code>ChapterDetailModel</code>, <code>UnlockResponseModel</code>, <code>ActiveReadingModel</code>, <code>ProgressResponseModel</code>.</td>
+      </tr>
+      <tr>
+        <td><code>mobile/lib/features/library/domain/library_item_model.dart</code></td>
+        <td>Library Domain</td>
+        <td>Model <code>LibraryItemModel</code> tương ứng <code>LibraryItemResponse</code> backend.</td>
+      </tr>
+      <tr>
+        <td><code>mobile/lib/features/stats/domain/stats_model.dart</code></td>
+        <td>Stats Domain</td>
+        <td>Các model <code>StatsResponseModel</code>, <code>StatCardModel</code>, <code>DayChartModel</code> tương ứng <code>StatsResponse</code> backend.</td>
+      </tr>
+      <tr>
+        <td><code>mobile/lib/features/**/data/*_repository.dart</code></td>
+        <td>Data Repositories</td>
+        <td>Chuyển đổi kiểu trả về của các Repository method sang strongly-typed models (Book, Discover, Library, Reader, Stats, Home).</td>
+      </tr>
+      <tr>
+        <td><code>mobile/lib/features/**/presentation/bloc/*</code></td>
+        <td>BLoC / Cubit States</td>
+        <td>Cập nhật các State (AuthorDetailLoaded, LibraryLoaded, ReaderLoaded, StatsLoaded, DiscoverState) sang lưu trữ typed models.</td>
+      </tr>
+      <tr>
+        <td><code>mobile/test/domain_models_test.dart</code></td>
+        <td>Test Suite</td>
+        <td>Bộ unit test toàn diện cho 100% domain models, serialization, deserialization và operator indexing.</td>
+      </tr>
+    </table>
+
+    <h2>4. Logic Thay Đổi</h2>
+    <ul>
+      <li><strong>1-to-1 DTO Parity</strong>: Tất cả các trường dữ liệu từ Spring Boot backend (như <code>viewsCount</code>, <code>readersCount</code>, <code>coinCost</code>, <code>isUnlocked</code>, <code>totalChapters</code>, <code>popularGenres</code>, v.v.) đều được map chính xác.</li>
+      <li><strong>Universal Index Operator Support</strong>: Mỗi model đều triển khai <code>dynamic operator [](String key)</code> ánh xạ các key JSON phổ biến và các alias cũ, loại bỏ nguy cơ runtime error ở các màn hình view kế thừa.</li>
+      <li><strong>ActiveReadingModel Compatibility</strong>: Mở rộng <code>ActiveReadingModel.operator []</code> (hỗ trợ <code>bookTitle</code>, <code>author</code>, <code>coverUrl</code>, <code>percentage</code>, <code>pctText</code>) và loại bỏ ép kiểu cứng <code>as Map&lt;String, dynamic&gt;?</code> tại <code>home_screen.dart</code>.</li>
+    </ul>
+
+    <h2>5. Phạm Vi Ảnh Hưởng</h2>
+    <p>Ảnh hưởng tích cực đến toàn bộ tầng Domain, Data Repository và BLoC/Cubit của Mobile App. Không thay đổi Backend Spring Boot Java code hay cấu trúc database.</p>
+
+    <h2>6. Kết Quả Kiểm Thử</h2>
+    <ul>
+      <li><code>flutter analyze</code>: <strong>0 issues found</strong> (Hoàn toàn sạch cảnh báo và lỗi biên dịch).</li>
+      <li><code>flutter test</code>: <strong>28/28 tests passed (100%)</strong>.</li>
     </ul>
   </div>
 </body>

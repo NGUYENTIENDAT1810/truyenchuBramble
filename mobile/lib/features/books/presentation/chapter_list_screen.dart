@@ -5,6 +5,7 @@ import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../data/book_repository.dart';
+import '../domain/chapter_model.dart';
 import 'cubit/book_detail_cubit.dart';
 
 class ChapterListScreen extends StatelessWidget {
@@ -43,7 +44,7 @@ class _ChapterListViewState extends State<_ChapterListView> {
         child: BlocBuilder<BookDetailCubit, BookDetailState>(
           builder: (context, state) {
             final book = state is BookDetailLoaded ? state.book : null;
-            final chapters = state is BookDetailLoaded ? state.chapters : <Map<String, dynamic>>[];
+            final chapters = state is BookDetailLoaded ? state.chapters : <ChapterModel>[];
 
             return Column(
               children: [

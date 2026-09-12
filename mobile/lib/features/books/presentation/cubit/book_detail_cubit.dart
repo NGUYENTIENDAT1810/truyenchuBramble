@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/book_repository.dart';
 import '../../domain/book_detail_model.dart';
+import '../../domain/chapter_model.dart';
 
 abstract class BookDetailState extends Equatable {
   const BookDetailState();
@@ -20,7 +21,7 @@ class BookDetailLoading extends BookDetailState {
 
 class BookDetailLoaded extends BookDetailState {
   final BookModel book;
-  final List<Map<String, dynamic>> chapters;
+  final List<ChapterModel> chapters;
   final bool? isSavedOverride;
 
   const BookDetailLoaded({
@@ -33,7 +34,7 @@ class BookDetailLoaded extends BookDetailState {
 
   BookDetailLoaded copyWith({
     BookModel? book,
-    List<Map<String, dynamic>>? chapters,
+    List<ChapterModel>? chapters,
     bool? isSavedOverride,
   }) {
     return BookDetailLoaded(
@@ -71,7 +72,7 @@ class BookDetailCubit extends Cubit<BookDetailState> {
       final results = await Future.wait([bookFuture, chaptersFuture]);
 
       final book = results[0] as BookModel;
-      final chapters = results[1] as List<Map<String, dynamic>>;
+      final chapters = results[1] as List<ChapterModel>;
 
       emit(BookDetailLoaded(book: book, chapters: chapters));
     } catch (e) {

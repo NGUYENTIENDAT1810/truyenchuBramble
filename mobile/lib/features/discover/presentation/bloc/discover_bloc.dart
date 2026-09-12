@@ -38,7 +38,8 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
     DiscoverQueryChanged event,
     Emitter<DiscoverState> emit,
   ) async {
-    emit(state.copyWith(query: event.query, isLoading: true, errorMessage: null));
+    emit(state.copyWith(
+        query: event.query, isLoading: true, errorMessage: null));
     await _searchOrInitial(emit);
   }
 
@@ -46,21 +47,30 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
     DiscoverTagSelected event,
     Emitter<DiscoverState> emit,
   ) async {
-    emit(state.copyWith(selectedTag: event.tag, isLoading: true, errorMessage: null));
+    emit(state.copyWith(
+        selectedTag: event.tag, isLoading: true, errorMessage: null));
     await _searchOrInitial(emit);
   }
 
   Future<void> _loadInitial(Emitter<DiscoverState> emit) async {
     try {
       final res = await _discoverRepository.getDiscoverData();
-      final rising = (res['rising'] as List? ?? [])
-          .map((e) => BookModel.fromJson(e as Map<String, dynamic>))
-          .toList();
-      final tagsList = (res['tags'] as List? ?? []).map((e) => e.toString()).toList();
+      final allBooks =
+          await _discoverRepository.searchBooks(query: '', tag: 'All');
 
+      final genresRaw =
+          (res['popularGenres'] as List? ?? res['tags'] as List? ?? []);
+      final tagsList = ['All'];
+      for (var genre in genresRaw) {
+        if (genre is Map && genre['name'] != null) {
+          tagsList.add(genre['name'].toString());
+        } else {
+          tagsList.add(genre);
+        }
+      }
       emit(state.copyWith(
-        books: rising,
-        tags: tagsList.isNotEmpty ? tagsList : state.tags,
+        books: allBooks,
+        tags: tagsList.length > 1 ? tagsList : state.tags,
         isLoading: false,
       ));
     } catch (e) {

@@ -258,7 +258,7 @@ class _ReaderViewState extends State<_ReaderView> {
                                 color: themeConfig.surface,
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: themeConfig.divider.withOpacity(0.5),
+                                  color: themeConfig.divider.withValues(alpha: 0.5),
                                   width: 1,
                                 ),
                               ),
@@ -348,7 +348,7 @@ class _ReaderViewState extends State<_ReaderView> {
                                         color: _isChapterLiked
                                             ? BrambleColors.primaryOrange
                                             : themeConfig.divider
-                                                .withOpacity(0.5),
+                                                .withValues(alpha: 0.5),
                                         width: 1,
                                       ),
                                     ),
@@ -391,7 +391,7 @@ class _ReaderViewState extends State<_ReaderView> {
                                       borderRadius: BorderRadius.circular(999),
                                       border: Border.all(
                                         color: themeConfig.divider
-                                            .withOpacity(0.5),
+                                            .withValues(alpha: 0.5),
                                         width: 1,
                                       ),
                                     ),
@@ -427,7 +427,7 @@ class _ReaderViewState extends State<_ReaderView> {
                                 color: themeConfig.surface,
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: themeConfig.divider.withOpacity(0.5),
+                                  color: themeConfig.divider.withValues(alpha: 0.5),
                                   width: 1,
                                 ),
                               ),
@@ -484,7 +484,7 @@ class _ReaderViewState extends State<_ReaderView> {
                               decoration: BoxDecoration(
                                 border: Border(
                                   top: BorderSide(
-                                    color: themeConfig.divider.withOpacity(0.6),
+                                    color: themeConfig.divider.withValues(alpha: 0.6),
                                     width: 1,
                                   ),
                                 ),
@@ -657,7 +657,7 @@ class _ReaderViewState extends State<_ReaderView> {
                           color: themeConfig.chrome,
                           border: Border(
                             bottom: BorderSide(
-                              color: themeConfig.divider.withOpacity(0.5),
+                              color: themeConfig.divider.withValues(alpha: 0.5),
                               width: 1,
                             ),
                           ),
@@ -758,7 +758,7 @@ class _ReaderViewState extends State<_ReaderView> {
                           color: themeConfig.chrome,
                           border: Border(
                             top: BorderSide(
-                              color: themeConfig.divider.withOpacity(0.5),
+                              color: themeConfig.divider.withValues(alpha: 0.5),
                               width: 1,
                             ),
                           ),
@@ -784,7 +784,7 @@ class _ReaderViewState extends State<_ReaderView> {
                                           color: prevCh != null
                                               ? themeConfig.ink
                                               : themeConfig.muted
-                                                  .withOpacity(0.5),
+                                                  .withValues(alpha: 0.5),
                                           fontWeight: FontWeight.w700,
                                         ),
                                       ),
@@ -824,7 +824,7 @@ class _ReaderViewState extends State<_ReaderView> {
                                           color: nextCh != null
                                               ? BrambleColors.primaryOrangeDark
                                               : themeConfig.muted
-                                                  .withOpacity(0.5),
+                                                  .withValues(alpha: 0.5),
                                           fontWeight: FontWeight.w700,
                                         ),
                                       ),

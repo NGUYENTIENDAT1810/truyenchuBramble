@@ -306,7 +306,7 @@ class ReaderSettingsSheet extends StatelessWidget {
             border: Border.all(
               color: isSelected
                   ? BrambleColors.primaryOrange
-                  : BrambleColors.creamBorder.withOpacity(0.5),
+                  : BrambleColors.creamBorder.withValues(alpha: 0.5),
               width: isSelected ? 2.5 : 1,
             ),
           ),
@@ -326,7 +326,7 @@ class ReaderSettingsSheet extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  color: ink.withOpacity(0.8),
+                  color: ink.withValues(alpha: 0.8),
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -357,7 +357,7 @@ class ReaderSettingsSheet extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? BrambleColors.primaryOrange
-                : BrambleColors.creamBorder.withOpacity(0.5),
+                : BrambleColors.creamBorder.withValues(alpha: 0.5),
             width: isSelected ? 2 : 1,
           ),
         ),

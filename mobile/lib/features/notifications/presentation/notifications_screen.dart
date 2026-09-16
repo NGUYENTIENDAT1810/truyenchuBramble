@@ -78,7 +78,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               decoration: BoxDecoration(
                 color: BrambleColors.creamBg,
                 border: Border(
-                  bottom: BorderSide(color: BrambleColors.creamInk.withOpacity(0.1)),
+                  bottom: BorderSide(color: BrambleColors.creamInk.withValues(alpha: 0.1)),
                 ),
               ),
               child: Row(
@@ -90,7 +90,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       height: 40,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: BrambleColors.creamInk.withOpacity(0.06),
+                        color: BrambleColors.creamInk.withValues(alpha: 0.06),
                       ),
                       child: const Icon(
                         Icons.chevron_left_rounded,
@@ -138,7 +138,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
                         border: Border(
-                          bottom: BorderSide(color: BrambleColors.creamInk.withOpacity(0.08)),
+                          bottom: BorderSide(color: BrambleColors.creamInk.withValues(alpha: 0.08)),
                         ),
                       ),
                       child: Row(

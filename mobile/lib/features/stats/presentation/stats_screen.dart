@@ -86,7 +86,7 @@ class _StatsView extends StatelessWidget {
                                   color: BrambleColors.creamSurface,
                                   borderRadius: BorderRadius.circular(999),
                                   border: Border.all(
-                                    color: BrambleColors.creamBorder.withOpacity(0.5),
+                                    color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                                     width: 1,
                                   ),
                                 ),
@@ -150,7 +150,7 @@ class _StatsView extends StatelessWidget {
                         color: BrambleColors.creamSurface,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: BrambleColors.creamBorder.withOpacity(0.5),
+                          color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                           width: 1,
                         ),
                       ),
@@ -216,7 +216,7 @@ class _StatsView extends StatelessWidget {
                               color: bg,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: BrambleColors.creamBorder.withOpacity(0.4),
+                                color: BrambleColors.creamBorder.withValues(alpha: 0.4),
                                 width: 1,
                               ),
                             ),
@@ -252,7 +252,7 @@ class _StatsView extends StatelessWidget {
                         color: BrambleColors.creamSurface,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: BrambleColors.creamBorder.withOpacity(0.5),
+                          color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                           width: 1,
                         ),
                       ),
@@ -326,7 +326,7 @@ class _StatsView extends StatelessWidget {
                         color: BrambleColors.lightSage,
                         borderRadius: BorderRadius.circular(18),
                         border: Border.all(
-                          color: BrambleColors.sageGreen.withOpacity(0.3),
+                          color: BrambleColors.sageGreen.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),

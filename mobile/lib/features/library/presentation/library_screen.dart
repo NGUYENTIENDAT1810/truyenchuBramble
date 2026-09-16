@@ -78,7 +78,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                         : BrambleColors.creamSurface,
                                     borderRadius: BorderRadius.circular(999),
                                     border: Border.all(
-                                      color: BrambleColors.creamBorder.withOpacity(0.5),
+                                      color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                                       width: 1,
                                     ),
                                   ),
@@ -105,7 +105,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                               color: BrambleColors.creamSurface,
                               borderRadius: BorderRadius.circular(999),
                               border: Border.all(
-                                color: BrambleColors.creamBorder.withOpacity(0.5),
+                                color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                                 width: 1,
                               ),
                             ),
@@ -208,7 +208,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                     separatorBuilder: (_, __) => Padding(
                                       padding: const EdgeInsets.symmetric(vertical: 10),
                                       child: Divider(
-                                        color: BrambleColors.creamDivider.withOpacity(0.5),
+                                        color: BrambleColors.creamDivider.withValues(alpha: 0.5),
                                         height: 1,
                                       ),
                                     ),
@@ -367,8 +367,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                                       : BrambleColors.creamSurface,
                                                   border: Border.all(
                                                     color: isDownloaded
-                                                        ? BrambleColors.sageGreen.withOpacity(0.3)
-                                                        : BrambleColors.creamBorder.withOpacity(0.4),
+                                                        ? BrambleColors.sageGreen.withValues(alpha: 0.3)
+                                                        : BrambleColors.creamBorder.withValues(alpha: 0.4),
                                                     width: 1,
                                                   ),
                                                 ),
@@ -419,7 +419,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             color: BrambleColors.creamSurface,
                             border: Border(
                               top: BorderSide(
-                                color: BrambleColors.creamBorder.withOpacity(0.6),
+                                color: BrambleColors.creamBorder.withValues(alpha: 0.6),
                               ),
                             ),
                             boxShadow: const [

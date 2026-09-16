@@ -74,7 +74,7 @@ class _CommentsViewState extends State<_CommentsView> {
                 color: BrambleColors.creamBg,
                 border: Border(
                   bottom: BorderSide(
-                    color: BrambleColors.creamDivider.withOpacity(0.6),
+                    color: BrambleColors.creamDivider.withValues(alpha: 0.6),
                     width: 1,
                   ),
                 ),
@@ -90,7 +90,7 @@ class _CommentsViewState extends State<_CommentsView> {
                         shape: BoxShape.circle,
                         color: BrambleColors.creamSurface,
                         border: Border.all(
-                          color: BrambleColors.creamBorder.withOpacity(0.5),
+                          color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                           width: 1,
                         ),
                       ),
@@ -154,7 +154,7 @@ class _CommentsViewState extends State<_CommentsView> {
                     padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                     itemCount: comments.length,
                     separatorBuilder: (_, __) => Divider(
-                      color: BrambleColors.creamDivider.withOpacity(0.4),
+                      color: BrambleColors.creamDivider.withValues(alpha: 0.4),
                       height: 24,
                     ),
                     itemBuilder: (context, index) {
@@ -170,7 +170,7 @@ class _CommentsViewState extends State<_CommentsView> {
                               shape: BoxShape.circle,
                               color: BrambleColors.creamSurface,
                               border: Border.all(
-                                color: BrambleColors.creamBorder.withOpacity(0.5),
+                                color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                                 width: 1,
                               ),
                             ),
@@ -254,7 +254,7 @@ class _CommentsViewState extends State<_CommentsView> {
                                           border: Border.all(
                                             color: c.isLiked
                                                 ? BrambleColors.primaryOrange
-                                                : BrambleColors.creamBorder.withOpacity(0.5),
+                                                : BrambleColors.creamBorder.withValues(alpha: 0.5),
                                             width: 1,
                                           ),
                                         ),
@@ -309,7 +309,7 @@ class _CommentsViewState extends State<_CommentsView> {
                 color: BrambleColors.creamSurface,
                 border: Border(
                   top: BorderSide(
-                    color: BrambleColors.creamBorder.withOpacity(0.6),
+                    color: BrambleColors.creamBorder.withValues(alpha: 0.6),
                     width: 1,
                   ),
                 ),
@@ -324,7 +324,7 @@ class _CommentsViewState extends State<_CommentsView> {
                         color: BrambleColors.creamBg,
                         borderRadius: BorderRadius.circular(999),
                         border: Border.all(
-                          color: BrambleColors.creamBorder.withOpacity(0.6),
+                          color: BrambleColors.creamBorder.withValues(alpha: 0.6),
                           width: 1,
                         ),
                       ),

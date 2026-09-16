@@ -71,7 +71,7 @@ class _AuthorView extends StatelessWidget {
                             shape: BoxShape.circle,
                             color: BrambleColors.creamSurface,
                             border: Border.all(
-                              color: BrambleColors.creamBorder.withOpacity(0.5),
+                              color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                               width: 1,
                             ),
                           ),
@@ -215,7 +215,7 @@ class _AuthorView extends StatelessWidget {
                                     color: BrambleColors.creamSurface,
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
-                                      color: BrambleColors.creamBorder.withOpacity(0.5),
+                                      color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                                       width: 1,
                                     ),
                                   ),
@@ -285,7 +285,7 @@ class _AuthorView extends StatelessWidget {
                           color: BrambleColors.creamSurface,
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
-                            color: BrambleColors.creamBorder.withOpacity(0.6),
+                            color: BrambleColors.creamBorder.withValues(alpha: 0.6),
                             width: 1,
                           ),
                         ),

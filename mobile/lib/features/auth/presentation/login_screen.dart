@@ -175,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Expanded(
                         child: Container(
                           height: 1,
-                          color: BrambleColors.creamInk.withOpacity(0.14),
+                          color: BrambleColors.creamInk.withValues(alpha: 0.14),
                         ),
                       ),
                       Padding(
@@ -188,7 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Expanded(
                         child: Container(
                           height: 1,
-                          color: BrambleColors.creamInk.withOpacity(0.14),
+                          color: BrambleColors.creamInk.withValues(alpha: 0.14),
                         ),
                       ),
                     ],

@@ -173,7 +173,7 @@ class _PaywallSheetState extends State<PaywallSheet> {
                       Text(
                         'Every chapter the moment it posts, offline downloads, no ads. 40% goes to the authors you read.',
                         style: BrambleTypography.bodySmall(
-                          color: const Color(0xFFF0FAE1).withOpacity(0.85),
+                          color: const Color(0xFFF0FAE1).withValues(alpha: 0.85),
                         ).copyWith(fontSize: 13.5, height: 1.55),
                       ),
                       const SizedBox(height: 14),

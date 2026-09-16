@@ -125,7 +125,7 @@ class BrambleEmptyState extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: BrambleColors.creamSurface,
                 border: Border.all(
-                  color: BrambleColors.creamBorder.withOpacity(0.5),
+                  color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                   width: 1,
                 ),
               ),

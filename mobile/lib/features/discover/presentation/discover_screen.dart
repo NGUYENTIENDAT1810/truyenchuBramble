@@ -66,7 +66,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       color: BrambleColors.creamSurface,
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
-                        color: BrambleColors.creamBorder.withOpacity(0.6),
+                        color: BrambleColors.creamBorder.withValues(alpha: 0.6),
                         width: 1,
                       ),
                     ),
@@ -188,7 +188,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       separatorBuilder: (_, __) => Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: Divider(
-                          color: BrambleColors.creamDivider.withOpacity(0.6),
+                          color: BrambleColors.creamDivider.withValues(alpha: 0.6),
                           height: 1,
                         ),
                       ),

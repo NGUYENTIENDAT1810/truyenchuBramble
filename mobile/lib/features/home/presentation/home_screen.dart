@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           color: BrambleColors.creamSurface,
                                           border: Border.all(
                                             color: BrambleColors.creamBorder
-                                                .withOpacity(0.5),
+                                                .withValues(alpha: 0.5),
                                             width: 1,
                                           ),
                                         ),
@@ -179,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       borderRadius: BorderRadius.circular(999),
                                       border: Border.all(
                                         color: BrambleColors.sageGreen
-                                            .withOpacity(0.3),
+                                            .withValues(alpha: 0.3),
                                         width: 1,
                                       ),
                                     ),
@@ -233,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color:
-                                    BrambleColors.creamBorder.withOpacity(0.6),
+                                    BrambleColors.creamBorder.withValues(alpha: 0.6),
                                 width: 1,
                               ),
                               boxShadow: const [
@@ -486,7 +486,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
                                         color: BrambleColors.creamBorder
-                                            .withOpacity(0.5),
+                                            .withValues(alpha: 0.5),
                                         width: 1,
                                       ),
                                     ),

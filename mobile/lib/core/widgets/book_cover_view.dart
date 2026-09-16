@@ -106,8 +106,8 @@ class BookCoverView extends StatelessWidget {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      Colors.black.withOpacity(0.25),
-                      Colors.white.withOpacity(0.12),
+                      Colors.black.withValues(alpha: 0.25),
+                      Colors.white.withValues(alpha: 0.12),
                       Colors.transparent,
                     ],
                   ),
@@ -175,7 +175,7 @@ class BookCoverView extends StatelessWidget {
               height: width * 0.85,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.12),
+                color: Colors.white.withValues(alpha: 0.12),
               ),
             ),
           ),
@@ -187,7 +187,7 @@ class BookCoverView extends StatelessWidget {
               height: width * 0.6,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.black.withOpacity(0.08),
+                color: Colors.black.withValues(alpha: 0.08),
               ),
             ),
           ),
@@ -200,7 +200,7 @@ class BookCoverView extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: ink.withOpacity(0.2),
+                  color: ink.withValues(alpha: 0.2),
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(borderRadius > 8 ? borderRadius - 6 : 4),

@@ -56,7 +56,7 @@ class _ChapterListViewState extends State<_ChapterListView> {
                     color: BrambleColors.creamBg,
                     border: Border(
                       bottom: BorderSide(
-                        color: BrambleColors.creamDivider.withOpacity(0.6),
+                        color: BrambleColors.creamDivider.withValues(alpha: 0.6),
                         width: 1,
                       ),
                     ),
@@ -72,7 +72,7 @@ class _ChapterListViewState extends State<_ChapterListView> {
                             shape: BoxShape.circle,
                             color: BrambleColors.creamSurface,
                             border: Border.all(
-                              color: BrambleColors.creamBorder.withOpacity(0.5),
+                              color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                               width: 1,
                             ),
                           ),
@@ -117,7 +117,7 @@ class _ChapterListViewState extends State<_ChapterListView> {
                             color: BrambleColors.creamSurface,
                             borderRadius: BorderRadius.circular(999),
                             border: Border.all(
-                              color: BrambleColors.creamBorder.withOpacity(0.5),
+                              color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                               width: 1,
                             ),
                           ),
@@ -174,7 +174,7 @@ class _ChapterListViewState extends State<_ChapterListView> {
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                         itemCount: list.length,
                         separatorBuilder: (_, __) => Divider(
-                          color: BrambleColors.creamDivider.withOpacity(0.4),
+                          color: BrambleColors.creamDivider.withValues(alpha: 0.4),
                           height: 1,
                         ),
                         itemBuilder: (context, index) {
@@ -195,7 +195,7 @@ class _ChapterListViewState extends State<_ChapterListView> {
                                       '${ch['chapterNumber']}',
                                       style: BrambleTypography.titleMedium(
                                         color: isLocked
-                                            ? BrambleColors.creamMuted.withOpacity(0.7)
+                                            ? BrambleColors.creamMuted.withValues(alpha: 0.7)
                                             : BrambleColors.primaryOrange,
                                       ).copyWith(fontSize: 16),
                                     ),

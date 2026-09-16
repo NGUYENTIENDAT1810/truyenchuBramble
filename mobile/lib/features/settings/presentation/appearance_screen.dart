@@ -40,7 +40,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                   color: BrambleColors.creamBg,
                   border: Border(
                     bottom: BorderSide(
-                      color: BrambleColors.creamInk.withOpacity(0.1),
+                      color: BrambleColors.creamInk.withValues(alpha: 0.1),
                     ),
                   ),
                 ),
@@ -53,7 +53,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                         height: 40,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: BrambleColors.creamInk.withOpacity(0.06),
+                          color: BrambleColors.creamInk.withValues(alpha: 0.06),
                         ),
                         child: const Icon(
                           Icons.chevron_left_rounded,
@@ -319,7 +319,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
             color: bg,
             borderRadius: BorderRadius.circular(22),
             border: Border.all(
-              color: isSelected ? BrambleColors.primaryOrange : BrambleColors.creamInk.withOpacity(0.14),
+              color: isSelected ? BrambleColors.primaryOrange : BrambleColors.creamInk.withValues(alpha: 0.14),
               width: isSelected ? 2.5 : 1.0,
             ),
           ),
@@ -482,7 +482,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: BrambleColors.creamInk.withOpacity(0.08),
+            color: BrambleColors.creamInk.withValues(alpha: 0.08),
           ),
         ),
       ),

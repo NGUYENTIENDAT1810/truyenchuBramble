@@ -81,7 +81,7 @@ class _NovelDetailViewState extends State<_NovelDetailView> {
                                 shape: BoxShape.circle,
                                 color: BrambleColors.creamSurface,
                                 border: Border.all(
-                                  color: BrambleColors.creamBorder.withOpacity(0.5),
+                                  color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                                   width: 1,
                                 ),
                               ),
@@ -105,7 +105,7 @@ class _NovelDetailViewState extends State<_NovelDetailView> {
                                     ? BrambleColors.peachSelection
                                     : BrambleColors.creamSurface,
                                 border: Border.all(
-                                  color: BrambleColors.creamBorder.withOpacity(0.5),
+                                  color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                                   width: 1,
                                 ),
                               ),
@@ -226,7 +226,7 @@ class _NovelDetailViewState extends State<_NovelDetailView> {
                           color: BrambleColors.creamSurface,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: BrambleColors.creamBorder.withOpacity(0.5),
+                            color: BrambleColors.creamBorder.withValues(alpha: 0.5),
                             width: 1,
                           ),
                         ),
@@ -387,7 +387,7 @@ class _NovelDetailViewState extends State<_NovelDetailView> {
                                     decoration: BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(
-                                          color: BrambleColors.creamDivider.withOpacity(0.6),
+                                          color: BrambleColors.creamDivider.withValues(alpha: 0.6),
                                           width: 1,
                                         ),
                                       ),

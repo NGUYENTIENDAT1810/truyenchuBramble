@@ -74,7 +74,7 @@ class BrambleButton extends StatelessWidget {
         bg = Colors.transparent;
         fg = BrambleColors.creamInk;
         border = Border.all(
-            color: BrambleColors.creamInk.withOpacity(0.3), width: 1.5);
+            color: BrambleColors.creamInk.withValues(alpha: 0.3), width: 1.5);
         break;
     }
 

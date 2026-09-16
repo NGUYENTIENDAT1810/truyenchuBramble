@@ -28,7 +28,7 @@ class _ComponentLibraryScreenState extends State<ComponentLibraryScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
               decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: BrambleColors.creamInk.withOpacity(0.1))),
+                border: Border(bottom: BorderSide(color: BrambleColors.creamInk.withValues(alpha: 0.1))),
               ),
               child: Row(
                 children: [
@@ -39,7 +39,7 @@ class _ComponentLibraryScreenState extends State<ComponentLibraryScreen> {
                       height: 40,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: BrambleColors.creamInk.withOpacity(0.06),
+                        color: BrambleColors.creamInk.withValues(alpha: 0.06),
                       ),
                       child: const Icon(Icons.chevron_left_rounded, color: BrambleColors.creamInk, size: 28),
                     ),

@@ -30,8 +30,8 @@ class BrambleBottomBar extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            BrambleColors.creamBg.withOpacity(0.0),
-            BrambleColors.creamBg.withOpacity(0.88),
+            BrambleColors.creamBg.withValues(alpha: 0.0),
+            BrambleColors.creamBg.withValues(alpha: 0.88),
             BrambleColors.creamBg,
           ],
           stops: const [0.0, 0.45, 0.85],
@@ -44,7 +44,7 @@ class BrambleBottomBar extends StatelessWidget {
           color: BrambleColors.creamSurface,
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
-            color: BrambleColors.creamBorder.withOpacity(0.6),
+            color: BrambleColors.creamBorder.withValues(alpha: 0.6),
             width: 1,
           ),
           boxShadow: const [

@@ -54,7 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       height: 40,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: BrambleColors.creamInk.withOpacity(0.06),
+                        color: BrambleColors.creamInk.withValues(alpha: 0.06),
                       ),
                       child: const Icon(
                         Icons.chevron_left_rounded,
@@ -387,7 +387,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: BrambleColors.creamInk.withOpacity(0.08),
+            color: BrambleColors.creamInk.withValues(alpha: 0.08),
           ),
         ),
       ),

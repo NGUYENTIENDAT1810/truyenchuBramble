@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
-import '../../auth/presentation/bloc/auth_bloc.dart';
+import '../../auth/presentation/bloc/auth_cubit.dart';
 
 enum _PaymentStage { select, detail, loading, success }
 
@@ -60,7 +60,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       final pack = widget.pendingPack;
       if (pack != null) {
         final coins = int.tryParse(pack['coins'].toString()) ?? 0;
-        context.read<AuthBloc>().add(AuthAddCoinsRequested(coins));
+        context.read<AuthCubit>().addCoinsRequested(coins);
       }
       setState(() => _stage = _PaymentStage.success);
     });

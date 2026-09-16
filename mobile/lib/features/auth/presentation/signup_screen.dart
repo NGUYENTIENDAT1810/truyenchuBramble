@@ -5,7 +5,7 @@ import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
 import '../../../core/widgets/bramble_text_field.dart';
-import 'bloc/auth_bloc.dart';
+import 'bloc/auth_cubit.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -56,18 +56,16 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
 
-    context.read<AuthBloc>().add(
-          AuthRegisterRequested(
-            email: email,
-            password: password,
-            name: name,
-          ),
+    context.read<AuthCubit>().registerRequested(
+          email: email,
+          password: password,
+          name: name,
         );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthBloc, AuthState>(
+    return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is Authenticated) {
           context.go('/onboarding');

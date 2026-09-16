@@ -6,7 +6,7 @@ import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
 import '../../../core/widgets/bramble_chip.dart';
-import 'bloc/auth_bloc.dart';
+import 'bloc/auth_cubit.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -38,12 +38,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     } else {
       // Save preferences & finish onboarding
       final selectedGenres = _genres.entries.where((e) => e.value).map((e) => e.key).toList();
-      context.read<AuthBloc>().add(
-            AuthUpdatePreferencesRequested({
-              'selectedGenres': selectedGenres,
-              'readingPace': _pace,
-            }),
-          );
+      context.read<AuthCubit>().updatePreferencesRequested({
+            'selectedGenres': selectedGenres,
+            'readingPace': _pace,
+          });
       await LocalStorage.setOnboardingCompleted(true);
       if (mounted) context.go('/home');
     }

@@ -6,7 +6,7 @@ import '../../../core/di/injection_container.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/loading_indicator.dart';
-import '../../auth/presentation/bloc/auth_bloc.dart';
+import '../../auth/presentation/bloc/auth_cubit.dart';
 import '../data/stats_repository.dart';
 import 'cubit/stats_cubit.dart';
 
@@ -110,7 +110,7 @@ class _StatsView extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            BlocBuilder<AuthBloc, AuthState>(
+                            BlocBuilder<AuthCubit, AuthState>(
                               builder: (context, authState) {
                                 final user = authState.user;
                                 final initial = user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'B';

@@ -6,7 +6,7 @@ import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/book_cover_view.dart';
 import '../../../core/widgets/bramble_chip.dart';
 import '../../../core/widgets/loading_indicator.dart';
-import 'bloc/discover_bloc.dart';
+import 'bloc/discover_cubit.dart';
 
 class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
@@ -21,9 +21,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   @override
   void initState() {
     super.initState();
-    final discoverBloc = context.read<DiscoverBloc>();
-    if (discoverBloc.state.books.isEmpty && !discoverBloc.state.isLoading) {
-      discoverBloc.add(const DiscoverStarted());
+    final discoverCubit = context.read<DiscoverCubit>();
+    if (discoverCubit.state.books.isEmpty && !discoverCubit.state.isLoading) {
+      discoverCubit.started();
     }
   }
 
@@ -35,7 +35,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DiscoverBloc, DiscoverState>(
+    return BlocBuilder<DiscoverCubit, DiscoverState>(
       builder: (context, state) {
         final isSearching = state.query.isNotEmpty || state.selectedTag != 'All';
         final heading =
@@ -82,7 +82,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                           child: TextField(
                             controller: _searchController,
                             onChanged: (val) {
-                              context.read<DiscoverBloc>().add(DiscoverQueryChanged(val));
+                              context.read<DiscoverCubit>().queryChanged(val);
                             },
                             style: BrambleTypography.bodyMedium(
                               color: BrambleColors.creamInk,
@@ -102,7 +102,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                           GestureDetector(
                             onTap: () {
                               _searchController.clear();
-                              context.read<DiscoverBloc>().add(const DiscoverQueryChanged(''));
+                              context.read<DiscoverCubit>().queryChanged('');
                             },
                             child: const Icon(
                               Icons.close_rounded,
@@ -125,7 +125,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                         label: tag,
                         isSelected: isSelected,
                         onTap: () {
-                          context.read<DiscoverBloc>().add(DiscoverTagSelected(tag));
+                          context.read<DiscoverCubit>().tagSelected(tag);
                         },
                       );
                     }).toList(),
@@ -146,8 +146,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                         GestureDetector(
                           onTap: () {
                             _searchController.clear();
-                            context.read<DiscoverBloc>().add(const DiscoverQueryChanged(''));
-                            context.read<DiscoverBloc>().add(const DiscoverTagSelected('All'));
+                            context.read<DiscoverCubit>().queryChanged('');
+                            context.read<DiscoverCubit>().tagSelected('All');
                           },
                           child: Text(
                             'Reset',
@@ -176,8 +176,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       actionLabel: 'Clear filters',
                       onAction: () {
                         _searchController.clear();
-                        context.read<DiscoverBloc>().add(const DiscoverQueryChanged(''));
-                        context.read<DiscoverBloc>().add(const DiscoverTagSelected('All'));
+                        context.read<DiscoverCubit>().queryChanged('');
+                        context.read<DiscoverCubit>().tagSelected('All');
                       },
                     )
                   else

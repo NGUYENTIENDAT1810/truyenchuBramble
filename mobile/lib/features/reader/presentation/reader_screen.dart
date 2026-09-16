@@ -12,7 +12,7 @@ import '../../../core/widgets/loading_indicator.dart';
 import '../../comments/data/comments_repository.dart';
 import '../../comments/presentation/cubit/comments_cubit.dart';
 import '../data/reader_repository.dart';
-import 'bloc/reader_bloc.dart';
+import 'bloc/reader_cubit.dart';
 import 'cubit/reader_settings_cubit.dart';
 import 'paywall_sheet.dart';
 import 'reader_settings_sheet.dart';
@@ -26,10 +26,10 @@ class ReaderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<ReaderBloc>(
-          create: (context) => ReaderBloc(
+        BlocProvider<ReaderCubit>(
+          create: (context) => ReaderCubit(
             readerRepository: sl<ReaderRepository>(),
-          )..add(ReaderChapterRequested(chapterId)),
+          )..chapterRequested(chapterId),
         ),
         BlocProvider<CommentsCubit>(
           create: (context) => CommentsCubit(
@@ -91,7 +91,7 @@ class _ReaderViewState extends State<_ReaderView> {
   }
 
   void _syncProgressToBackend() {
-    final readerState = context.read<ReaderBloc>().state;
+    final readerState = context.read<ReaderCubit>().state;
     if (readerState is ReaderLoaded) {
       final ch = readerState.chapterData;
       final elapsed = DateTime.now().difference(_startTime).inSeconds;
@@ -138,7 +138,7 @@ class _ReaderViewState extends State<_ReaderView> {
         chapterTitle: nextCh['title'] ?? 'Next Chapter',
         coinPrice: nextCh['coinPrice'] ?? 30,
         onUnlocked: () {
-          context.read<ReaderBloc>().add(ReaderChapterUnlocked(nextCh['id']));
+          context.read<ReaderCubit>().chapterUnlocked(nextCh['id']);
           context.pushReplacement('/reader/${nextCh['id']}');
         },
       ),
@@ -154,7 +154,7 @@ class _ReaderViewState extends State<_ReaderView> {
       backgroundColor: themeConfig.bg,
       body: SafeArea(
         bottom: false,
-        child: BlocBuilder<ReaderBloc, ReaderState>(
+        child: BlocBuilder<ReaderCubit, ReaderState>(
           builder: (context, state) {
             if (state is ReaderLoading || state is ReaderInitial) {
               return const BrambleLoading(message: 'Opening chapter...');
@@ -164,8 +164,8 @@ class _ReaderViewState extends State<_ReaderView> {
               return BrambleErrorView(
                 message: state.message,
                 onRetry: () => context
-                    .read<ReaderBloc>()
-                    .add(ReaderChapterRequested(widget.chapterId)),
+                    .read<ReaderCubit>()
+                    .chapterRequested(widget.chapterId),
               );
             }
 

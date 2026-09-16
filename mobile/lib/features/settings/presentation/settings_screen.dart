@@ -5,7 +5,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
-import '../../auth/presentation/bloc/auth_cubit.dart';
+import '../../auth/presentation/bloc/auth_bloc.dart';
 import '../../reader/presentation/cubit/reader_settings_cubit.dart';
 import 'cubit/settings_preferences_cubit.dart';
 
@@ -20,13 +20,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _confirmDelete = false;
 
   void _handleLogout() {
-    context.read<AuthCubit>().logoutRequested();
+    context.read<AuthBloc>().add(const AuthLogoutRequested());
     if (mounted) context.go('/login');
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthCubit>().state.user;
+    final user = context.watch<AuthBloc>().state.user;
     final readerSettings = context.watch<ReaderSettingsCubit>().state;
     final readerCubit = context.read<ReaderSettingsCubit>();
     final prefs = context.watch<SettingsPreferencesCubit>().state;

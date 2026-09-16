@@ -5,7 +5,7 @@ import '../core/theme/bramble_colors.dart';
 import '../core/theme/bramble_typography.dart';
 import '../core/widgets/bramble_bottom_bar.dart';
 import '../features/admin/presentation/admin_add_novel_screen.dart';
-import '../features/auth/presentation/bloc/auth_cubit.dart';
+import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/onboarding_screen.dart';
 import '../features/auth/presentation/signup_screen.dart';
@@ -46,13 +46,13 @@ class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
-  static GoRouter createRouter(AuthCubit authCubit) {
+  static GoRouter createRouter(AuthBloc authBloc) {
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
       initialLocation: '/splash',
-      refreshListenable: GoRouterRefreshStream(authCubit.stream),
+      refreshListenable: GoRouterRefreshStream(authBloc.stream),
       redirect: (context, state) {
-        final authState = authCubit.state;
+        final authState = authBloc.state;
         final isAuth = authState.status == AuthStatus.authenticated;
         final isInitializing = authState.status == AuthStatus.initializing;
         final location = state.matchedLocation;

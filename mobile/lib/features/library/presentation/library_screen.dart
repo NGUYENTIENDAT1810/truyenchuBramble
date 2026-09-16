@@ -6,7 +6,7 @@ import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/book_cover_view.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../domain/library_item_model.dart';
-import 'bloc/library_cubit.dart';
+import 'bloc/library_bloc.dart';
 import 'cubit/library_selection_cubit.dart';
 
 class LibraryScreen extends StatefulWidget {
@@ -20,9 +20,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
   @override
   void initState() {
     super.initState();
-    final libraryCubit = context.read<LibraryCubit>();
-    if (libraryCubit.state is LibraryInitial) {
-      libraryCubit.started();
+    final libraryBloc = context.read<LibraryBloc>();
+    if (libraryBloc.state is LibraryInitial) {
+      libraryBloc.add(const LibraryStarted());
     }
   }
 
@@ -38,7 +38,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
           builder: (context, selection) {
             final selectionCubit = context.read<LibrarySelectionCubit>();
 
-            return BlocBuilder<LibraryCubit, LibraryState>(
+            return BlocBuilder<LibraryBloc, LibraryState>(
               builder: (context, state) {
                 final currentTab = state.currentTab;
 
@@ -115,7 +115,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                 return Expanded(
                                   child: GestureDetector(
                                     onTap: () {
-                                      context.read<LibraryCubit>().tabChanged(label);
+                                      context.read<LibraryBloc>().add(LibraryTabChanged(label));
                                       selectionCubit.reset();
                                     },
                                     behavior: HitTestBehavior.opaque,
@@ -168,7 +168,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                 if (state is LibraryFailure) {
                                   return BrambleErrorView(
                                     message: state.message,
-                                    onRetry: () => context.read<LibraryCubit>().tabChanged(currentTab),
+                                    onRetry: () => context.read<LibraryBloc>().add(LibraryTabChanged(currentTab)),
                                   );
                                 }
 
@@ -200,7 +200,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                   color: BrambleColors.primaryOrange,
                                   backgroundColor: BrambleColors.creamBg,
                                   onRefresh: () async {
-                                    context.read<LibraryCubit>().refreshed();
+                                    context.read<LibraryBloc>().add(const LibraryRefreshed());
                                   },
                                   child: ListView.separated(
                                     physics: const AlwaysScrollableScrollPhysics(),

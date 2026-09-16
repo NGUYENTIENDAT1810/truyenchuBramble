@@ -5,10 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'core/di/injection_container.dart';
 import 'core/storage/local_storage.dart';
 import 'core/theme/bramble_theme.dart';
-import 'features/auth/presentation/bloc/auth_cubit.dart';
-import 'features/discover/presentation/bloc/discover_cubit.dart';
-import 'features/home/presentation/bloc/home_cubit.dart';
-import 'features/library/presentation/bloc/library_cubit.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/discover/presentation/bloc/discover_bloc.dart';
+import 'features/home/presentation/bloc/home_bloc.dart';
+import 'features/library/presentation/bloc/library_bloc.dart';
 import 'features/library/presentation/cubit/library_selection_cubit.dart';
 import 'features/notifications/presentation/cubit/notifications_cubit.dart';
 import 'features/reader/presentation/cubit/reader_settings_cubit.dart';
@@ -44,15 +44,15 @@ class BrambleRootApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<AuthCubit>(
-          create: (_) => sl<AuthCubit>()..checkRequested(),
+        BlocProvider<AuthBloc>(
+          create: (_) => sl<AuthBloc>()..add(const AuthCheckRequested()),
         ),
         BlocProvider<ReaderSettingsCubit>(create: (_) => sl<ReaderSettingsCubit>()),
         BlocProvider<SettingsPreferencesCubit>(create: (_) => sl<SettingsPreferencesCubit>()),
         BlocProvider<NotificationsCubit>(create: (_) => sl<NotificationsCubit>()),
-        BlocProvider<HomeCubit>(create: (_) => sl<HomeCubit>()),
-        BlocProvider<DiscoverCubit>(create: (_) => sl<DiscoverCubit>()),
-        BlocProvider<LibraryCubit>(create: (_) => sl<LibraryCubit>()),
+        BlocProvider<HomeBloc>(create: (_) => sl<HomeBloc>()),
+        BlocProvider<DiscoverBloc>(create: (_) => sl<DiscoverBloc>()),
+        BlocProvider<LibraryBloc>(create: (_) => sl<LibraryBloc>()),
         BlocProvider<LibrarySelectionCubit>(create: (_) => sl<LibrarySelectionCubit>()),
       ],
       child: const BrambleApp(),
@@ -73,8 +73,8 @@ class _BrambleAppState extends State<BrambleApp> {
   @override
   void initState() {
     super.initState();
-    final authCubit = context.read<AuthCubit>();
-    _router = AppRouter.createRouter(authCubit);
+    final authBloc = context.read<AuthBloc>();
+    _router = AppRouter.createRouter(authBloc);
   }
 
   @override

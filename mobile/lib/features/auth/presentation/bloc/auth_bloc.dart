@@ -2,18 +2,31 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/storage/local_storage.dart';
 import '../../data/auth_repository.dart';
 import '../../domain/user_model.dart';
+import 'auth_event.dart';
 import 'auth_state.dart';
 
+export 'auth_event.dart';
 export 'auth_state.dart';
 
-class AuthCubit extends Cubit<AuthState> {
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
 
-  AuthCubit({required AuthRepository authRepository})
+  AuthBloc({required AuthRepository authRepository})
       : _authRepository = authRepository,
-        super(const AuthInitial());
+        super(const AuthInitial()) {
+    on<AuthCheckRequested>(_onCheckRequested);
+    on<AuthLoginRequested>(_onLoginRequested);
+    on<AuthRegisterRequested>(_onRegisterRequested);
+    on<AuthLogoutRequested>(_onLogoutRequested);
+    on<AuthUpdatePreferencesRequested>(_onUpdatePreferencesRequested);
+    on<AuthAddCoinsRequested>(_onAddCoinsRequested);
+    on<AuthUpdateProfileRequested>(_onUpdateProfileRequested);
+  }
 
-  Future<void> checkRequested() async {
+  Future<void> _onCheckRequested(
+    AuthCheckRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     if (state.status != AuthStatus.initializing && state is! AuthInitial) {
       return;
     }
@@ -41,27 +54,29 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> loginRequested(String email, String password) async {
+  Future<void> _onLoginRequested(
+    AuthLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(const AuthLoading());
     try {
-      final user = await _authRepository.login(email, password);
+      final user = await _authRepository.login(event.email, event.password);
       emit(Authenticated(user));
     } catch (e) {
       emit(Unauthenticated(errorMessage: _mapError(e)));
     }
   }
 
-  Future<void> registerRequested({
-    required String email,
-    required String password,
-    required String name,
-  }) async {
+  Future<void> _onRegisterRequested(
+    AuthRegisterRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(const AuthLoading());
     try {
       final user = await _authRepository.register(
-        email,
-        password,
-        name,
+        event.email,
+        event.password,
+        event.name,
       );
       emit(Authenticated(user));
     } catch (e) {
@@ -69,20 +84,26 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> logoutRequested() async {
+  Future<void> _onLogoutRequested(
+    AuthLogoutRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     try {
       await _authRepository.logout();
     } catch (_) {}
     emit(const Unauthenticated());
   }
 
-  Future<void> updatePreferencesRequested(Map<String, dynamic> preferences) async {
+  Future<void> _onUpdatePreferencesRequested(
+    AuthUpdatePreferencesRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     try {
-      await _authRepository.updatePreferences(preferences);
+      await _authRepository.updatePreferences(event.preferences);
       final current = state.user;
       if (current != null) {
         final updated = current.copyWith(
-          preferences: {...?current.preferences, ...preferences},
+          preferences: {...?current.preferences, ...event.preferences},
         );
         await LocalStorage.saveUser(updated.toJson());
         emit(Authenticated(updated));
@@ -90,18 +111,24 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (_) {}
   }
 
-  Future<void> addCoinsRequested(int amount) async {
+  Future<void> _onAddCoinsRequested(
+    AuthAddCoinsRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     final current = state.user;
     if (current == null) return;
-    final updated = current.copyWith(coins: current.coins + amount);
+    final updated = current.copyWith(coins: current.coins + event.amount);
     await LocalStorage.saveUser(updated.toJson());
     emit(Authenticated(updated));
   }
 
-  Future<void> updateProfileRequested({String? name, String? bio}) async {
+  Future<void> _onUpdateProfileRequested(
+    AuthUpdateProfileRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     final current = state.user;
     if (current == null) return;
-    final updated = current.copyWith(name: name, bio: bio);
+    final updated = current.copyWith(name: event.name, bio: event.bio);
     await LocalStorage.saveUser(updated.toJson());
     emit(Authenticated(updated));
   }

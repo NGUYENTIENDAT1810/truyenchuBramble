@@ -6,10 +6,10 @@ import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/book_cover_view.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../core/widgets/skeleton_loading.dart';
-import '../../auth/presentation/bloc/auth_cubit.dart';
+import '../../auth/presentation/bloc/auth_bloc.dart';
 import '../../books/domain/book_detail_model.dart';
 import '../../notifications/presentation/cubit/notifications_cubit.dart';
-import 'bloc/home_cubit.dart';
+import 'bloc/home_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,9 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    final homeCubit = context.read<HomeCubit>();
-    if (homeCubit.state is HomeInitial) {
-      homeCubit.fetchStarted();
+    final homeBloc = context.read<HomeBloc>();
+    if (homeBloc.state is HomeInitial) {
+      homeBloc.add(const HomeFetchStarted());
     }
   }
 
@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: BrambleColors.creamBg,
       body: SafeArea(
         bottom: false,
-        child: BlocBuilder<HomeCubit, HomeState>(
+        child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
             if (state is HomeLoading || state is HomeInitial) {
               return const HomeSkeletonView();
@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return BrambleErrorView(
                 message: state.message,
                 onRetry: () =>
-                    context.read<HomeCubit>().fetchStarted(),
+                    context.read<HomeBloc>().add(const HomeFetchStarted()),
               );
             }
 
@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: BrambleColors.primaryOrange,
                 backgroundColor: BrambleColors.creamBg,
                 onRefresh: () async {
-                  context.read<HomeCubit>().refreshed();
+                  context.read<HomeBloc>().add(const HomeRefreshed());
                 },
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Expanded(
-                              child: BlocBuilder<AuthCubit, AuthState>(
+                              child: BlocBuilder<AuthBloc, AuthState>(
                                 builder: (context, authState) {
                                   final user = authState.user;
                                   final userName =

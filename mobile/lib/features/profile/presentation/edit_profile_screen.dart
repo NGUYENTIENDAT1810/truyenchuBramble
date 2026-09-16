@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
-import '../../auth/presentation/bloc/auth_cubit.dart';
+import '../../auth/presentation/bloc/auth_bloc.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -20,7 +20,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final user = context.read<AuthCubit>().state.user;
+    final user = context.read<AuthBloc>().state.user;
     _nameController = TextEditingController(text: user?.name ?? '');
     _bioController = TextEditingController(text: user?.bio ?? '');
   }
@@ -34,16 +34,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _save() {
     setState(() => _saving = true);
-    context.read<AuthCubit>().updateProfileRequested(
-          name: _nameController.text.trim(),
-          bio: _bioController.text.trim(),
+    context.read<AuthBloc>().add(
+          AuthUpdateProfileRequested(
+            name: _nameController.text.trim(),
+            bio: _bioController.text.trim(),
+          ),
         );
     if (mounted) context.pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthCubit>().state.user;
+    final user = context.watch<AuthBloc>().state.user;
     final initial = user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'N';
 
     return Scaffold(

@@ -5,7 +5,7 @@ import '../../../core/di/injection_container.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
-import '../../auth/presentation/bloc/auth_cubit.dart';
+import '../../auth/presentation/bloc/auth_bloc.dart';
 import '../data/reader_repository.dart';
 
 class PaywallSheet extends StatefulWidget {
@@ -39,7 +39,7 @@ class _PaywallSheetState extends State<PaywallSheet> {
       final remainingCoins = res['remainingCoins'] as int?;
 
       if (remainingCoins != null && mounted) {
-        context.read<AuthCubit>().checkRequested();
+        context.read<AuthBloc>().add(const AuthCheckRequested());
       }
 
       widget.onUnlocked();
@@ -62,7 +62,7 @@ class _PaywallSheetState extends State<PaywallSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthCubit, AuthState>(
+    return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
         final coins = authState.user?.coins ?? 120;
 

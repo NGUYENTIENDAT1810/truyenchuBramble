@@ -5,7 +5,7 @@ import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
 import '../../../core/widgets/bramble_text_field.dart';
-import 'bloc/auth_cubit.dart';
+import 'bloc/auth_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -45,12 +45,14 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    context.read<AuthCubit>().loginRequested(email, password);
+    context.read<AuthBloc>().add(
+          AuthLoginRequested(email: email, password: password),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthCubit, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is Authenticated) {
           context.go('/home');

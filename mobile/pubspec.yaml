@@ -3,6 +3,8 @@ description: "Bramble - Modern Minimalist Novel Reader Mobile App"
 publish_to: 'none'
 version: 1.0.0+1
 
+scripts: derry.yaml
+
 environment:
   sdk: '>=3.4.0 <4.0.0'
 
@@ -24,6 +26,8 @@ dev_dependencies:
     sdk: flutter
   bloc_test: ^9.1.7
   flutter_lints: ^3.0.0
+  derry: ^1.5.0
+  build_runner: ^2.4.13
 
 flutter:
   uses-material-design: true

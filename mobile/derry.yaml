@@ -1,0 +1,32 @@
+get: flutter pub get
+
+clean:
+  - flutter clean
+  - flutter pub get
+
+format: dart format lib test
+
+analyze: flutter analyze
+
+test: flutter test
+
+build:apk: flutter build apk --release
+
+build:appbundle: flutter build appbundle --release
+
+build:ios: flutter build ios --release --no-codesign
+
+build:all:
+  - derry build:apk
+  - derry build:ios
+
+run:dev: flutter run
+
+build_runner: dart run build_runner build --delete-conflicting-outputs
+
+build_runner:watch: dart run build_runner watch --delete-conflicting-outputs
+
+check:
+  - derry format
+  - derry analyze
+  - derry test

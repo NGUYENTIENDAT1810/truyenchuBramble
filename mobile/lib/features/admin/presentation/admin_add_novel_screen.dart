@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/di/injection_container.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
@@ -51,7 +51,7 @@ class _AdminAddNovelScreenState extends State<AdminAddNovelScreen> {
     if (!_ready || _published || _publishing) return;
     setState(() => _publishing = true);
     try {
-      await context.read<BookRepository>().createBook(
+      await sl<BookRepository>().createBook(
             title: _titleController.text.trim(),
             description: _blurbController.text.trim(),
           );

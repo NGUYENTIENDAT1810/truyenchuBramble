@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/di/injection_container.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/book_cover_view.dart';
@@ -18,7 +19,7 @@ class NovelDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => BookDetailCubit(
-        bookRepository: context.read<BookRepository>(),
+        bookRepository: sl<BookRepository>(),
       )..loadBook(bookId),
       child: _NovelDetailView(bookId: bookId),
     );

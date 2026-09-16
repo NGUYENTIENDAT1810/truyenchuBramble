@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/di/injection_container.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/loading_indicator.dart';
@@ -17,7 +18,7 @@ class CommentsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => CommentsCubit(
-        commentsRepository: context.read<CommentsRepository>(),
+        commentsRepository: sl<CommentsRepository>(),
       )..loadComments(chapterId),
       child: _CommentsView(chapterId: chapterId),
     );

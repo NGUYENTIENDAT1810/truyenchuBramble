@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/di/injection_container.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_typography.dart';
 import '../../../core/widgets/bramble_button.dart';
@@ -33,7 +34,7 @@ class _PaywallSheetState extends State<PaywallSheet> {
   void _handleUnlock() async {
     setState(() => _isUnlocking = true);
     try {
-      final repo = context.read<ReaderRepository>();
+      final repo = sl<ReaderRepository>();
       final res = await repo.unlockChapter(widget.chapterId);
       final remainingCoins = res['remainingCoins'] as int?;
 

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/di/injection_container.dart';
 import '../../../core/theme/bramble_colors.dart';
 import '../../../core/theme/bramble_theme.dart';
 import '../../../core/theme/bramble_typography.dart';
@@ -27,12 +28,12 @@ class ReaderScreen extends StatelessWidget {
       providers: [
         BlocProvider<ReaderBloc>(
           create: (context) => ReaderBloc(
-            readerRepository: context.read<ReaderRepository>(),
+            readerRepository: sl<ReaderRepository>(),
           )..add(ReaderChapterRequested(chapterId)),
         ),
         BlocProvider<CommentsCubit>(
           create: (context) => CommentsCubit(
-            commentsRepository: context.read<CommentsRepository>(),
+            commentsRepository: sl<CommentsRepository>(),
           )..loadComments(chapterId),
         ),
       ],
@@ -96,7 +97,7 @@ class _ReaderViewState extends State<_ReaderView> {
       final elapsed = DateTime.now().difference(_startTime).inSeconds;
       final bookId = ch['bookId']?.toString() ?? '';
       if (bookId.isNotEmpty) {
-        context.read<ReaderRepository>().syncProgress(
+        sl<ReaderRepository>().syncProgress(
               bookId: bookId,
               chapterId: widget.chapterId,
               scrollOffset: _scrollController.hasClients
